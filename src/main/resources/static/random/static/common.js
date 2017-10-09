@@ -2979,6 +2979,7 @@ var RandomDatas = function() {
                             calCnt = 1;
                         }
 					} else {
+					    //匹配成功，通知后台
                         calCnt = 1;
                     }
 				   
@@ -3124,9 +3125,11 @@ var RandomDatas = function() {
 						var g = "main" + i;
 						var itemResult = KlineMaps.createmap(d, f, g);
 						if (itemResult) {
-							alert(" 随机王第【" + i + "】组图");
+						    console.log(" 随机王第【" + i + "】组图");
+							//alert(" 随机王第【" + i + "】组图");
 								var str = ".randombox #rand" + i;
 								console.log($(str).html());
+                            NotifyData.betCur(a.caipiao, a.recentid, $(str).html());
 						} 
 						result = result || itemResult;
 					}
@@ -3181,6 +3184,7 @@ var RandomDatas = function() {
 					success: function(a) {
 						if (a) {
 							prizesData = a;
+
 							RandomDatas.layout(a);
 							if (bigAuto.length > 0) {
 								RandomDatas.bigmap(a, bigAuto)
@@ -5359,7 +5363,26 @@ var KlineMaps = function() {
 			},
 		}
 	}();
-	//新增策略
-	//1.布林盘整，在下轨买入
+var NotifyData = function() {
+    var d = $("#startPrize");
+    return {
 
+        betCur: function(cp, no, data) {
+            $.ajax({
+                type: "post",
+                async: false,
+                url: "http://localhost:8011/betCP",
+                data: "caipiao=" + cp + "&no=" + no + "&data=" + data,
+                dataType: "json",
+                success: function(a) {
+                    console.log(a);
+                },
+                error: function(a) {
+                    return false
+                }
+            })
+        }
+
+    }
+}();
 	

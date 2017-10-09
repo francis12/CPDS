@@ -24,7 +24,7 @@ public class DsController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/init", method= {RequestMethod.POST})
+	@RequestMapping(value="/init", method= {RequestMethod.GET})
 	public String initdata() {
 		String result = "";
 		try {

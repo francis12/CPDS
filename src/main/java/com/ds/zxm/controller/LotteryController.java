@@ -31,4 +31,11 @@ public class LotteryController {
         }
         return lottery;
     }
+
+    @RequestMapping("/betCP")
+    @ResponseBody
+    public String  betCPData(String caipiao, String no, String data) {
+        System.out.println(caipiao + "," + no + "," + data);
+        return "{'bet':'suc'}";
+    }
 }
