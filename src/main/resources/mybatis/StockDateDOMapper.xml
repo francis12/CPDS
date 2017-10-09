@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stock.dao.StockDateDAO" >
+  <resultMap id="BaseResultMap" type="com.stock.model.StockDateDO" >
+    <result column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+    <result column="trade_date" property="tradeDate" jdbcType="DATE" />
+    <result column="open" property="open" jdbcType="DOUBLE" />
+    <result column="close" property="close" jdbcType="DOUBLE" />
+    <result column="high" property="high" jdbcType="DOUBLE" />
+    <result column="low" property="low" jdbcType="DOUBLE" />
+    <result column="limit_up_price" property="limitUpPrice" jdbcType="DOUBLE" />
+    <result column="limit_down_price" property="limitDownPrice" jdbcType="DOUBLE" />
+    <result column="deal_amount" property="dealAmount" jdbcType="DOUBLE" />
+    <result column="deal_money" property="dealMoney" jdbcType="DOUBLE" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    stock_code, trade_date, open, close, high, low, limit_up_price, limit_down_price, 
+    deal_amount, deal_money, creator, modifier
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.stock.model.StockDateDOCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_stock_date
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByCondition" parameterType="com.stock.model.StockDateDOCondition" >
+    delete from t_stock_date
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.stock.model.StockDateDO" >
+    insert into t_stock_date (stock_code, trade_date, open, 
+      close, high, low, limit_up_price, 
+      limit_down_price, deal_amount, deal_money, 
+      creator, modifier)
+    values (#{stockCode,jdbcType=VARCHAR}, #{tradeDate,jdbcType=DATE}, #{open,jdbcType=DOUBLE}, 
+      #{close,jdbcType=DOUBLE}, #{high,jdbcType=DOUBLE}, #{low,jdbcType=DOUBLE}, #{limitUpPrice,jdbcType=DOUBLE}, 
+      #{limitDownPrice,jdbcType=DOUBLE}, #{dealAmount,jdbcType=DOUBLE}, #{dealMoney,jdbcType=DOUBLE}, 
+      #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.stock.model.StockDateDO" >
+    insert into t_stock_date
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stockCode != null" >
+        stock_code,
+      </if>
+      <if test="tradeDate != null" >
+        trade_date,
+      </if>
+      <if test="open != null" >
+        open,
+      </if>
+      <if test="close != null" >
+        close,
+      </if>
+      <if test="high != null" >
+        high,
+      </if>
+      <if test="low != null" >
+        low,
+      </if>
+      <if test="limitUpPrice != null" >
+        limit_up_price,
+      </if>
+      <if test="limitDownPrice != null" >
+        limit_down_price,
+      </if>
+      <if test="dealAmount != null" >
+        deal_amount,
+      </if>
+      <if test="dealMoney != null" >
+        deal_money,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stockCode != null" >
+        #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeDate != null" >
+        #{tradeDate,jdbcType=DATE},
+      </if>
+      <if test="open != null" >
+        #{open,jdbcType=DOUBLE},
+      </if>
+      <if test="close != null" >
+        #{close,jdbcType=DOUBLE},
+      </if>
+      <if test="high != null" >
+        #{high,jdbcType=DOUBLE},
+      </if>
+      <if test="low != null" >
+        #{low,jdbcType=DOUBLE},
+      </if>
+      <if test="limitUpPrice != null" >
+        #{limitUpPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="limitDownPrice != null" >
+        #{limitDownPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="dealAmount != null" >
+        #{dealAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="dealMoney != null" >
+        #{dealMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByCondition" parameterType="com.stock.model.StockDateDOCondition" resultType="java.lang.Integer" >
+    select count(*) from t_stock_date
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByConditionSelective" parameterType="map" >
+    update t_stock_date
+    <set >
+      <if test="record.stockCode != null" >
+        stock_code = #{record.stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeDate != null" >
+        trade_date = #{record.tradeDate,jdbcType=DATE},
+      </if>
+      <if test="record.open != null" >
+        open = #{record.open,jdbcType=DOUBLE},
+      </if>
+      <if test="record.close != null" >
+        close = #{record.close,jdbcType=DOUBLE},
+      </if>
+      <if test="record.high != null" >
+        high = #{record.high,jdbcType=DOUBLE},
+      </if>
+      <if test="record.low != null" >
+        low = #{record.low,jdbcType=DOUBLE},
+      </if>
+      <if test="record.limitUpPrice != null" >
+        limit_up_price = #{record.limitUpPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="record.limitDownPrice != null" >
+        limit_down_price = #{record.limitDownPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="record.dealAmount != null" >
+        deal_amount = #{record.dealAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.dealMoney != null" >
+        deal_money = #{record.dealMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.creator != null" >
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modifier != null" >
+        modifier = #{record.modifier,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByCondition" parameterType="map" >
+    update t_stock_date
+    set stock_code = #{record.stockCode,jdbcType=VARCHAR},
+      trade_date = #{record.tradeDate,jdbcType=DATE},
+      open = #{record.open,jdbcType=DOUBLE},
+      close = #{record.close,jdbcType=DOUBLE},
+      high = #{record.high,jdbcType=DOUBLE},
+      low = #{record.low,jdbcType=DOUBLE},
+      limit_up_price = #{record.limitUpPrice,jdbcType=DOUBLE},
+      limit_down_price = #{record.limitDownPrice,jdbcType=DOUBLE},
+      deal_amount = #{record.dealAmount,jdbcType=DOUBLE},
+      deal_money = #{record.dealMoney,jdbcType=DOUBLE},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      modifier = #{record.modifier,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
