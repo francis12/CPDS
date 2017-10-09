@@ -99,7 +99,7 @@ var TimerData = function() {
 				$.ajax({
 					type: "get",
 					async: false,
-					url: "http://localhost:8080/ds/init",
+					url: "http://localhost:8011/ds/init",
 					data: "caipiao=" + caipiao,
 					dataType: "jsonp",
 					success: function(a) {
@@ -401,7 +401,7 @@ var TimerData = function() {
 				var bollUp = j.bollup;
 				var bollMiddle = j.bollmiddle;
 				var bollDown = j.bolldown;
-				var rate = 0.086;
+				var rate = 0.056;
 				var lastItems = 20;
 				var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle,rate, lastItems)&&this.isCommonRate(bollDown, rate, lastItems);
 				//添加处于boll下轨的判断
@@ -627,7 +627,7 @@ var GodkeyDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -662,7 +662,7 @@ var GodkeyDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -912,7 +912,7 @@ var DansDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -1457,7 +1457,7 @@ var DragonDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -2227,7 +2227,7 @@ var KlineData = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -2752,7 +2752,7 @@ var DudanDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
 					dataType: "JSONP",
 					success: function(a) {
@@ -2776,7 +2776,7 @@ var DudanDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
 					dataType: "JSONP",
 					success: function(a) {
@@ -2958,7 +2958,9 @@ var RandomDatas = function() {
 						storeNums = new Array()
 					}
 				});
-				F.on('click', function() {
+                var calCnt = 1;
+
+                F.on('click', function() {
 					dataMatched = false;
 					RandomDatas.getRandomNums();
 					C.show();
@@ -2969,8 +2971,16 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 					
 					if (!dataMatched) {
-						F.click();
-					}
+					    console.log(calCnt);
+                        calCnt++;
+                        if ( calCnt <= 10000) {
+                            F.click();
+                        } else {
+                            calCnt = 1;
+                        }
+					} else {
+                        calCnt = 1;
+                    }
 				   
 				});
 				G.on('click', function() {
@@ -3113,7 +3123,6 @@ var RandomDatas = function() {
 						var f = this.prizesData(way, prizes, e, 1);
 						var g = "main" + i;
 						var itemResult = KlineMaps.createmap(d, f, g);
-						console.log("itemResult:" + itemResult);
 						if (itemResult) {
 							alert(" 随机王第【" + i + "】组图");
 								var str = ".randombox #rand" + i;
@@ -3144,7 +3153,7 @@ var RandomDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -3166,7 +3175,7 @@ var RandomDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
 					dataType: "json",
 					success: function(a) {
@@ -3191,7 +3200,7 @@ var RandomDatas = function() {
 				$.ajax({
 					type: "get",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
 					dataType: "jsonp",
 					jsonpCallback:"RandomDatas.jsonpCallback",
@@ -3228,7 +3237,7 @@ var RandomDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
 					dataType: "JSONP",
 					success: function(a) {
@@ -3699,7 +3708,7 @@ var GodnumDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -3720,7 +3729,7 @@ var GodnumDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
@@ -4204,7 +4213,7 @@ var RotateDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
 					dataType: "JSONP",
 					success: function(a) {
@@ -4228,7 +4237,7 @@ var RotateDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
 					dataType: "JSONP",
 					success: function(a) {
@@ -4511,7 +4520,7 @@ var FormulaDatas = function() {
 				$.ajax({
 					type: "post",
 					async: false,
-					url: "http://localhost:8080/WebTest/ds/data",
+					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
 					dataType: "JSONP",
 					success: function(a) {
