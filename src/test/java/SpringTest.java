@@ -1,76 +1,36 @@
-import java.util.ArrayList;
-import java.util.List;  
-  
-import org.apache.log4j.LogManager;  
-import org.apache.log4j.Logger;  
-import org.junit.Test;  
-import org.junit.runner.RunWith;  
+import com.ds.zxm.Application;
+import com.ds.zxm.service.LotteryService;
+import com.ds.zxm.thread.LotteryUpdateThread;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.lottery.model.LotteryDO;
-import com.lottery.service.ILotteryService;
-import com.lottery.strategy.ILotteryStrategy;
-import com.lottery.thread.LotteryUpdateThread;
-import com.stock.model.StockDO;
-import com.stock.service.IStockService;  
+import javax.annotation.Resource;
+
+
+@RunWith(SpringJUnit4ClassRunner.class) // SpringJUnit支持，由此引入Spring-Test框架支持！
+@SpringApplicationConfiguration(classes = Application.class) // 指定我们SpringBoot工程的Application启动类
+@WebAppConfiguration // 由于是Web项目，Junit需要模拟ServletContext，因此我们需要给我们的测试类加上@WebAppConfiguration。
+public class SpringTest{
   
-  
-  
-  
-@RunWith(SpringJUnit4ClassRunner.class)   
-@ContextConfiguration(locations = {"classpath:spring.xml"})  
-public class SpringTest extends AbstractJUnit4SpringContextTests {  
-  
-    @Autowired  
-    private IStockService service;  
-    @Autowired()
-    private ILotteryService lotteryService;
+    @Resource
+	LotteryService lotteryService;
     @Autowired
     LotteryUpdateThread lotteryUpdateThread;
-    @Autowired
-    protected ApplicationContext ctx;
- 
-    public <T> T getBean(Class<T> type) {
-        return applicationContext.getBean(type);
-    }
- 
-    public Object getBean(String beanName) {
-        return applicationContext.getBean(beanName);
-    }
- 
-    protected ApplicationContext getContext() {
-        return applicationContext;
-    }
-    
+   /* @Autowired
+    protected ApplicationContext ctx;*/
+
+
     @Test  
-    public void test() {  
-
-        
-    	StockDO stock = service.queryStockDetailByStockCode("002751");
-        System.out.println(stock.getStockName());
-
-    	LotteryDO lottery = new LotteryDO();
-    	lottery.setLotteryCode("RDSSC");
-    	lottery.setLotteryName("瑞典时时彩");
-    	lottery.setCreator("admin");
-    	lottery.setModifier("admin");
-    	
-    	try {
-			lotteryService.saveLottery(lottery);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }  
+    public void test() {}
     
     @Test
     public void testLottery() {
     	try {
-			lotteryService.fetchLotteryInfo("RDSSC", "22-06-2017-0000", 3);
+			lotteryService.fetchLotteryInfo("RDSSC", "08-10-2017-0000", 3);
 			Thread.sleep(1000 * 60 * 10);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -88,7 +48,7 @@ public class SpringTest extends AbstractJUnit4SpringContextTests {
 		}
     }
     
-    @Test
+   /* @Test
     public void testLotteryStrategy() {
     	try {
     		List<String> strS = new ArrayList<String>();
@@ -102,7 +62,7 @@ public class SpringTest extends AbstractJUnit4SpringContextTests {
     		strS.add("678-345");
     		strS.add("678-678");
     		for (String sr : strS) {
-        		ILotteryStrategy last2LotteryStrategy = (ILotteryStrategy)this.getBean("Last2LotteryStrategy");
+        		ILotteryStrategy last2LotteryStrategy = (ILotteryStrategy)ctx.getBean("Last2LotteryStrategy");
         		last2LotteryStrategy.runStrategy("20170604-0031", "20170605-0061", sr);
     		}
 		} catch (Exception e) {
@@ -113,7 +73,7 @@ public class SpringTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testLotteryStrategyWithNos() {
     	try {
-    		ILotteryStrategy last2LotteryStrategy = (ILotteryStrategy)this.getBean("Last2LotteryStrategy");
+    		ILotteryStrategy last2LotteryStrategy = (ILotteryStrategy)ctx.getBean("Last2LotteryStrategy");
     		List<String> strS = new ArrayList<String>();
     		strS.add("012-012");
     		strS.add("012-345");
@@ -128,5 +88,5 @@ public class SpringTest extends AbstractJUnit4SpringContextTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    }
+    }*/
 }

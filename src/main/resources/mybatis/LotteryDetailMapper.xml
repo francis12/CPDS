@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.zxm.mapper.LotteryDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.ds.zxm.model.LotteryDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="num1" property="num1" jdbcType="VARCHAR" />
+    <result column="num2" property="num2" jdbcType="VARCHAR" />
+    <result column="num3" property="num3" jdbcType="VARCHAR" />
+    <result column="num4" property="num4" jdbcType="VARCHAR" />
+    <result column="num5" property="num5" jdbcType="VARCHAR" />
+    <result column="num6" property="num6" jdbcType="VARCHAR" />
+    <result column="num7" property="num7" jdbcType="VARCHAR" />
+    <result column="num8" property="num8" jdbcType="VARCHAR" />
+    <result column="alias_no" property="aliasNo" jdbcType="VARCHAR" />
+    <result column="lottery_date" property="lotteryDate" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, lottery_code, no, time, num1, num2, num3, num4, num5, num6, num7, num8, alias_no, 
+    lottery_date
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_lottery_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectMax" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_lottery_detail
+    where
+	alias_no = (
+		select max(alias_no) from t_lottery_detail)
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_lottery_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
+    delete from t_lottery_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ds.zxm.model.LotteryDetail" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_lottery_detail (lottery_code, no, time, 
+      num1, num2, num3, num4, 
+      num5, num6, num7, num8, 
+      alias_no, lottery_date)
+    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, 
+      #{num1,jdbcType=VARCHAR}, #{num2,jdbcType=VARCHAR}, #{num3,jdbcType=VARCHAR}, #{num4,jdbcType=VARCHAR}, 
+      #{num5,jdbcType=VARCHAR}, #{num6,jdbcType=VARCHAR}, #{num7,jdbcType=VARCHAR}, #{num8,jdbcType=VARCHAR}, 
+      #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ds.zxm.model.LotteryDetail" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_lottery_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lotteryCode != null" >
+        lottery_code,
+      </if>
+      <if test="no != null" >
+        no,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="num1 != null" >
+        num1,
+      </if>
+      <if test="num2 != null" >
+        num2,
+      </if>
+      <if test="num3 != null" >
+        num3,
+      </if>
+      <if test="num4 != null" >
+        num4,
+      </if>
+      <if test="num5 != null" >
+        num5,
+      </if>
+      <if test="num6 != null" >
+        num6,
+      </if>
+      <if test="num7 != null" >
+        num7,
+      </if>
+      <if test="num8 != null" >
+        num8,
+      </if>
+      <if test="aliasNo != null" >
+        alias_no,
+      </if>
+      <if test="lotteryDate != null" >
+        lottery_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lotteryCode != null" >
+        #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="num1 != null" >
+        #{num1,jdbcType=VARCHAR},
+      </if>
+      <if test="num2 != null" >
+        #{num2,jdbcType=VARCHAR},
+      </if>
+      <if test="num3 != null" >
+        #{num3,jdbcType=VARCHAR},
+      </if>
+      <if test="num4 != null" >
+        #{num4,jdbcType=VARCHAR},
+      </if>
+      <if test="num5 != null" >
+        #{num5,jdbcType=VARCHAR},
+      </if>
+      <if test="num6 != null" >
+        #{num6,jdbcType=VARCHAR},
+      </if>
+      <if test="num7 != null" >
+        #{num7,jdbcType=VARCHAR},
+      </if>
+      <if test="num8 != null" >
+        #{num8,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasNo != null" >
+        #{aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryDate != null" >
+        #{lotteryDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByCondition" parameterType="com.ds.zxm.model.LotteryDetailCondition" resultType="java.lang.Integer" >
+    select count(*) from t_lottery_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByConditionSelective" parameterType="map" >
+    update t_lottery_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.lotteryCode != null" >
+        lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.no != null" >
+        no = #{record.no,jdbcType=VARCHAR},
+      </if>
+      <if test="record.time != null" >
+        time = #{record.time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.num1 != null" >
+        num1 = #{record.num1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num2 != null" >
+        num2 = #{record.num2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num3 != null" >
+        num3 = #{record.num3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num4 != null" >
+        num4 = #{record.num4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num5 != null" >
+        num5 = #{record.num5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num6 != null" >
+        num6 = #{record.num6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num7 != null" >
+        num7 = #{record.num7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.num8 != null" >
+        num8 = #{record.num8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aliasNo != null" >
+        alias_no = #{record.aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lotteryDate != null" >
+        lottery_date = #{record.lotteryDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByCondition" parameterType="map" >
+    update t_lottery_detail
+    set id = #{record.id,jdbcType=BIGINT},
+      lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      no = #{record.no,jdbcType=VARCHAR},
+      time = #{record.time,jdbcType=TIMESTAMP},
+      num1 = #{record.num1,jdbcType=VARCHAR},
+      num2 = #{record.num2,jdbcType=VARCHAR},
+      num3 = #{record.num3,jdbcType=VARCHAR},
+      num4 = #{record.num4,jdbcType=VARCHAR},
+      num5 = #{record.num5,jdbcType=VARCHAR},
+      num6 = #{record.num6,jdbcType=VARCHAR},
+      num7 = #{record.num7,jdbcType=VARCHAR},
+      num8 = #{record.num8,jdbcType=VARCHAR},
+      alias_no = #{record.aliasNo,jdbcType=VARCHAR},
+      lottery_date = #{record.lotteryDate,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.LotteryDetail" >
+    update t_lottery_detail
+    <set >
+      <if test="lotteryCode != null" >
+        lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        no = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="num1 != null" >
+        num1 = #{num1,jdbcType=VARCHAR},
+      </if>
+      <if test="num2 != null" >
+        num2 = #{num2,jdbcType=VARCHAR},
+      </if>
+      <if test="num3 != null" >
+        num3 = #{num3,jdbcType=VARCHAR},
+      </if>
+      <if test="num4 != null" >
+        num4 = #{num4,jdbcType=VARCHAR},
+      </if>
+      <if test="num5 != null" >
+        num5 = #{num5,jdbcType=VARCHAR},
+      </if>
+      <if test="num6 != null" >
+        num6 = #{num6,jdbcType=VARCHAR},
+      </if>
+      <if test="num7 != null" >
+        num7 = #{num7,jdbcType=VARCHAR},
+      </if>
+      <if test="num8 != null" >
+        num8 = #{num8,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasNo != null" >
+        alias_no = #{aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryDate != null" >
+        lottery_date = #{lotteryDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.LotteryDetail" >
+    update t_lottery_detail
+    set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      no = #{no,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      num1 = #{num1,jdbcType=VARCHAR},
+      num2 = #{num2,jdbcType=VARCHAR},
+      num3 = #{num3,jdbcType=VARCHAR},
+      num4 = #{num4,jdbcType=VARCHAR},
+      num5 = #{num5,jdbcType=VARCHAR},
+      num6 = #{num6,jdbcType=VARCHAR},
+      num7 = #{num7,jdbcType=VARCHAR},
+      num8 = #{num8,jdbcType=VARCHAR},
+      alias_no = #{aliasNo,jdbcType=VARCHAR},
+      lottery_date = #{lotteryDate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

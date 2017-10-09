@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 @EnableAutoConfiguration
 @SpringBootApplication
 @ComponentScan
-@MapperScan("com.ds.zxm.mapper,com.lottery.dao")
+@MapperScan("com.ds.zxm.mapper")
 public class Application implements EmbeddedServletContainerCustomizer {
     private static Logger logger = Logger.getLogger(Application.class);
 
