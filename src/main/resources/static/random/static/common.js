@@ -401,8 +401,9 @@ var TimerData = function() {
 				var bollUp = j.bollup;
 				var bollMiddle = j.bollmiddle;
 				var bollDown = j.bolldown;
-				var rate = 0.096;
-				var lastItems = 12;
+				//defatul : 0.056,20
+				var rate = 0.056;
+				var lastItems = 20;
 				var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle,rate, lastItems)&&this.isCommonRate(bollDown, rate, lastItems);
 				//添加处于boll下轨的判断
 				//当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
@@ -2972,10 +2973,11 @@ var RandomDatas = function() {
 
 
 					while(!dataMatched&&calCnt <= 10000){
+                        RandomDatas.getRandomNums();
                         var str = ".randombox #rand1";
                         console.log($(str).html());
                         console.log(calCnt);
-
+                        RandomDatas.getlocaldata();
                         calCnt++;
                         /* dataMatched = false;
                          RandomDatas.getRandomNums();
@@ -2984,10 +2986,7 @@ var RandomDatas = function() {
                          E.html('');
                          bigAuto = [];
                          before = parseInt(z.val());*/
-                        RandomDatas.layout(prizesData);
-                        if (bigAuto.length > 0) {
-                            RandomDatas.bigmap(prizesData, bigAuto)
-                        }
+
 
 					}
                     calCnt = 1;
@@ -3227,6 +3226,15 @@ var RandomDatas = function() {
 					}
 				})
 			},
+            getlocaldata: function() {
+                recentid = y.val();
+                var c = bigAuto.length > 0 && before < 300 ? 300 : before;
+
+                RandomDatas.layout(prizesData);
+                if (bigAuto.length > 0) {
+                    RandomDatas.bigmap(prizesData, bigAuto)
+                }
+            },
 			getbigdata: function(b, c) {
 				recentid = y.val();
 				$.ajax({
@@ -5359,7 +5367,7 @@ var NotifyData = function() {
     return {
 
         betCur: function(cp, no, data) {
-            $.ajax({
+            /*$.ajax({
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
@@ -5371,7 +5379,7 @@ var NotifyData = function() {
                 error: function(a) {
                     return false
                 }
-            })
+            });*/
         }
 
     }
