@@ -30,7 +30,8 @@ public class SpringTest{
     @Test
     public void testLottery() {
     	try {
-			lotteryService.fetchLotteryInfo("RDSSC", "08-10-2017-0000", 3);
+			//lotteryService.fetchLotteryInfo("RDSSC", "10-10-2017-0000", "", 3);
+			lotteryService.fetchLotteryInfo("CQSSC", "171011031", "171012051", 4);
 			Thread.sleep(1000 * 60 * 10);
 		} catch (Exception e) {
 			e.printStackTrace();

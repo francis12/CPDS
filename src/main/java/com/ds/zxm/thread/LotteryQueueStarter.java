@@ -1,19 +1,22 @@
 package com.ds.zxm.thread;
 
 import com.ds.zxm.service.LotteryService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Service("LotteryQueueStarter")
-@Scope("prototype")  
+@Scope("singleton")
 public class LotteryQueueStarter implements Runnable{
-
+/*
 	@Autowired
-	LotteryUpdateConsumer lotteryUpdateConsumer;
+	LotteryUpdateConsumer lotteryUpdateConsumer;*/
 	@Autowired
 	LotteryService lotteryService;
 	private String lotteryCode;
+
+	Logger log = Logger.getLogger(LotteryQueueStarter.class);
 	public String getLotteryCode() {
 		return lotteryCode;
 	}
@@ -44,7 +47,7 @@ public class LotteryQueueStarter implements Runnable{
 		try {
 			lotteryService.fetchLotteryInfo(this.lotteryCode, this.no);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(this.lotteryCode + "--" + this.no + "  error", e);
 		}
 		
 	}

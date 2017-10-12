@@ -97,11 +97,11 @@ var TimerData = function() {
 			},
 			getdata: function() {
 				$.ajax({
-					type: "get",
+					type: "post",
 					async: false,
 					url: "http://localhost:8011/ds/init",
 					data: "caipiao=" + caipiao,
-					dataType: "jsonp",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							curPrizes = a.prizes;
@@ -401,8 +401,8 @@ var TimerData = function() {
 				var bollUp = j.bollup;
 				var bollMiddle = j.bollmiddle;
 				var bollDown = j.bolldown;
-				var rate = 0.056;
-				var lastItems = 20;
+				var rate = 0.096;
+				var lastItems = 12;
 				var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle,rate, lastItems)&&this.isCommonRate(bollDown, rate, lastItems);
 				//添加处于boll下轨的判断
 				//当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
@@ -629,7 +629,7 @@ var GodkeyDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -664,7 +664,7 @@ var GodkeyDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -914,7 +914,7 @@ var DansDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -1459,7 +1459,7 @@ var DragonDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -2229,7 +2229,7 @@ var KlineData = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -2754,7 +2754,7 @@ var DudanDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -2778,7 +2778,7 @@ var DudanDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							DudanDatas.bigmap(a, c)
@@ -2969,19 +2969,47 @@ var RandomDatas = function() {
 					bigAuto = [];
 					before = parseInt(z.val());
 					RandomDatas.getdata(caipiao);
-					
-					if (!dataMatched) {
+
+
+					while(!dataMatched&&calCnt <= 10000){
+                        var str = ".randombox #rand1";
+                        console.log($(str).html());
+                        console.log(calCnt);
+
+                        calCnt++;
+                        /* dataMatched = false;
+                         RandomDatas.getRandomNums();
+                         C.show();
+                         D.hide();
+                         E.html('');
+                         bigAuto = [];
+                         before = parseInt(z.val());*/
+                        RandomDatas.layout(prizesData);
+                        if (bigAuto.length > 0) {
+                            RandomDatas.bigmap(prizesData, bigAuto)
+                        }
+
+					}
+                    calCnt = 1;
+					if(dataMatched) {
+						//匹配成功，通知后台
+					}
+					/*if (!dataMatched) {
 					    console.log(calCnt);
                         calCnt++;
                         if ( calCnt <= 10000) {
-                            F.click();
+                            //F.click();
+                            RandomDatas.layout(prizesData);
+                            if (bigAuto.length > 0) {
+                                RandomDatas.bigmap(prizesData, bigAuto)
+                            }
                         } else {
                             calCnt = 1;
                         }
 					} else {
 					    //匹配成功，通知后台
                         calCnt = 1;
-                    }
+                    }*/
 				   
 				});
 				G.on('click', function() {
@@ -3158,7 +3186,7 @@ var RandomDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -3172,6 +3200,7 @@ var RandomDatas = function() {
 					}
 				})
 			},
+
 			getdata: function(b) {
 				recentid = y.val();
 				var c = bigAuto.length > 0 && before < 300 ? 300 : before;
@@ -3198,44 +3227,6 @@ var RandomDatas = function() {
 					}
 				})
 			},
-			getdata2: function(b) {
-				recentid = y.val();
-				var c = bigAuto.length > 0 && before < 300 ? 300 : before;
-				$.ajax({
-					type: "get",
-					async: false,
-					url: "http://localhost:8011/ds/data",
-					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
-					dataType: "jsonp",
-					jsonpCallback:"RandomDatas.jsonpCallback",
-					success: function(a) {
-						if (a) {
-							prizesData = a;
-							RandomDatas.layout(a);
-							if (bigAuto.length > 0) {
-								RandomDatas.bigmap(a, bigAuto)
-							}
-						} else {
-							alert('数据获取失败！')
-						}
-					},
-					error: function(a) {
-						return false
-					}
-				})
-			},
-			jsonpCallback: function(a) {
-					if (a) {
-							prizesData = a;
-							RandomDatas.layout(a);
-							if (bigAuto.length > 0) {
-								RandomDatas.bigmap(a, bigAuto)
-							}
-						} else {
-							alert('数据获取失败！')
-						}
-				
-			},
 			getbigdata: function(b, c) {
 				recentid = y.val();
 				$.ajax({
@@ -3243,7 +3234,7 @@ var RandomDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							RandomDatas.bigmap(a, c)
@@ -3714,7 +3705,7 @@ var GodnumDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -3735,7 +3726,7 @@ var GodnumDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -4219,7 +4210,7 @@ var RotateDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + c,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;
@@ -4243,7 +4234,7 @@ var RotateDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + 300,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							RotateDatas.bigmap(a, c)
@@ -4488,7 +4479,7 @@ var FormulaDatas = function() {
 					type: "post",
 					async: false,
 					url: "/caipiao/kline/getmethod",
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							J.val(a.method)
@@ -4526,7 +4517,7 @@ var FormulaDatas = function() {
 					async: false,
 					url: "http://localhost:8011/ds/data",
 					data: "caipiao=" + b + "&recentid=" + recentid + "&before=" + before,
-					dataType: "JSONP",
+					dataType: "json",
 					success: function(a) {
 						if (a) {
 							prizesData = a;

@@ -281,5 +281,27 @@ public class DateUtils {
         return calendar.getTime();
 
     }
+    /***
+     * 日期减一天、加一天
+     *
+     * @return 减一天：2014-11-23或(加一天：2014-11-25)
+     */
+    public static Date addDate(int amount, Date date) {
+        Calendar cl = Calendar.getInstance();
+
+        cl.setTime(date);
+        cl.add(Calendar.DATE, amount);
+
+        date = cl.getTime();
+        return date;
+    }
+    public  static  void main(String[] args){
+        try {
+           Date date = DateUtils.String2Date("171010", "yyMMdd");
+           System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

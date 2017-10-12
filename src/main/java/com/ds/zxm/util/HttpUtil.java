@@ -1,9 +1,7 @@
 package com.ds.zxm.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,6 +10,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -75,14 +74,90 @@ public class HttpUtil {
 					result = EntityUtils.toString(resEntity, charset);
 				}
 			}
+			//result = getResponseString(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return result;
 	}
-	
-	public static void main(String[] args) {
-		System.out.println(HttpUtil.doGet("https://www.swedishlottery.se/lotto/resulat/lottery/number?lottery=SS&issueNo=21-06-2017-0826", null));
+
+	public static String getResponseString(HttpResponse response) throws IOException {
+		HttpEntity entity = response.getEntity();//响应实体类
+		StringBuilder result = new StringBuilder();//响应正文
+		if (entity != null) {
+			String charset = EntityUtils.getContentCharSet(entity);
+			//String charset = getContentCharSet(entity);
+			InputStream instream = entity.getContent();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					instream,"ISO8859-1"));
+			String temp = "";
+			while ((temp = br.readLine()) != null) {
+				result.append(temp+"\n");
+			}
+		}
+		return result.toString();
+	}
+
+	public static String getResponseString2(HttpResponse response) throws IOException {
+		HttpEntity entity = response.getEntity();//响应实体类
+		StringBuilder result = new StringBuilder();//响应正文
+		if (entity != null) {
+			InputStream instream = entity.getContent();
+			byte[] bytes = new byte[4096];
+			int size = 0;
+			try {
+				while ((size = instream.read(bytes)) > 0) {
+					String str = new String(bytes, 0, size, "utf-8");
+					result.append(str);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					instream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return result.toString();
+	}
+	public static String decodeUnicode(final String dataStr) {
+		int start = 0;
+		int end = 0;
+		final StringBuffer buffer = new StringBuffer();
+		while (start > -1) {
+			end = dataStr.indexOf("\\u", start + 2);
+			String charStr = "";
+			if (end == -1) {
+				charStr = dataStr.substring(start + 2, dataStr.length());
+			} else {
+				charStr = dataStr.substring(start + 2, end);
+			}
+			char letter = (char) Integer.parseInt(charStr, 16); // 16进制parse整形字符串。
+			buffer.append(new Character(letter).toString());
+			start = end;
+		}
+		return buffer.toString();
+	}
+
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("caipiao", "chongqing");
+		String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map,"utf-8");
+		System.out.println(result);
+
+		Map<String, String> map2 = new HashMap<String, String>();
+		map2.put("caipiao", "chongqing");
+
+		map2.put("recentid", "20171011034");
+		map2.put("before", "100");
+
+		String result2 = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/datas", map2,"utf-8");
+
+
+		System.out.println(result2);
 	}
 }
