@@ -5367,7 +5367,7 @@ var NotifyData = function() {
     return {
 
         betCur: function(cp, no, data) {
-            /*$.ajax({
+            $.ajax({
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
@@ -5379,7 +5379,7 @@ var NotifyData = function() {
                 error: function(a) {
                     return false
                 }
-            });*/
+            });
         }
 
     }

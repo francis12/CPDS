@@ -44,8 +44,8 @@ public class DsController {
     @ResponseBody
     @RequestMapping(value = "/init", method = {RequestMethod.POST})
     public String initdata(@RequestParam(required = true, value = "caipiao") String caipiao) {
-        String result = "";
 
+        String result = "";
         try {
             //result = "{\"ret\":0,\"caipiao\":\"chongqing\",\"peroid\":\"20170923051\",\"prize\":\"88654\",\"prizes\":[\"8\",\"8\",\"6\",\"5\",\"4\"],\"nextid\":\"20170923052\",\"countdown\":\"127\"}";
             Map<String, String> map = new HashMap<String, String>();
