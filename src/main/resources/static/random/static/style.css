@@ -1520,7 +1520,7 @@ Box portlet
 
 .portlet.box .portlet-title .tools > a.expand,
 .portlet.solid .portlet-title .tools > a.expand {
-  background-image:url(../../image/portlet-expand-icon-white.png);
+  background-image:url(image/portlet-expand-icon-white.png);
 }
 
 .portlet.box .portlet-title .tools > a.collapse,
@@ -2356,7 +2356,7 @@ Zoom icon overlay on images
 }
 
 .zoom .zoom-icon {
-  background-image:url("../../image/overlay-icon.png");
+  background-image:url("image/overlay-icon.png");
   background-color: #222;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -3452,7 +3452,7 @@ Styler Panel
 }
 
 .color-panel .icon-color {
-  background:#c9c9c9 url(../../image/icon-color.png) center no-repeat !important;
+  background:#c9c9c9 url(image/icon-color.png) center no-repeat !important;
 }
 
 .color-panel .icon-color:hover {
@@ -3461,7 +3461,7 @@ Styler Panel
 
 .color-panel .icon-color-close {
   display:none;
-  background:#3d3d3d url(../../image/icon-color-close.png) center no-repeat !important;
+  background:#3d3d3d url(image/icon-color-close.png) center no-repeat !important;
 }
 
 .color-panel .icon-color-close:hover {
@@ -4470,7 +4470,7 @@ jQuery UI Datepicker(new in v1.2.2)
 }
 
 .ui-widget-header .ui-icon {
-  background-image: url(../../image/ui-icons_888888_256x240.png) !important;
+  background-image: url(image/ui-icons_888888_256x240.png) !important;
 }
 
 .ui-widget-header .ui-datepicker-next,

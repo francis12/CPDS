@@ -111,7 +111,7 @@ var TimerData = function() {
 						}
 					},
 					error: function(a) {
-						return false
+                        window.setTimeout(TimerData.getdata, 5000)
 					}
 				})
 			},
@@ -404,11 +404,15 @@ var TimerData = function() {
 				//defatul : 0.056,20
 				var rate = 0.056;
 				var lastItems = 20;
-				var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle,rate, lastItems)&&this.isCommonRate(bollDown, rate, lastItems);
-				//添加处于boll下轨的判断
-				//当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
-				var isKlineMatch = this.isKlineInbottom(j, 80)  &&  this.isKLineUnderBollMiddle(j) ;
-				return isBollUpCommon &&isKlineMatch;
+				try {
+                    var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
+                    //添加处于boll下轨的判断
+                    //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
+                    var isKlineMatch = this.isKlineInbottom(j, 80) && this.isKLineUnderBollMiddle(j);
+                    return isBollUpCommon && isKlineMatch;
+                } catch (err) {
+					return false;
+				}
 			},
 			//判断盘整src的偏离平均值情况
 			isCommonRate: function(src, rate, last) {
@@ -2927,6 +2931,7 @@ var RandomDatas = function() {
 		return {
 			init: function() {
 				before = z.val();
+                $('#dropdownCaipiao').hide();
 				caipiaoMenu.on('click', function() {
 					caipiao = $(this).attr('init');
 					TimerData.setCaipiaoCookie(caipiao);
@@ -2937,7 +2942,7 @@ var RandomDatas = function() {
 					before = z.val();
 					E.html('');
 					TimerData.getdata(caipiao);
-					$('#dropdownCaipiao').hide()
+                    //F.click();
 				});
 				A.on('click', function() {
 					C.show();
@@ -2971,25 +2976,28 @@ var RandomDatas = function() {
 					before = parseInt(z.val());
 					RandomDatas.getdata(caipiao);
 
+                    setTimeout(function () {
+                        while(!dataMatched&&calCnt <= 10000){
+                            RandomDatas.getRandomNums();
+                            var str = ".randombox #rand1";
+                            console.log($(str).html());
+                            console.log(calCnt);
+                            RandomDatas.getlocaldata();
+                            calCnt++;
+                            /* dataMatched = false;
+                             RandomDatas.getRandomNums();
+                             C.show();
+                             D.hide();
+                             E.html('');
+                             bigAuto = [];
+                             before = parseInt(z.val());*/
 
-					while(!dataMatched&&calCnt <= 10000){
-                        RandomDatas.getRandomNums();
-                        var str = ".randombox #rand1";
-                        console.log($(str).html());
-                        console.log(calCnt);
-                        RandomDatas.getlocaldata();
-                        calCnt++;
-                        /* dataMatched = false;
-                         RandomDatas.getRandomNums();
-                         C.show();
-                         D.hide();
-                         E.html('');
-                         bigAuto = [];
-                         before = parseInt(z.val());*/
+                        }
+                        calCnt = 1;
+                        NotifyData.checkis2Recall(caipiao);
 
+                    }, 100);
 
-					}
-                    calCnt = 1;
 					if(dataMatched) {
 						//匹配成功，通知后台
 					}
@@ -5378,6 +5386,22 @@ var NotifyData = function() {
                 },
                 error: function(a) {
                     return false
+                }
+            });
+        },
+		checkis2Recall: function (cp) {
+            $.ajax({
+                type: "post",
+                async: false,
+                url: "http://localhost:8011/checkRecall",
+                data: "caipiao=" + cp,
+                dataType: "json",
+                success: function(a) {
+                	if(a){
+                        window.location.reload(true);
+					} else {
+                        window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
+					}
                 }
             });
         }

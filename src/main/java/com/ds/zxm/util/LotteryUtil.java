@@ -1,6 +1,12 @@
 package com.ds.zxm.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -128,11 +134,50 @@ public class LotteryUtil {
 	        combine(cs,begin+1,number-1,list);  
 	        list.remove((Character)cs[begin]);  
 	        combine(cs,begin+1,number,list);  
-	    }  
-	    
-	    public static void main(String args[]){  
+	    }
+	//cqssc
+	public static String getNextAwardNo(String no) throws ParseException {
+		String nextNo = "";
+		//171010051,postfix001-120
+		String dateStr = no.substring(0, 8);
+		int postNo = Integer.valueOf(no.substring(8));
+		if(postNo != 120) {
+			nextNo = ("000" + (postNo + 1));
+			nextNo = nextNo.substring(nextNo.length() - 3);
+			return dateStr + nextNo;
+		} else {
+			Date curDate = DateUtils.String2Date(dateStr, "yyMMdd");
+			nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyMMdd") + "001";
+		}
+		return nextNo;
+	}
+
+	public static int compareCQAwardNO(String no1, String no2) throws ParseException {
+		Date date1 = DateUtils.String2Date(no1.substring(0, 6), "yyMMdd");
+		Date date2 = DateUtils.String2Date(no2.substring(0, 6), "yyMMdd");
+		if(date1.compareTo(date2) != 0) {
+			return date1.compareTo(date2);
+		} else {
+			int postFix1 = Integer.valueOf(no1.substring(no1.length() -3));
+			int postFix2 =  Integer.valueOf(no2.substring(no2.length() -3));
+			if (postFix1 > postFix2) {
+				return  1;
+			} else if(postFix1 == postFix2) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
+	}
+ 	    public static void main(String args[]) throws Exception {
 	        
 	        //permutation("135".toCharArray(),0); 
-	    	convertStr2DetailList("345-012-7");
+	    	//convertStr2DetailList("345-012-7");
+			while (true) {
+				Thread.sleep(5000);
+				File file = new File("C:\\test.txt");
+				new FileOutputStream(file).write(new Date().toString().getBytes());
+
+			}
 	    }  
 }

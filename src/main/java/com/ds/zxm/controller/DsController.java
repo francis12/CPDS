@@ -1,7 +1,13 @@
 package com.ds.zxm.controller;
 
-import com.ds.zxm.service.LotteryDetailService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.ds.zxm.model.BetDO;
+import com.ds.zxm.model.BetDOCondition;
+import com.ds.zxm.service.BetService;
 import com.ds.zxm.util.HttpUtil;
+import com.ds.zxm.util.LotteryUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
@@ -11,14 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/ds")
 public class DsController {
+
+    Logger log = Logger.getLogger(DsController.class);
     //请求直接转发
     @Autowired
-    private LotteryDetailService lotteryDetailService;
+    private BetService betService;
 
     @ResponseBody
     @RequestMapping(value = "/data", method = {RequestMethod.POST})
