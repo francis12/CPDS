@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -45,7 +46,11 @@ public class BetService {
     }
     public static  String query198conf() {
         String loginUrl = "http://www.198good.com:88/loadconf.do?p=[0]&r=" + Math.random();
-        //loginUrl = URLEncoder.encode( "http://www.198good.com:88/loadconf.do?p=[0]&r=0.6621101939317919", "utf-8");
+        try {
+            loginUrl = URLEncoder.encode(loginUrl, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
         // 模拟登陆，按实际服务器端要求选用 Post 或 Get 请求方式
@@ -54,8 +59,9 @@ public class BetService {
         postMethod.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
         postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         postMethod.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        postMethod.setRequestHeader("Accept-Encoding", "gzip, deflate");
+        postMethod.setRequestHeader("Accept-Encoding", "gzip, deflate, sdch");
         postMethod.setRequestHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6");
+        postMethod.setRequestHeader("Host", "www.198good.com:88");
 
         postMethod.setRequestHeader("Referer", "http://www.198good.com:88/player/v5/order.jsp?g=CQSSC&t=SSC&u=backtoxcb8&o=3");
         postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
@@ -71,6 +77,8 @@ public class BetService {
             e.printStackTrace();
         }
         return  "";
+
+
     }
 
     public void betto198(String amtMode,String betNO,String multi) {
