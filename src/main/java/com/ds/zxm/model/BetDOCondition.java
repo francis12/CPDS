@@ -1,9 +1,11 @@
 package com.ds.zxm.model;
 
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class BetDOCondition {
+public class BetDOCondition  {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -304,6 +306,76 @@ public class BetDOCondition {
             return (Criteria) this;
         }
 
+        public Criteria andPrizeNoIsNull() {
+            addCriterion("prize_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoIsNotNull() {
+            addCriterion("prize_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoEqualTo(String value) {
+            addCriterion("prize_no =", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoNotEqualTo(String value) {
+            addCriterion("prize_no <>", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoGreaterThan(String value) {
+            addCriterion("prize_no >", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoGreaterThanOrEqualTo(String value) {
+            addCriterion("prize_no >=", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoLessThan(String value) {
+            addCriterion("prize_no <", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoLessThanOrEqualTo(String value) {
+            addCriterion("prize_no <=", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoLike(String value) {
+            addCriterion("prize_no like", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoNotLike(String value) {
+            addCriterion("prize_no not like", value, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoIn(List<String> values) {
+            addCriterion("prize_no in", values, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoNotIn(List<String> values) {
+            addCriterion("prize_no not in", values, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoBetween(String value1, String value2) {
+            addCriterion("prize_no between", value1, value2, "prizeNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoNotBetween(String value1, String value2) {
+            addCriterion("prize_no not between", value1, value2, "prizeNo");
+            return (Criteria) this;
+        }
+
         public Criteria andStartNoIsNull() {
             addCriterion("start_no is null");
             return (Criteria) this;
@@ -584,6 +656,66 @@ public class BetDOCondition {
             return (Criteria) this;
         }
 
+        public Criteria andCreateTimeIsNull() {
+            addCriterion("create_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIsNotNull() {
+            addCriterion("create_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeEqualTo(Date value) {
+            addCriterion("create_time =", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotEqualTo(Date value) {
+            addCriterion("create_time <>", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThan(Date value) {
+            addCriterion("create_time >", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_time >=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThan(Date value) {
+            addCriterion("create_time <", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
+            addCriterion("create_time <=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIn(List<Date> values) {
+            addCriterion("create_time in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotIn(List<Date> values) {
+            addCriterion("create_time not in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeBetween(Date value1, Date value2) {
+            addCriterion("create_time between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
+            addCriterion("create_time not between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
         public Criteria andLotteryCodeLikeInsensitive(String value) {
             addCriterion("upper(lottery_code) like", value.toUpperCase(), "lotteryCode");
             return (Criteria) this;
@@ -591,6 +723,11 @@ public class BetDOCondition {
 
         public Criteria andSeqNoLikeInsensitive(String value) {
             addCriterion("upper(seq_no) like", value.toUpperCase(), "seqNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeNoLikeInsensitive(String value) {
+            addCriterion("upper(prize_no) like", value.toUpperCase(), "prizeNo");
             return (Criteria) this;
         }
 

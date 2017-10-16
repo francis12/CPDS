@@ -1,11 +1,15 @@
 package com.ds.zxm.model;
 
+import java.util.Date;
+
 public class BetDO {
     private Long id;
 
     private String lotteryCode;
 
     private String seqNo;
+
+    private String prizeNo;
 
     private String startNo;
 
@@ -14,6 +18,8 @@ public class BetDO {
     private String status;
 
     private String betType;
+
+    private Date createTime;
 
     private String betNo;
 
@@ -39,6 +45,14 @@ public class BetDO {
 
     public void setSeqNo(String seqNo) {
         this.seqNo = seqNo == null ? null : seqNo.trim();
+    }
+
+    public String getPrizeNo() {
+        return prizeNo;
+    }
+
+    public void setPrizeNo(String prizeNo) {
+        this.prizeNo = prizeNo == null ? null : prizeNo.trim();
     }
 
     public String getStartNo() {
@@ -71,6 +85,14 @@ public class BetDO {
 
     public void setBetType(String betType) {
         this.betType = betType == null ? null : betType.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public String getBetNo() {

@@ -59,6 +59,7 @@ public class LotteryController {
             bet.setStatus("1");
             bet.setBetType("3");
             bet.setBetNo(data);
+            bet.setCreateTime(new Date());
 
             betService.insert(bet);
         } catch (Exception e) {
@@ -106,12 +107,16 @@ public class LotteryController {
             String curNO = resultMap.get("peroid").toString();
             String prize = resultMap.get("prize").toString();
 
-            BetDO betDO = new BetDO();
+           /* BetDO betDO = new BetDO();
             betDO.setLotteryCode(caipiao);
             betDO.setBetType("3");
             //未开奖
-            betDO.setStatus("1");
-            List<BetDO> betDOList = betService.queryBetUnprizeInfo(betDO, curNO);
+            betDO.setStatus("1");*/
+            //List<BetDO> betDOList = betService.queryBetUnprizeInfo(betDO, curNO);
+            BetDOCondition betDOCondition = new BetDOCondition();
+            //查询所有status为1的记录
+            betDOCondition.createCriteria().andBetTypeEqualTo("3").andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1");
+            List<BetDO> betDOList = betService.queryBetList(betDOCondition);
 
             BetDOCondition bdd = new BetDOCondition();
             for(BetDO item : betDOList) {
@@ -120,7 +125,7 @@ public class LotteryController {
                 if ("3".equals(item.getBetType())) {
                     if(curNO.equals(item.getEndNo())
                             ||LotteryUtil.compareCQAwardNO(item.getEndNo(), curNO) < 0
-                            ||LotteryUtil.compareCQAwardNO(item.getStartNo(), curNO) > 0 ) {
+                            ||LotteryUtil.compareCQAwardNO(item.getStartNo(), LotteryUtil.getNextAwardNo(curNO)) > 0 ) {
                         //最后一期仍然未中奖。或者已经过了开奖期
                         item.setStatus("2");
                         log.info(item .getSeqNo() + "未中奖");
@@ -129,6 +134,7 @@ public class LotteryController {
                     else {
                         if (item.getBetNo().indexOf(prize.substring(prize.length()  -3) ) > 0) {
                             item.setStatus("3");
+                            item.setPrizeNo(curNO);
                             log.info(item.getSeqNo() + "已中奖");
                             betService.updateBetDO(item, bdd);
                         } else {

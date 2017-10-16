@@ -144,18 +144,15 @@ public class HttpUtil {
 	}
 
 	public static void main(String[] args) throws UnsupportedEncodingException {
-		Map<String, String> map = new HashMap<String, String>();
+		/*Map<String, String> map = new HashMap<String, String>();
 		map.put("caipiao", "chongqing");
 		String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map,"utf-8");
-		System.out.println(result);
+		System.out.println(result);*/
 
 		Map<String, String> map2 = new HashMap<String, String>();
-		map2.put("caipiao", "chongqing");
+		map2.put("p", "[\"backtoxcb8\",\"230679zxm\",3]");
 
-		map2.put("recentid", "20171011034");
-		map2.put("before", "100");
-
-		String result2 = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/datas", map2,"utf-8");
+		String result2 = HttpUtil.doPost("http://www.198good.com:88/loginconf.do", map2,"utf-8");
 
 
 		System.out.println(result2);
