@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration  
+      PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+      "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+  <classPathEntry location=".\mysql-connector-java-5.1.34.jar" /> <!-- JDBC jar -->
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+	<!-- <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/> -->
+	<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"/>
+    <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+        <property name="searchString" value="Example$" />
+        <property name="replaceString" value="Condition" />
+    </plugin>  
+	<commentGenerator>
+  		<property name="suppressAllComments" value="true"/>
+  	</commentGenerator>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://127.0.0.1:3306/stock"
+        userId="root"
+        password="230679">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+    <javaModelGenerator targetPackage="com.lottery.model"
+	targetProject=".\Output\src\main\java\">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+	
+    <!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+    <sqlMapGenerator targetPackage="sqlmap" 
+	targetProject=".\Output\src\main\resources\">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+	
+	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+	<javaClientGenerator type="XMLMAPPER" 
+	targetPackage="com.lottery.dao"
+	 targetProject=".\Output\src\main\java\">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+    
+    <!-- table 可以列多个表，同时生成所有。把不需要生成的table注释掉 -->
+   
+  <table tableName="t_lottery" domainObjectName="LotteryDO" 
+    enableDeleteByExample="true"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+  <table tableName="t_lottery_detail" domainObjectName="LotteryDetailDO" 
+    enableDeleteByExample="true"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+   
+  </context>
+</generatorConfiguration>

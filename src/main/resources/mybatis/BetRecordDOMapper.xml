@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ds.zxm.mapper.BetDAO" >
-  <resultMap id="BaseResultMap" type="com.ds.zxm.model.BetDO" >
+<mapper namespace="com.ds.zxm.mapper.BetRecordDAO" >
+  <resultMap id="BaseResultMap" type="com.ds.zxm.model.BetRecordDO" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="bet_website" property="betWebsite" jdbcType="VARCHAR" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="seq_no" property="seqNo" jdbcType="VARCHAR" />
-    <result column="prize_no" property="prizeNo" jdbcType="VARCHAR" />
-    <result column="start_no" property="startNo" jdbcType="VARCHAR" />
-    <result column="end_no" property="endNo" jdbcType="VARCHAR" />
+    <result column="bet_no" property="betNo" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="bet_type" property="betType" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.ds.zxm.model.BetDO" extends="BaseResultMap" >
-    <result column="bet_no" property="betNo" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,20 +69,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, lottery_code, seq_no, prize_no, start_no, end_no, status, bet_type, create_time
+    id, bet_website, lottery_code, seq_no, bet_no, status, create_time
   </sql>
-  <sql id="Blob_Column_List" >
-    bet_no
-  </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.ds.zxm.model.BetDOCondition" >
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.BetRecordDOCondition" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from t_bet
+    from t_bet_record
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -95,243 +85,158 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.BetDOCondition" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from t_bet
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from t_bet
+    from t_bet_record
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from t_bet
+    delete from t_bet_record
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.BetDOCondition" >
-    delete from t_bet
+  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.BetRecordDOCondition" >
+    delete from t_bet_record
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ds.zxm.model.BetDO" >
+  <insert id="insert" parameterType="com.ds.zxm.model.BetRecordDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
-    insert into t_bet (lottery_code, seq_no, prize_no, 
-      start_no, end_no, status, 
-      bet_type, create_time, bet_no
+    insert into t_bet_record (bet_website, lottery_code, seq_no, 
+      bet_no, status, create_time
       )
-    values (#{lotteryCode,jdbcType=VARCHAR}, #{seqNo,jdbcType=VARCHAR}, #{prizeNo,jdbcType=VARCHAR}, 
-      #{startNo,jdbcType=VARCHAR}, #{endNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{betType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{betNo,jdbcType=LONGVARCHAR}
+    values (#{betWebsite,jdbcType=VARCHAR}, #{lotteryCode,jdbcType=VARCHAR}, #{seqNo,jdbcType=VARCHAR}, 
+      #{betNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.ds.zxm.model.BetDO" >
+  <insert id="insertSelective" parameterType="com.ds.zxm.model.BetRecordDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
-    insert into t_bet
+    insert into t_bet_record
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="betWebsite != null" >
+        bet_website,
+      </if>
       <if test="lotteryCode != null" >
         lottery_code,
       </if>
       <if test="seqNo != null" >
         seq_no,
       </if>
-      <if test="prizeNo != null" >
-        prize_no,
-      </if>
-      <if test="startNo != null" >
-        start_no,
-      </if>
-      <if test="endNo != null" >
-        end_no,
+      <if test="betNo != null" >
+        bet_no,
       </if>
       <if test="status != null" >
         status,
       </if>
-      <if test="betType != null" >
-        bet_type,
-      </if>
       <if test="createTime != null" >
         create_time,
       </if>
-      <if test="betNo != null" >
-        bet_no,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="betWebsite != null" >
+        #{betWebsite,jdbcType=VARCHAR},
+      </if>
       <if test="lotteryCode != null" >
         #{lotteryCode,jdbcType=VARCHAR},
       </if>
       <if test="seqNo != null" >
         #{seqNo,jdbcType=VARCHAR},
       </if>
-      <if test="prizeNo != null" >
-        #{prizeNo,jdbcType=VARCHAR},
-      </if>
-      <if test="startNo != null" >
-        #{startNo,jdbcType=VARCHAR},
-      </if>
-      <if test="endNo != null" >
-        #{endNo,jdbcType=VARCHAR},
+      <if test="betNo != null" >
+        #{betNo,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         #{status,jdbcType=VARCHAR},
       </if>
-      <if test="betType != null" >
-        #{betType,jdbcType=VARCHAR},
-      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="betNo != null" >
-        #{betNo,jdbcType=LONGVARCHAR},
-      </if>
     </trim>
   </insert>
-  <select id="countByCondition" parameterType="com.ds.zxm.model.BetDOCondition" resultType="java.lang.Integer" >
-    select count(*) from t_bet
+  <select id="countByCondition" parameterType="com.ds.zxm.model.BetRecordDOCondition" resultType="java.lang.Integer" >
+    select count(*) from t_bet_record
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByConditionSelective" parameterType="map" >
-    update t_bet
+    update t_bet_record
     <set >
-
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.betWebsite != null" >
+        bet_website = #{record.betWebsite,jdbcType=VARCHAR},
+      </if>
       <if test="record.lotteryCode != null" >
         lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       </if>
       <if test="record.seqNo != null" >
         seq_no = #{record.seqNo,jdbcType=VARCHAR},
       </if>
-      <if test="record.prizeNo != null" >
-        prize_no = #{record.prizeNo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.startNo != null" >
-        start_no = #{record.startNo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.endNo != null" >
-        end_no = #{record.endNo,jdbcType=VARCHAR},
+      <if test="record.betNo != null" >
+        bet_no = #{record.betNo,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null" >
         status = #{record.status,jdbcType=VARCHAR},
       </if>
-      <if test="record.betType != null" >
-        bet_type = #{record.betType,jdbcType=VARCHAR},
-      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.betNo != null" >
-        bet_no = #{record.betNo,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map" >
-    update t_bet
-    set
-      lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
-      seq_no = #{record.seqNo,jdbcType=VARCHAR},
-      prize_no = #{record.prizeNo,jdbcType=VARCHAR},
-      start_no = #{record.startNo,jdbcType=VARCHAR},
-      end_no = #{record.endNo,jdbcType=VARCHAR},
-      status = #{record.status,jdbcType=VARCHAR},
-      bet_type = #{record.betType,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      bet_no = #{record.betNo,jdbcType=LONGVARCHAR}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
   <update id="updateByCondition" parameterType="map" >
-    update t_bet
-    set
+    update t_bet_record
+    set id = #{record.id,jdbcType=BIGINT},
+      bet_website = #{record.betWebsite,jdbcType=VARCHAR},
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       seq_no = #{record.seqNo,jdbcType=VARCHAR},
-      prize_no = #{record.prizeNo,jdbcType=VARCHAR},
-      start_no = #{record.startNo,jdbcType=VARCHAR},
-      end_no = #{record.endNo,jdbcType=VARCHAR},
+      bet_no = #{record.betNo,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
-      bet_type = #{record.betType,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.BetDO" >
-    update t_bet
+  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.BetRecordDO" >
+    update t_bet_record
     <set >
+      <if test="betWebsite != null" >
+        bet_website = #{betWebsite,jdbcType=VARCHAR},
+      </if>
       <if test="lotteryCode != null" >
         lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       </if>
       <if test="seqNo != null" >
         seq_no = #{seqNo,jdbcType=VARCHAR},
       </if>
-      <if test="prizeNo != null" >
-        prize_no = #{prizeNo,jdbcType=VARCHAR},
-      </if>
-      <if test="startNo != null" >
-        start_no = #{startNo,jdbcType=VARCHAR},
-      </if>
-      <if test="endNo != null" >
-        end_no = #{endNo,jdbcType=VARCHAR},
+      <if test="betNo != null" >
+        bet_no = #{betNo,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=VARCHAR},
       </if>
-      <if test="betType != null" >
-        bet_type = #{betType,jdbcType=VARCHAR},
-      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="betNo != null" >
-        bet_no = #{betNo,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ds.zxm.model.BetDO" >
-    update t_bet
-    set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.BetRecordDO" >
+    update t_bet_record
+    set bet_website = #{betWebsite,jdbcType=VARCHAR},
+      lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       seq_no = #{seqNo,jdbcType=VARCHAR},
-      prize_no = #{prizeNo,jdbcType=VARCHAR},
-      start_no = #{startNo,jdbcType=VARCHAR},
-      end_no = #{endNo,jdbcType=VARCHAR},
+      bet_no = #{betNo,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
-      bet_type = #{betType,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      bet_no = #{betNo,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.BetDO" >
-    update t_bet
-    set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
-      seq_no = #{seqNo,jdbcType=VARCHAR},
-      prize_no = #{prizeNo,jdbcType=VARCHAR},
-      start_no = #{startNo,jdbcType=VARCHAR},
-      end_no = #{endNo,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
-      bet_type = #{betType,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

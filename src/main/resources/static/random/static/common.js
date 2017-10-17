@@ -5402,7 +5402,11 @@ var NotifyData = function() {
 					} else {
                         window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
 					}
-                }
+                },
+                error: function(a) {
+                        window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
+                 }
+
             });
         }
 

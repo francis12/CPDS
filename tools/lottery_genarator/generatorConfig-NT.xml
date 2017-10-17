@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration  
+      PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+      "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+  <classPathEntry location="./mysql-connector-java-5.1.34.jar" /> <!-- JDBC jar -->
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+	<!-- <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/> -->
+	<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"/>
+    <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+        <property name="searchString" value="Example$" />
+        <property name="replaceString" value="Condition" />
+    </plugin>  
+	<commentGenerator>
+  		<property name="suppressAllComments" value="true"/>
+  	</commentGenerator>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://10.254.62.101:3306/hickwall"
+        userId="root"
+        password="1qaz@WSX">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+    <javaModelGenerator targetPackage="com.hy.ph.risk.hickwall.model"
+	targetProject="./Output/domain/src/main/java/">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+	  <property name="rootClass" value="com.hywin.puhui.common.domain.DomainBase" />
+    </javaModelGenerator>
+	
+    <!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+    <sqlMapGenerator targetPackage="sqlmap" 
+	targetProject="./Output/dao/src/main/resources/META-INF/">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+	
+	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
+	<javaClientGenerator type="XMLMAPPER" 
+	targetPackage="com.hy.ph.risk.hickwall.dao"
+	 targetProject="./Output/dao/src/main/java/">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+    
+    <!-- table 可以列多个表，同时生成所有。把不需要生成的table注释掉 -->
+    
+ 
+
+  <!-- <table tableName="t_risk_rule" domainObjectName="TRiskRuleDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+    <table tableName="risk_score_card_element_result" domainObjectName="RiskScoreCardElementResultDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+    <table tableName="risk_score_card_element" domainObjectName="RiskScoreCardElementDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+      <table tableName="risk_score_card_detail" domainObjectName="RiskScoreCardDetailDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+
+      <table tableName="risk_score_card" domainObjectName="RiskScoreCardDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+  
+      <table tableName="risk_rule_templet" domainObjectName="RiskRuleTempletDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+        <table tableName="risk_rule_exe_record_detail" domainObjectName="RiskRuleExeRecordDetailDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+          <table tableName="risk_rule_exe_record" domainObjectName="RiskRuleExeRecordDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+           
+
+              <table tableName="risk_public_element" domainObjectName="RiskPublicElementDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                <table tableName="risk_product_type_flow" domainObjectName="RiskProductTypeFlowDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                  <table tableName="risk_product_mapping" domainObjectName="RiskProductMappingDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                    <table tableName="risk_list_group" domainObjectName="RiskListGroupDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                      <table tableName="risk_list_filed_mapping" domainObjectName="RiskListFiledMappingDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                        <table tableName="risk_list_detail" domainObjectName="RiskListDetailDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+
+                        <table tableName="risk_group" domainObjectName="RiskGroupDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                          <table tableName="risk_flow_node" domainObjectName="RiskFlowNodeDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+
+                          <table tableName="risk_flow_element" domainObjectName="RiskFlowElementDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+
+                            <table tableName="risk_field_mapping" domainObjectName="RiskFieldMappingDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+                              <table tableName="risk_exteral_interface_info" domainObjectName="RiskExteralInterfaceInfoDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table> -->
+
+
+<!--         <table tableName="risk_element_script" domainObjectName="RiskElementScriptDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table> -->
+
+<!--           <table tableName="risk_element_default_value" domainObjectName="RiskElementDefaultValueDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table> -->
+
+<!-- 
+            <table tableName="risk_flow_exe" domainObjectName="RiskFlowExeDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table> -->
+
+ <table tableName="risk_apply_info" domainObjectName="RiskApplyInfoDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table>
+
+
+<!--           <table tableName="risk_code_define" domainObjectName="RiskCodeDefineDO" 
+    enableDeleteByExample="false"
+    enableUpdateByExample="true">
+    <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
+  </table> -->
+
+  </context>
+</generatorConfiguration>

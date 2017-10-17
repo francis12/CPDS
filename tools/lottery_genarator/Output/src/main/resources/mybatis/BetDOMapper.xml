@@ -96,6 +96,7 @@
     </if>
   </select>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.BetDOCondition" >
+    <include refid="PAGINATION.MYSQL_paginationStart" />
     select
     <if test="distinct" >
       distinct
@@ -108,6 +109,7 @@
     <if test="orderByClause != null" >
       order by ${orderByClause}
     </if>
+    <include refid="PAGINATION.MYSQL_paginationEnd" />
   </select>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
     select 
@@ -213,7 +215,9 @@
   <update id="updateByConditionSelective" parameterType="map" >
     update t_bet
     <set >
-
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
       <if test="record.lotteryCode != null" >
         lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       </if>
@@ -248,7 +252,7 @@
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map" >
     update t_bet
-    set
+    set id = #{record.id,jdbcType=BIGINT},
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       seq_no = #{record.seqNo,jdbcType=VARCHAR},
       prize_no = #{record.prizeNo,jdbcType=VARCHAR},
@@ -264,7 +268,7 @@
   </update>
   <update id="updateByCondition" parameterType="map" >
     update t_bet
-    set
+    set id = #{record.id,jdbcType=BIGINT},
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       seq_no = #{record.seqNo,jdbcType=VARCHAR},
       prize_no = #{record.prizeNo,jdbcType=VARCHAR},

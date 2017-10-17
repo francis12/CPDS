@@ -143,7 +143,7 @@ public class LoginUtil {
                 postMethod.setRequestHeader("Referer", "http://www.198good.com:88/player/v5/login.jsp?o=3");
                 postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
 
-                String session = "th=mountain; uuid=f54f9769c3e0-8af4-4cad-889a-8c3976cf8cc8; JSESSIONID=AAEA7AD689775ECD5E6EDBE0CF4CAB9D; announceRead=; username=backtoxcb8";
+                String session = "th=mountain; uuid=f54f9769c3e0-8af4-4cad-889a-8c3976cf8cc8; sb=true; JSESSIONID=23274AB353D6CB646E2C8DCF8AC36C58; announceRead=; username=backtoxcb8";
                 postMethod.setRequestHeader("Cookie",session);
 
                 // 设置登陆时要求的信息，用户名和密码
