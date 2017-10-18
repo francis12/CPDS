@@ -2,21 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cf6475ff-d5ab-43e7-bbde-3dd3a8df810a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tools/lottery_genarator/Output/src/main/java/com/ds/zxm/mapper/BetDAO.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tools/lottery_genarator/Output/src/main/java/com/ds/zxm/model/BetDO.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tools/lottery_genarator/Output/src/main/java/com/ds/zxm/model/BetDOCondition.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tools/lottery_genarator/Output/src/main/resources/mybatis/BetDOMapper.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ds.log" afterPath="$PROJECT_DIR$/ds.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/DsController.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/DsController.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/LotteryController.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/LotteryController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetDOCondition.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetDOCondition.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetRecordDO.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetRecordDO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetRecordDOCondition.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetRecordDOCondition.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ds/zxm/service/BetService.java" afterPath="$PROJECT_DIR$/src/main/java/com/ds/zxm/service/BetService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/mybatis/BetDOMapper.xml" afterPath="$PROJECT_DIR$/src/main/resources/mybatis/BetDOMapper.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/mybatis/BetRecordDOMapper.xml" afterPath="$PROJECT_DIR$/src/main/resources/mybatis/BetRecordDOMapper.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/lottery_genarator/generatorConfig-LS.xml" afterPath="$PROJECT_DIR$/tools/lottery_genarator/generatorConfig-LS.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/db/ds.sql" afterPath="$PROJECT_DIR$/tools/db/ds.sql" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,16 +16,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="LotteryController.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="LotteryController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/LotteryController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="266" column="38" lean-forward="true" selection-start-line="266" selection-start-column="38" selection-end-line="266" selection-end-column="38" />
+            <state relative-caret-position="943">
+              <caret line="196" column="110" lean-forward="true" selection-start-line="196" selection-start-column="110" selection-end-line="196" selection-end-column="110" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4668#4684#0" expanded="true" />
                 <element signature="e#4908#4924#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ds.sql" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tools/db/ds.sql">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="518">
+              <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -108,16 +106,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="generatorConfig-LS.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tools/lottery_genarator/generatorConfig-LS.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="54" column="48" lean-forward="false" selection-start-line="54" selection-start-column="48" selection-end-line="54" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="BetDO.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ds/zxm/model/BetDO.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -176,9 +164,9 @@
       <find>e.printStackTrace()</find>
       <find>query198</find>
       <find>getCurNoAlias</find>
-      <find>betLottery</find>
       <find>static</find>
       <find>e.printStackTrace()</find>
+      <find>betLottery</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -213,6 +201,7 @@
         <option value="$MAVEN_REPOSITORY$/com/alibaba/fastjson/1.1.43/fastjson-1.1.43.jar!/com/alibaba/fastjson/JSON.class" />
         <option value="$PROJECT_DIR$/src/main/java/com/ds/zxm/service/BetService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/LotteryController.java" />
+        <option value="$PROJECT_DIR$/tools/db/ds.sql" />
       </list>
     </option>
   </component>
@@ -291,6 +280,12 @@
               <item name="springboot-mybatis" type="b2602c69:ProjectViewProjectNode" />
               <item name="CPDS" type="462c0819:PsiDirectoryNode" />
               <item name="tools" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="springboot-mybatis" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CPDS" type="462c0819:PsiDirectoryNode" />
+              <item name="tools" type="462c0819:PsiDirectoryNode" />
+              <item name="db" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="springboot-mybatis" type="b2602c69:ProjectViewProjectNode" />
@@ -562,14 +557,14 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54640526" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2901961" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -589,14 +584,14 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54640526" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2901961" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3281046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3281046" sideWeight="0.4975" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3281046" sideWeight="0.4975" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
@@ -736,14 +731,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tools/db/ds.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="29" lean-forward="false" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
           <folding />
         </state>
       </provider>
@@ -1001,13 +988,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ds/zxm/controller/LotteryController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="266" column="38" lean-forward="true" selection-start-line="266" selection-start-column="38" selection-end-line="266" selection-end-column="38" />
+        <state relative-caret-position="943">
+          <caret line="196" column="110" lean-forward="true" selection-start-line="196" selection-start-column="110" selection-end-line="196" selection-end-column="110" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4668#4684#0" expanded="true" />
             <element signature="e#4908#4924#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/db/ds.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="518">
+          <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -253,11 +253,11 @@ public class LotteryController {
     }
 
     private void betLottery(String originNo, int multi, String nums) {
-        try {
+        /*try {
             betService.betto198("-1", originNo, multi + "", nums);
         } catch (UnsupportedEncodingException e) {
             log.error("betLottery", e);
-        }
+        }*/
     }
 
     public  static  void main(String[] args){
