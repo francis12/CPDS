@@ -305,6 +305,76 @@ public class BetRecordDOCondition  {
             return (Criteria) this;
         }
 
+        public Criteria andScheduleNoIsNull() {
+            addCriterion("schedule_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoIsNotNull() {
+            addCriterion("schedule_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoEqualTo(String value) {
+            addCriterion("schedule_no =", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoNotEqualTo(String value) {
+            addCriterion("schedule_no <>", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoGreaterThan(String value) {
+            addCriterion("schedule_no >", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoGreaterThanOrEqualTo(String value) {
+            addCriterion("schedule_no >=", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoLessThan(String value) {
+            addCriterion("schedule_no <", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoLessThanOrEqualTo(String value) {
+            addCriterion("schedule_no <=", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoLike(String value) {
+            addCriterion("schedule_no like", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoNotLike(String value) {
+            addCriterion("schedule_no not like", value, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoIn(List<String> values) {
+            addCriterion("schedule_no in", values, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoNotIn(List<String> values) {
+            addCriterion("schedule_no not in", values, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoBetween(String value1, String value2) {
+            addCriterion("schedule_no between", value1, value2, "scheduleNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoNotBetween(String value1, String value2) {
+            addCriterion("schedule_no not between", value1, value2, "scheduleNo");
+            return (Criteria) this;
+        }
+
         public Criteria andSeqNoIsNull() {
             addCriterion("seq_no is null");
             return (Criteria) this;
@@ -582,6 +652,11 @@ public class BetRecordDOCondition  {
 
         public Criteria andLotteryCodeLikeInsensitive(String value) {
             addCriterion("upper(lottery_code) like", value.toUpperCase(), "lotteryCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andScheduleNoLikeInsensitive(String value) {
+            addCriterion("upper(schedule_no) like", value.toUpperCase(), "scheduleNo");
             return (Criteria) this;
         }
 

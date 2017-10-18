@@ -62,7 +62,7 @@ public class DsController {
             result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8");
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("initdata error", e);
         }
         return result;
     }

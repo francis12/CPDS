@@ -52,7 +52,7 @@
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
   </table>-->
-  <table tableName="t_bet" domainObjectName="BetDO" 
+  <table tableName="t_bet" domainObjectName="BetDO"
     enableDeleteByExample="true"
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />

@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="bet_website" property="betWebsite" jdbcType="VARCHAR" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
+    <result column="schedule_no" property="scheduleNo" jdbcType="VARCHAR" />
     <result column="seq_no" property="seqNo" jdbcType="VARCHAR" />
     <result column="bet_no" property="betNo" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, bet_website, lottery_code, seq_no, bet_no, status, create_time
+    id, bet_website, lottery_code, schedule_no, seq_no, bet_no, status, create_time
   </sql>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.BetRecordDOCondition" >
     select
@@ -105,12 +106,12 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
-    insert into t_bet_record (bet_website, lottery_code, seq_no, 
-      bet_no, status, create_time
-      )
-    values (#{betWebsite,jdbcType=VARCHAR}, #{lotteryCode,jdbcType=VARCHAR}, #{seqNo,jdbcType=VARCHAR}, 
-      #{betNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
+    insert into t_bet_record (bet_website, lottery_code, schedule_no, 
+      seq_no, bet_no, status, 
+      create_time)
+    values (#{betWebsite,jdbcType=VARCHAR}, #{lotteryCode,jdbcType=VARCHAR}, #{scheduleNo,jdbcType=VARCHAR}, 
+      #{seqNo,jdbcType=VARCHAR}, #{betNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.BetRecordDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -123,6 +124,9 @@
       </if>
       <if test="lotteryCode != null" >
         lottery_code,
+      </if>
+      <if test="scheduleNo != null" >
+        schedule_no,
       </if>
       <if test="seqNo != null" >
         seq_no,
@@ -143,6 +147,9 @@
       </if>
       <if test="lotteryCode != null" >
         #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleNo != null" >
+        #{scheduleNo,jdbcType=VARCHAR},
       </if>
       <if test="seqNo != null" >
         #{seqNo,jdbcType=VARCHAR},
@@ -176,6 +183,9 @@
       <if test="record.lotteryCode != null" >
         lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.scheduleNo != null" >
+        schedule_no = #{record.scheduleNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.seqNo != null" >
         seq_no = #{record.seqNo,jdbcType=VARCHAR},
       </if>
@@ -198,6 +208,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       bet_website = #{record.betWebsite,jdbcType=VARCHAR},
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      schedule_no = #{record.scheduleNo,jdbcType=VARCHAR},
       seq_no = #{record.seqNo,jdbcType=VARCHAR},
       bet_no = #{record.betNo,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
@@ -214,6 +225,9 @@
       </if>
       <if test="lotteryCode != null" >
         lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleNo != null" >
+        schedule_no = #{scheduleNo,jdbcType=VARCHAR},
       </if>
       <if test="seqNo != null" >
         seq_no = #{seqNo,jdbcType=VARCHAR},
@@ -234,6 +248,7 @@
     update t_bet_record
     set bet_website = #{betWebsite,jdbcType=VARCHAR},
       lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      schedule_no = #{scheduleNo,jdbcType=VARCHAR},
       seq_no = #{seqNo,jdbcType=VARCHAR},
       bet_no = #{betNo,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},

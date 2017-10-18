@@ -9,6 +9,8 @@ public class BetRecordDO {
 
     private String lotteryCode;
 
+    private String scheduleNo;
+
     private String seqNo;
 
     private String betNo;
@@ -39,6 +41,14 @@ public class BetRecordDO {
 
     public void setLotteryCode(String lotteryCode) {
         this.lotteryCode = lotteryCode == null ? null : lotteryCode.trim();
+    }
+
+    public String getScheduleNo() {
+        return scheduleNo;
+    }
+
+    public void setScheduleNo(String scheduleNo) {
+        this.scheduleNo = scheduleNo == null ? null : scheduleNo.trim();
     }
 
     public String getSeqNo() {
