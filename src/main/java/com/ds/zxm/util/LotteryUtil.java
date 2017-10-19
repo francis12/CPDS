@@ -136,18 +136,27 @@ public class LotteryUtil {
 	        combine(cs,begin+1,number,list);  
 	    }
 	//cqssc
-	public static String getNextAwardNo(String no) throws ParseException {
+	public static String getNextAwardNo(String no, String caipiao) throws ParseException {
 		String nextNo = "";
 		//171010051,postfix001-120
-		String dateStr = no.substring(0, 8);
-		int postNo = Integer.valueOf(no.substring(8));
-		if(postNo != 120) {
-			nextNo = ("000" + (postNo + 1));
-			nextNo = nextNo.substring(nextNo.length() - 3);
-			return dateStr + nextNo;
-		} else {
-			Date curDate = DateUtils.String2Date(dateStr, "yyMMdd");
-			nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyMMdd") + "001";
+		if("chongqing".equals(caipiao)) {
+			String dateStr = no.substring(0, 8);
+			int postNo = Integer.valueOf(no.substring(8));
+			if(postNo != 120) {
+				nextNo = ("000" + (postNo + 1));
+				nextNo = nextNo.substring(nextNo.length() - 3);
+				return dateStr + nextNo;
+			} else {
+				Date curDate = DateUtils.String2Date(dateStr, "yyMMdd");
+				nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyMMdd") + "001";
+			}
+		} else if ("n198_60s".equals(caipiao)) {
+			//201710190726
+			String dateStr = no.substring(0, 8);
+			int postNo = Integer.valueOf(no.substring(8));
+			nextNo = ("0000" + (postNo + 1));
+			nextNo = nextNo.substring(nextNo.length() - 4);
+			nextNo = dateStr + nextNo;
 		}
 		return nextNo;
 	}

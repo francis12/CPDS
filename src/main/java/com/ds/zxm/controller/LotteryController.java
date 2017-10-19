@@ -41,12 +41,12 @@ public class LotteryController {
         try {
 
             System.out.println(no + "投注:" + data);
-            String next1 = LotteryUtil.getNextAwardNo(no);
-            String next2 = LotteryUtil.getNextAwardNo(next1);
-            String next3 = LotteryUtil.getNextAwardNo(next2);
-            String next4 = LotteryUtil.getNextAwardNo(next3);
-            String next5 = LotteryUtil.getNextAwardNo(next4);
-            String next6 = LotteryUtil.getNextAwardNo(next5);
+            String next1 = LotteryUtil.getNextAwardNo(no, caipiao);
+            String next2 = LotteryUtil.getNextAwardNo(next1, caipiao);
+            String next3 = LotteryUtil.getNextAwardNo(next2, caipiao);
+            String next4 = LotteryUtil.getNextAwardNo(next3, caipiao);
+            String next5 = LotteryUtil.getNextAwardNo(next4, caipiao);
+            String next6 = LotteryUtil.getNextAwardNo(next5, caipiao);
 
             String startPostfix = next1.substring(next1.length() - 3);
             String endPostfix = next6.substring(next6.length() - 3);
@@ -156,7 +156,7 @@ public class LotteryController {
                     if ("3".equals(item.getBetType())) {
                         //历史记录置为2
                         if (LotteryUtil.compareCQAwardNO(item.getEndNo(), curNO) < 0
-                                || LotteryUtil.compareCQAwardNO(item.getStartNo(), LotteryUtil.getNextAwardNo(curNO)) > 0) {
+                                || LotteryUtil.compareCQAwardNO(item.getStartNo(), LotteryUtil.getNextAwardNo(curNO,caipiao)) > 0) {
                             item.setStatus("2");
                             betService.updateBetDO(item);
                         } else {
@@ -184,7 +184,7 @@ public class LotteryController {
                                         betRecordDAO.updateByPrimaryKeySelective(betRecordDO);
                                         if (!curNO.equals(item.getEndNo())) {
                                             //投注下一期
-                                            String nextNo = LotteryUtil.getNextAwardNo(curNO);
+                                            String nextNo = LotteryUtil.getNextAwardNo(curNO, caipiao);
                                             String curScheduleNo = betRecordDOItem.getScheduleNo();
                                             TradeSchedule tradeSchedule = scheMap.get(curScheduleNo);
                                             int nextscheNo = tradeSchedule.getLoseNo();
