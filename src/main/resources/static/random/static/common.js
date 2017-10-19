@@ -408,7 +408,7 @@ var TimerData = function() {
                     var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
                     //添加处于boll下轨的判断
                     //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
-                    var isKlineMatch = this.isKlineInbottom(j, 80) && this.isKLineUnderBollMiddle(j);
+                    var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
                     return isBollUpCommon && isKlineMatch;
                 } catch (err) {
 					return false;
@@ -446,7 +446,7 @@ var TimerData = function() {
 				return kline[0] < j.line30[j.line30.length -1];
 			},
 			//判断在近期低点
-			isKlineInbottom: function(j, last) {
+			isKlineInbottom2: function(j, last) {
 				var kline =  j.values[j.values.length -1 ] [0];					
 				var total = 0;
 				for (var i = j.values.length -last;i<j.values.length;i++) {
@@ -454,6 +454,21 @@ var TimerData = function() {
 				}
 				return total/last > kline ;
 			}
+            ,
+            //判断在近期低点
+            isKlineInbottom: function(j, last) {
+                var kline =  j.values[j.values.length -1 ] [0];
+                var totalPre = 0;
+                for (var i = j.values.length -last;i<j.values.length - last/2;i++) {
+                    totalPre +=j.values[i][0];
+                }
+                var totalPost = 0;
+                for (var i = j.values.length - last/2;i<j.values.length;i++) {
+                    totalPost +=j.values[i][0];
+                }
+                console.log(totalPre + "---" + totalPost)
+                return totalPre > totalPost;
+            }
 		}
 
 	}();	
@@ -2977,7 +2992,7 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 10000){
+                        while(!dataMatched&&calCnt <= 1200){
                             RandomDatas.getRandomNums();
                             var str = ".randombox #rand1";
                             console.log($(str).html());
@@ -2992,6 +3007,9 @@ var RandomDatas = function() {
                              bigAuto = [];
                              before = parseInt(z.val());*/
 
+                        }
+                        if(!dataMatched) {
+                            window.location.reload(true);
                         }
                         calCnt = 1;
                         NotifyData.checkis2Recall(caipiao);
