@@ -51,7 +51,7 @@ public class LotteryController {
             String startPostfix = next1.substring(next1.length() - 3);
             String endPostfix = next6.substring(next6.length() - 3);
             log.info("第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
-            FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+            //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
             //由于文件无法实时更新，需要自己写接口连接网站投注
 
             //FileUtils.writeStringToFile(new File("c://tz.txt"),startPostfix + "-" + endPostfix+"期" + data  + " ---" + "\r",true);
