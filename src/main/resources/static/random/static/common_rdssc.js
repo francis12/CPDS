@@ -2946,7 +2946,6 @@ var RandomDatas = function() {
 		return {
 			init: function() {
 				before = z.val();
-                $('#dropdownCaipiao').hide();
 				caipiaoMenu.on('click', function() {
 					caipiao = $(this).attr('init');
 					TimerData.setCaipiaoCookie(caipiao);
@@ -2957,6 +2956,8 @@ var RandomDatas = function() {
 					before = z.val();
 					E.html('');
 					TimerData.getdata(caipiao);
+					$('#dropdownCaipiao').hide();
+
                     //F.click();
 				});
 				A.on('click', function() {
@@ -2982,6 +2983,8 @@ var RandomDatas = function() {
                 var calCnt = 1;
 
                 F.on('click', function() {
+                console.time("randon initialize")
+
 					dataMatched = false;
 					RandomDatas.getRandomNums();
 					C.show();
@@ -2992,7 +2995,7 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 290){
+                        while(!dataMatched&&calCnt <= 1000){
                             RandomDatas.getRandomNums();
                             var str = ".randombox #rand1";
                             console.log($(str).html());
@@ -3035,7 +3038,8 @@ var RandomDatas = function() {
 					    //匹配成功，通知后台
                         calCnt = 1;
                     }*/
-				   
+			console.timeEnd("randon initialize")
+
 				});
 				G.on('click', function() {
 					RandomDatas.getRandomLock();

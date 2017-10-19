@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.ds.zxm.mapper.BetRecordDAO;
 import com.ds.zxm.model.*;
 import com.ds.zxm.service.BetService;
+import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
 import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.io.FileUtils;
@@ -128,7 +129,7 @@ public class LotteryController {
         try {
             Map<String, String> map = new HashMap<String, String>();
             map.put("caipiao", caipiao);
-            String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8");
+            String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
 
             //更新彩票状态
             Map<String, Object> resultMap = new HashMap<String, Object>();

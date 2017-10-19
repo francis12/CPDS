@@ -1,5 +1,6 @@
 package com.ds.zxm;
 
+import com.ds.zxm.util.DsUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -55,6 +56,8 @@ public class Application implements EmbeddedServletContainerCustomizer {
      */
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+        DsUtil.init();
+
         logger.info("SpringBoot Start Success");
     }
 

@@ -15,19 +15,27 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 public class HttpUtil {
-	public static String doPost(String url, Map<String, String> map, String charset) {
+	public static String doPost(String url, Map<String, String> map, String charset, Map<String, String> requestHeader) {
 		HttpClient httpClient = null;
 		HttpPost httpPost = null;
 		String result = null;
 		try {
 			httpClient = new SSLClient();
 			httpPost = new HttpPost(url);
+
 			// 设置参数
 			List<NameValuePair> list = new ArrayList<NameValuePair>();
 			Iterator iterator = map.entrySet().iterator();
 			while (iterator.hasNext()) {
 				java.util.Map.Entry<String, String> elem = (java.util.Map.Entry<String, String>) iterator.next();
 				list.add(new BasicNameValuePair(elem.getKey(), elem.getValue()));
+			}
+
+			Iterator iterator2 = requestHeader.entrySet().iterator();
+			while (iterator2.hasNext()) {
+				java.util.Map.Entry<String, String> elem = (java.util.Map.Entry<String, String>) iterator2.next();
+				httpPost.setHeader(elem.getKey(), elem.getValue());
+
 			}
 			if (list.size() > 0) {
 				UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, charset);
@@ -149,12 +157,13 @@ public class HttpUtil {
 		String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map,"utf-8");
 		System.out.println(result);*/
 
-		Map<String, String> map2 = new HashMap<String, String>();
-		map2.put("p", "[\"backtoxcb8\",\"230679zxm\",3]");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("caipiao", "hele_fenfen");
+		map.put("recentid", "14803788");
+		map.put("before", "100");
+		String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/datas", map, "utf-8", DsUtil.genRequestHeaderMap("hele_fenfen"));
 
-		String result2 = HttpUtil.doPost("http://www.198good.com:88/loginconf.do", map2,"utf-8");
 
-
-		System.out.println(result2);
+		System.out.println(result);
 	}
 }

@@ -2946,7 +2946,6 @@ var RandomDatas = function() {
 		return {
 			init: function() {
 				before = z.val();
-                $('#dropdownCaipiao').hide();
 				caipiaoMenu.on('click', function() {
 					caipiao = $(this).attr('init');
 					TimerData.setCaipiaoCookie(caipiao);
@@ -2957,6 +2956,7 @@ var RandomDatas = function() {
 					before = z.val();
 					E.html('');
 					TimerData.getdata(caipiao);
+					$('#dropdownCaipiao').hide();
                     //F.click();
 				});
 				A.on('click', function() {

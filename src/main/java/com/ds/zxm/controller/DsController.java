@@ -5,8 +5,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.ds.zxm.model.BetDO;
 import com.ds.zxm.model.BetDOCondition;
 import com.ds.zxm.service.BetService;
+import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
 import com.ds.zxm.util.LotteryUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
@@ -41,7 +43,7 @@ public class DsController {
             map.put("caipiao", caipiao);
             map.put("recentid", recentid);
             map.put("before", before);
-            result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/datas", map, "utf-8");
+            result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/datas", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -59,11 +61,13 @@ public class DsController {
             //result = "{\"ret\":0,\"caipiao\":\"chongqing\",\"peroid\":\"20170923051\",\"prize\":\"88654\",\"prizes\":[\"8\",\"8\",\"6\",\"5\",\"4\"],\"nextid\":\"20170923052\",\"countdown\":\"127\"}";
             Map<String, String> map = new HashMap<String, String>();
             map.put("caipiao", caipiao);
-            result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8");
+            result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             log.error("initdata error", e);
         }
         return result;
     }
+
+
 }
