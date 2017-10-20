@@ -150,7 +150,7 @@ public class LotteryUtil {
 				Date curDate = DateUtils.String2Date(dateStr, "yyMMdd");
 				nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyMMdd") + "001";
 			}
-		} else if ("n198_60s".equals(caipiao)) {
+		} else if ("n198_60s".equals(caipiao) || "rd60s".equals(caipiao)) {
 			//201710190726
 			String dateStr = no.substring(0, 8);
 			int postNo = Integer.valueOf(no.substring(8));
@@ -169,6 +169,24 @@ public class LotteryUtil {
 		} else {
 			int postFix1 = Integer.valueOf(no1.substring(no1.length() -3));
 			int postFix2 =  Integer.valueOf(no2.substring(no2.length() -3));
+			if (postFix1 > postFix2) {
+				return  1;
+			} else if(postFix1 == postFix2) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
+	}
+	//201710200456
+	public static int compare19860AwardNO(String no1, String no2) throws ParseException {
+		Date date1 = DateUtils.String2Date(no1.substring(0, 8), "yyyyMMdd");
+		Date date2 = DateUtils.String2Date(no2.substring(0, 8), "yyyyMMdd");
+		if(date1.compareTo(date2) != 0) {
+			return date1.compareTo(date2);
+		} else {
+			int postFix1 = Integer.valueOf(no1.substring(no1.length() -4));
+			int postFix2 =  Integer.valueOf(no2.substring(no2.length() -4));
 			if (postFix1 > postFix2) {
 				return  1;
 			} else if(postFix1 == postFix2) {

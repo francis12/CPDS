@@ -85,11 +85,22 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 }
             }
         };
+        Runnable runnable3 = new Runnable() {
+            public void run() {
+                try {
+                    betService.updateLotteryStatus("rd60s");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
         service.scheduleAtFixedRate(runnable, 1, 5, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable2, 1, 5, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable3, 1, 5, TimeUnit.SECONDS);
+
 
 
         logger.info("SpringBoot Start Success");

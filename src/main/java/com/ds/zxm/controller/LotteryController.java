@@ -2,7 +2,10 @@ package com.ds.zxm.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ds.zxm.mapper.BetRecordDAO;
-import com.ds.zxm.model.*;
+import com.ds.zxm.model.BetDO;
+import com.ds.zxm.model.BetDOCondition;
+import com.ds.zxm.model.BetRecordDO;
+import com.ds.zxm.model.TradeSchedule;
 import com.ds.zxm.service.BetService;
 import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
@@ -17,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -39,6 +41,25 @@ public class LotteryController {
 
         String result = "";
         try {
+            String next1 = LotteryUtil.getNextAwardNo(no, caipiao);
+            try {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("caipiao", caipiao);
+                String result2 = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
+                //更新彩票状态
+                //201710200456
+                Map<String, Object> resultMap = new HashMap<String, Object>();
+                resultMap = JSON.parseObject(result2, Map.class);
+                if ("0".equals(resultMap.get("ret").toString())) {
+                    String curNO = resultMap.get("peroid").toString();
+                    if(LotteryUtil.compare19860AwardNO(curNO, next1) >= 0) {
+                        //如果开奖号码大于开始号码重新出号
+                        return result;
+                    }
+                }
+            } catch (ParseException e) {
+               log.error("比较当前开奖号和倍投开始号码失败,继续执行");
+            }
             //有未开奖记录
             BetDOCondition betDOCondition = new BetDOCondition();
             betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1").andEndNoGreaterThan(no);
@@ -47,7 +68,6 @@ public class LotteryController {
                 return result;
             }
             System.out.println(no + "投注:" + data);
-            String next1 = LotteryUtil.getNextAwardNo(no, caipiao);
             String next2 = LotteryUtil.getNextAwardNo(next1, caipiao);
             String next3 = LotteryUtil.getNextAwardNo(next2, caipiao);
             String next4 = LotteryUtil.getNextAwardNo(next3, caipiao);
@@ -62,9 +82,15 @@ public class LotteryController {
                // FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
                 FileUtils.write(new File("D:" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
 
-            } else{
+            } else if("n198_60s".equals(caipiao)) {
+
                 //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-                FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+                FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
+
+            } else if("rd60s".equals(caipiao)) {
+
+                //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+                FileUtils.write(new File("D:" + File.separator  + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
 
             }
             //由于文件无法实时更新，需要自己写接口连接网站投注
@@ -122,7 +148,7 @@ public class LotteryController {
             log.error("checkRecall error");
         }
         if (result) {
-            log.info("当期方案已完成，刷新页面");
+            log.info("当期" + caipiao + "方案已完成，刷新页面");
             try {
                 //冲掉上次方案，防止赚投误取
                 if("chongqing".equals(caipiao)) {
@@ -130,9 +156,14 @@ public class LotteryController {
                     FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
 
 
-                } else {
+                } else if("n198_60s".equals(caipiao)) {
                     //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
                     FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+
+                }else if("n198_60s".equals(caipiao)) {
+                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+                    FileUtils.write(new File("D:" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
 
 
                 }
@@ -194,7 +225,9 @@ public class LotteryController {
     public  static  void main(String[] args){
         try {
             while (true) {
-                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r",true);
+                //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r",true);
+                FileUtils.write(new File("D:" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r\n" + "test",false);
+
                 Thread.sleep(1000 *1);
             }
         } catch (Exception e) {

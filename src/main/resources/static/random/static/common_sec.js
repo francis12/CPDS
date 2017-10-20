@@ -635,7 +635,7 @@ var GodkeyDatas = function() {
 					$("#betting").html(g)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -670,7 +670,7 @@ var GodkeyDatas = function() {
 					prizeNum = this.searchGodKeys(prizes, way, b)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -892,7 +892,7 @@ var DansDatas = function() {
 					this.klinemap(a)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -920,7 +920,7 @@ var DansDatas = function() {
 					}
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -1437,7 +1437,7 @@ var DragonDatas = function() {
 					this.klinemap(a)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -1465,7 +1465,7 @@ var DragonDatas = function() {
 					}
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -2218,7 +2218,7 @@ var KlineData = function() {
 					$("#betting").html(f)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -2235,7 +2235,7 @@ var KlineData = function() {
 					$("#betting").html(d)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -2726,7 +2726,7 @@ var DudanDatas = function() {
 					$("#betting").html(h)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -2759,7 +2759,7 @@ var DudanDatas = function() {
 					}
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -3111,7 +3111,7 @@ var RandomDatas = function() {
 					}
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -3141,7 +3141,7 @@ var RandomDatas = function() {
 					$("#betting").html(h)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -3197,7 +3197,7 @@ var RandomDatas = function() {
 					storeNums.push(c)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -3694,7 +3694,7 @@ var GodnumDatas = function() {
 					$("#betting").html(f)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -3725,7 +3725,7 @@ var GodnumDatas = function() {
 					$("#betting").html(g)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -4203,7 +4203,7 @@ var RotateDatas = function() {
 					$("#betting").html(h)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -4229,7 +4229,7 @@ var RotateDatas = function() {
 					}
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false
@@ -4537,7 +4537,7 @@ var FormulaDatas = function() {
 					$("#betting").html(f)
 				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
-						location.href = '/user/login';
+						 window.location.reload(true);
 						return true
 					} else {
 						return false

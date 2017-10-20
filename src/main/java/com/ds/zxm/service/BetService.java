@@ -232,7 +232,7 @@ public class BetService {
                                     if (item.getBetNo().indexOf(prize.substring(prize.length() - 3)) > 0) {
                                         item.setStatus("3");
                                         item.setPrizeNo(curNO);
-                                        log.info(item.getSeqNo() + "("+ curNO + ")" + "已中奖");
+                                        log.info(item.getSeqNo() + "("+ betRecordDOItem.getLotteryCode() + ":" + curNO + ")" + "已中奖");
                                         updateBetDO(item);
 
                                         BetRecordDO betRecordDO = new BetRecordDO();
@@ -247,7 +247,7 @@ public class BetService {
                                         betRecordDAO.updateByPrimaryKeySelective(betRecordDO);
                                         if (!curNO.equals(item.getEndNo())) {
                                             //投注下一期
-                                            log.info(item.getSeqNo() + "(" + betRecordDOItem.getBetNo() + ")" + "未中奖");
+                                            log.info(item.getSeqNo() + "("+ betRecordDOItem.getLotteryCode() + ":" + betRecordDOItem.getBetNo() + ")" + "未中奖");
                                             String nextNo = LotteryUtil.getNextAwardNo(curNO, caipiao);
                                             String curScheduleNo = betRecordDOItem.getScheduleNo();
                                             TradeSchedule tradeSchedule = LotteryController.scheMap.get(curScheduleNo);
@@ -267,7 +267,7 @@ public class BetService {
                                             //betLottery(originNo, nextschedule.getMultiple(), item.getBetNo());
                                         } else {
                                             //跑完最后一期未中奖，更新方案状态
-                                            log.info(item.getSeqNo() + "未中奖");
+                                            log.info(betRecordDOItem.getLotteryCode() + ":" + item.getSeqNo() + "未中奖");
                                             item.setStatus("2");
                                             updateBetDO(item);
                                         }
