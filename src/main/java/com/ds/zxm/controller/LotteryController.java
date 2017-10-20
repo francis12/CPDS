@@ -56,8 +56,15 @@ public class LotteryController {
 
             String startPostfix = next1.substring(next1.length() - 3);
             String endPostfix = next6.substring(next6.length() - 3);
+
             log.info("第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
-            //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+            if("chongqing".equals(caipiao)) {
+                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+
+            } else{
+                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+
+            }
             //由于文件无法实时更新，需要自己写接口连接网站投注
 
             //FileUtils.writeStringToFile(new File("c://tz.txt"),startPostfix + "-" + endPostfix+"期" + data  + " ---" + "\r",true);
@@ -101,6 +108,7 @@ public class LotteryController {
             Thread.sleep(5 * 1000);
             //updateLotteryStatus(caipiao);
 
+
                 BetDOCondition betDOCondition = new BetDOCondition();
                 betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1");
                 List<BetDO> betDOList = betService.queryBetList(betDOCondition);
@@ -115,7 +123,13 @@ public class LotteryController {
             log.info("当期方案已完成，刷新页面");
             try {
                 //冲掉上次方案，防止赚投误取
-                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+                if("chongqing".equals(caipiao)) {
+                    FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+                } else {
+                    FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+                }
             } catch (IOException e) {
                log.error("write tmp file data er", e);
             }
