@@ -3012,7 +3012,7 @@ var RandomDatas = function() {
                             window.location.reload(true);
                         }
                         calCnt = 1;
-                        //NotifyData.checkis2Recall(caipiao);
+                        NotifyData.checkis2Recall(caipiao);
 
                     }, 100);
 
@@ -5418,11 +5418,11 @@ var NotifyData = function() {
                 	if(a){
                         window.location.reload(true);
 					} else {
-                        window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
+                        window.setTimeout(NotifyData.checkis2Recall(cp), 2000)
 					}
                 },
                 error: function(a) {
-                        window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
+                        window.setTimeout(NotifyData.checkis2Recall(cp), 2000)
                  }
 
             });

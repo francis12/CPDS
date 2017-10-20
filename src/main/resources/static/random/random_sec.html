@@ -763,7 +763,13 @@
 		   TimerData.init();
 		   RandomDatas.init();
            $("#tab_1_3 a")[1].click();
-           //$('#randomNum').click();
+           $('#randomNum').click();
+            //4分钟还没刷新的话自动刷新
+            window.setTimeout(
+                function(){
+                    window.location.reload(true);
+                },
+                1000 * 20);
 		});
 	</script>
 <!-- END JAVASCRIPTS -->
