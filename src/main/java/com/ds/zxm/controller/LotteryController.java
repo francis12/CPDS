@@ -59,10 +59,12 @@ public class LotteryController {
 
             log.info("第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
             if("chongqing".equals(caipiao)) {
-                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+               // FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+                FileUtils.write(new File("D:" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
 
             } else{
-                FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+                //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+                FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
 
             }
             //由于文件无法实时更新，需要自己写接口连接网站投注
@@ -124,10 +126,14 @@ public class LotteryController {
             try {
                 //冲掉上次方案，防止赚投误取
                 if("chongqing".equals(caipiao)) {
-                    FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+                    FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+
 
                 } else {
-                    FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+                    FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+
 
                 }
             } catch (IOException e) {

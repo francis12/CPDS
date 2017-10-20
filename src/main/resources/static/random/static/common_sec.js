@@ -1,4 +1,4 @@
-var caipiao = 'chongqing';
+var caipiao = 'n198_60s';
 var caipiaoMenu = $(".caipiao");
 var dropCaipiao = $("#dropCaipiao");
 var caipiaoText = $("#caipiaoText");

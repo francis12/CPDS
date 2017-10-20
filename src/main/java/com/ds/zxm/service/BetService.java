@@ -232,7 +232,7 @@ public class BetService {
                                     if (item.getBetNo().indexOf(prize.substring(prize.length() - 3)) > 0) {
                                         item.setStatus("3");
                                         item.setPrizeNo(curNO);
-                                        log.info(item.getSeqNo() + "已中奖");
+                                        log.info(item.getSeqNo() + "("+ curNO + ")" + "已中奖");
                                         updateBetDO(item);
 
                                         BetRecordDO betRecordDO = new BetRecordDO();
@@ -278,8 +278,8 @@ public class BetService {
                     }
                 }
             }
-        } catch (ParseException e) {
-            log.error("updateLotteryStatus error", e);
+        } catch (Exception e) {
+            log.error("updateLotteryStatus error");
         }
     }
 
