@@ -161,7 +161,7 @@ public class LotteryController {
                     FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
 
 
-                }else if("n198_60s".equals(caipiao)) {
+                }else if("rd60s".equals(caipiao)) {
                     //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
                     FileUtils.write(new File("D:" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
 
