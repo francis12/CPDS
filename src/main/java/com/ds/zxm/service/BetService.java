@@ -1,9 +1,13 @@
 package com.ds.zxm.service;
 
+import com.alibaba.fastjson.JSON;
 import com.ds.zxm.controller.LotteryController;
 import com.ds.zxm.mapper.BetDAO;
-import com.ds.zxm.model.BetDO;
-import com.ds.zxm.model.BetDOCondition;
+import com.ds.zxm.mapper.BetRecordDAO;
+import com.ds.zxm.model.*;
+import com.ds.zxm.util.DsUtil;
+import com.ds.zxm.util.HttpUtil;
+import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -17,13 +21,19 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BetService {
 
     @Autowired
     private BetDAO betDAO;
+    @Autowired
+    private BetRecordDAO betRecordDAO;
     HttpClient  httpClient = new HttpClient();
     org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(BetService.class);
 
@@ -176,6 +186,101 @@ public class BetService {
 
     public int updateBetDO(BetDO bet) {
        return betDAO.updateByPrimaryKeySelective(bet);
+    }
+
+    /**
+     * 暂时只支持一个方案
+     *
+     * @param caipiao
+     * @throws ParseException
+     */
+    public void updateLotteryStatus(String caipiao) throws ParseException {
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("caipiao", caipiao);
+            String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
+
+            //更新彩票状态
+            Map<String, Object> resultMap = new HashMap<String, Object>();
+            resultMap = JSON.parseObject(result, Map.class);
+            if ("0".equals(resultMap.get("ret").toString())) {
+                String curNO = resultMap.get("peroid").toString();
+                String prize = resultMap.get("prize").toString();
+
+                BetDOCondition betDOCondition = new BetDOCondition();
+                //查询所有status为1的记录
+                betDOCondition.createCriteria().andBetTypeEqualTo("3").andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1");
+                List<BetDO> betDOList = queryBetList(betDOCondition);
+
+                //BetDOCondition bdd = new BetDOCondition();
+                for (BetDO item : betDOList) {
+                    // bdd.createCriteria().andIdEqualTo(item.getId());
+                    //匹配当期期是否中奖或者已经是最后一期
+                    if ("3".equals(item.getBetType())) {
+                        //历史记录置为2
+                        if (LotteryUtil.compareCQAwardNO(item.getEndNo(), curNO) < 0
+                                || LotteryUtil.compareCQAwardNO(item.getStartNo(), LotteryUtil.getNextAwardNo(curNO,caipiao)) > 0) {
+                            item.setStatus("2");
+                            updateBetDO(item);
+                        } else {
+                            //方案正在进行中
+                            BetRecordDOCondition betRecordDOCondition = new BetRecordDOCondition();
+                            betRecordDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andBetNoEqualTo(curNO).andStatusEqualTo("1");
+                            List<BetRecordDO> betRecordDOList = betRecordDAO.selectByCondition(betRecordDOCondition);
+                            for (BetRecordDO betRecordDOItem : betRecordDOList) {
+                                {
+                                    if (item.getBetNo().indexOf(prize.substring(prize.length() - 3)) > 0) {
+                                        item.setStatus("3");
+                                        item.setPrizeNo(curNO);
+                                        log.info(item.getSeqNo() + "已中奖");
+                                        updateBetDO(item);
+
+                                        BetRecordDO betRecordDO = new BetRecordDO();
+                                        betRecordDO.setId(betRecordDOItem.getId());
+                                        betRecordDO.setStatus("3");
+                                        betRecordDAO.updateByPrimaryKeySelective(betRecordDO);
+                                    } else {
+                                        //投注记录更新成未中奖
+                                        BetRecordDO betRecordDO = new BetRecordDO();
+                                        betRecordDO.setId(betRecordDOItem.getId());
+                                        betRecordDO.setStatus("2");
+                                        betRecordDAO.updateByPrimaryKeySelective(betRecordDO);
+                                        if (!curNO.equals(item.getEndNo())) {
+                                            //投注下一期
+                                            log.info(item.getSeqNo() + "(" + betRecordDOItem.getBetNo() + ")" + "未中奖");
+                                            String nextNo = LotteryUtil.getNextAwardNo(curNO, caipiao);
+                                            String curScheduleNo = betRecordDOItem.getScheduleNo();
+                                            TradeSchedule tradeSchedule = LotteryController.scheMap.get(curScheduleNo);
+                                            int nextscheNo = tradeSchedule.getLoseNo();
+                                            TradeSchedule nextschedule = LotteryController.scheMap.get("" + nextscheNo);
+                                            BetRecordDO betRecordDO2 = new BetRecordDO();
+                                            betRecordDO2.setStatus("1");
+                                            betRecordDO2.setSeqNo(betRecordDOItem.getSeqNo());
+                                            betRecordDO2.setBetNo(nextNo);
+                                            betRecordDO2.setBetWebsite(betRecordDOItem.getBetWebsite());
+                                            betRecordDO2.setLotteryCode(betRecordDOItem.getLotteryCode());
+                                            betRecordDO2.setCreateTime(new Date());
+                                            betRecordDO2.setScheduleNo("" + nextscheNo);
+                                            betRecordDAO.insert(betRecordDO2);
+
+                                            String originNo = nextNo.substring(0, 8) + "-" + nextNo.substring(8);
+                                            //betLottery(originNo, nextschedule.getMultiple(), item.getBetNo());
+                                        } else {
+                                            //跑完最后一期未中奖，更新方案状态
+                                            log.info(item.getSeqNo() + "未中奖");
+                                            item.setStatus("2");
+                                            updateBetDO(item);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            log.error("updateLotteryStatus error", e);
+        }
     }
 
 }

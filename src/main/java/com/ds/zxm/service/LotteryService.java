@@ -4,14 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.ds.zxm.mapper.LotteryDetailMapper;
 import com.ds.zxm.mapper.LotteryMapper;
-import com.ds.zxm.model.LotteryDO;
-import com.ds.zxm.model.LotteryDetail;
-import com.ds.zxm.model.LotteryDetailCondition;
-import com.ds.zxm.model.LotteryparseInfo;
+import com.ds.zxm.model.*;
 import com.ds.zxm.thread.LotteryQueueStarter;
 import com.ds.zxm.thread.LotteryUpdateConsumer;
 import com.ds.zxm.util.DateUtils;
+import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
+import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -348,4 +348,7 @@ public class LotteryService implements  ApplicationContextAware  {
         this.act = act;
 
     }
+
+
+
 }
