@@ -197,10 +197,11 @@ public class BetService {
      * @throws ParseException
      */
     public void updateLotteryStatus(String caipiao) throws ParseException {
+        String result = "";
         try {
             Map<String, String> map = new HashMap<String, String>();
             map.put("caipiao", caipiao);
-            String result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
+            result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
 
             //更新彩票状态
             Map<String, Object> resultMap = new HashMap<String, Object>();

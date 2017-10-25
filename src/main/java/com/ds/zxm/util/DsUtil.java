@@ -46,7 +46,6 @@ public class DsUtil {
             int loginConfStatusCode = httpClient.executeMethod(postMethod);
             if (loginConfStatusCode == 302) {
                 String cookieHeader = postMethod.getResponseHeader("Set-Cookie").getValue();
-                log.info("query auth response:" + cookieHeader);
                 result = cookieHeader.substring(cookieHeader.indexOf("auth=") + "auth=".length(), cookieHeader.indexOf(";"));
             }
 

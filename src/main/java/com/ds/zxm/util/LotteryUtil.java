@@ -17,6 +17,8 @@ import com.ds.zxm.model.LotteryDetail;
 
 public class LotteryUtil {
 
+	//"C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator
+	public static  final  String noPath = "D:" + File.separator  + "log" + File.separator;
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LotteryUtil.class);
 
 	//定位abc-aed-c转成aac,aec等
@@ -211,8 +213,8 @@ public class LotteryUtil {
 	public  static  void writeTmpTxt2PrizeFile(String caipiao, String id){
 		try {
 			//冲掉上次方案，防止赚投误取
-			FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator  + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
-			//FileUtils.write(new File("D:" + File.separator  + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
+			//FileUtils.write(new File(  noPath + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
+			FileUtils.write(new File(noPath + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
 			/*if("chongqing".equals(caipiao) && "panzheng".equals(id)) {
 				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
 				//FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);

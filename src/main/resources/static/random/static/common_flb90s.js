@@ -409,12 +409,24 @@ var TimerData = function() {
                     //添加处于boll下轨的判断
                     //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
                     var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
-                    return isBollUpCommon && isKlineMatch;
+                    //var isAve = this.isAverage(j, 2);
+                    var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
+         var isjxJc = this.isAverage(j,1);
+                    return isBollUpCommon && isKlineMatch && kUp && isjxJc;
                 } catch (err) {
 					return false;
 				}
 			},
-			//判断盘整src的偏离平均值情况
+            //均线last期金叉
+            isAverage: function(j, last) {
+
+                for (var i = j.line60.length -last;i<j.line60.length - 1;i++) {
+                    if (j.line15[i] < j.line60[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            },
 			isCommonRate: function(src, rate, last) {
 				var total = 0;
 				for (var i = src.length -last;i<src.length;i++) {
@@ -466,7 +478,6 @@ var TimerData = function() {
                 for (var i = j.values.length - last/2;i<j.values.length;i++) {
                     totalPost +=j.values[i][0];
                 }
-                //console.log(totalPre + "---" + totalPost)
                 return totalPre > totalPost;
             }
 		}
@@ -2982,8 +2993,7 @@ var RandomDatas = function() {
                 var calCnt = 1;
 
                 F.on('click', function() {
-                    console.time("randon initialize")
-                    dataMatched = false;
+					dataMatched = false;
 					RandomDatas.getRandomNums();
 					C.show();
 					D.hide();
@@ -2993,10 +3003,10 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 520){
+                        while(!dataMatched&&calCnt <= 1200){
                             RandomDatas.getRandomNums();
-                            // var str = ".randombox #rand1";
-                            // console.log($(str).html());
+                            /*var str = ".randombox #rand1";
+                            console.log($(str).html());*/
                             console.log(calCnt);
                             RandomDatas.getlocaldata();
                             calCnt++;
@@ -3009,12 +3019,11 @@ var RandomDatas = function() {
                              before = parseInt(z.val());*/
 
                         }
-                        console.timeEnd("randon initialize")
                         if(!dataMatched) {
                             window.location.reload(true);
                         }
                         calCnt = 1;
-                        NotifyData.checkis2Recall(caipiao);
+                       NotifyData.checkis2Recall(caipiao);
 
                     }, 100);
 
@@ -5414,7 +5423,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp+ "&id=panzheng" ,
+                data: "caipiao=" + cp + "&id=panzheng" ,
                 dataType: "json",
                 success: function(a) {
                 	if(a){

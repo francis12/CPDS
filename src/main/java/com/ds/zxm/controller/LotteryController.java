@@ -52,9 +52,10 @@ public class LotteryController {
                 Map<String, Object> resultMap = new HashMap<String, Object>();
                 resultMap = JSON.parseObject(result2, Map.class);
                 if ("0".equals(resultMap.get("ret").toString())) {
-                    String curNO = resultMap.get("peroid").toString();
-                    if (LotteryUtil.compare19860AwardNO(curNO, next1) >= 0) {
+                    String nextid = resultMap.get("nextid").toString();
+                    if (LotteryUtil.compare19860AwardNO(nextid, next1) > 0) {
                         //如果开奖号码大于开始号码重新出号
+                        log.info("已过开奖号" + caipiao + "/" + id);
                         return result;
                     }
                 }
@@ -75,44 +76,25 @@ public class LotteryController {
             String next6 = LotteryUtil.getNextAwardNo(next5, caipiao);
 
             String startPostfix = next1.substring(next1.length() - 3);
-            String endPostfix = next6.substring(next6.length() - 3);
+            String endNo = "";
+            String endPostfix = "";
+            if("chongqing".equals(caipiao)) {
+                endPostfix  = next6.substring(next6.length() - 3);
+                endNo = next6;
+            } else if("flb90s".equals(caipiao)) {
+                //flb做三期计划平刷
+                endPostfix  = next3.substring(next3.length() - 3);
+                endNo = next3;
+            }
 
             log.info(id + "/" + caipiao + "--" + "第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
-            FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
-            //FileUtils.write(new File("D:" + File.separator + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+            //FileUtils.write(new File(LotteryUtil.noPath + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
+            FileUtils.write(new File(LotteryUtil.noPath +  caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
 
-//            if ("chongqing".equals(caipiao) && "panzheng".equals(id)) {
-//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
-//                //FileUtils.write(new File("D:" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-//
-//            } else if ("chongqing".equals(caipiao) && "doubleJC".equals(id)) {
-//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "cqjc.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
-//                //FileUtils.write(new File("D:" + File.separator + "cqjc.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-//
-//            } else if ("n198_60s".equals(caipiao)) {
-//
-//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
-//                //FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
-//
-//            } else if ("rd60s".equals(caipiao)) {
-//
-//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
-//                //FileUtils.write(new File("D:" + File.separator  + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
-//
-//            } else if ("flb90s".equals(caipiao)) {
-//
-//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "flb90s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
-//                //FileUtils.write(new File("D:" + File.separator  + "flb90s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
-//
-//            }
-            //
-            //由于文件无法实时更新，需要自己写接口连接网站投注
-
-            //FileUtils.writeStringToFile(new File("c://tz.txt"),startPostfix + "-" + endPostfix+"期" + data  + " ---" + "\r",true);
             BetDO bet = new BetDO();
-            bet.setSeqNo(next1 + UUID.randomUUID().toString() + next6);
+            bet.setSeqNo(next1 + UUID.randomUUID().toString().substring(0,8) + endNo);
             bet.setStartNo(next1);
-            bet.setEndNo(next6);
+            bet.setEndNo(endNo);
             bet.setLotteryCode(caipiao);
             bet.setStatus("1");
             bet.setBetType("3");
@@ -148,7 +130,7 @@ public class LotteryController {
         //判断前台需要重新出号的条件.1.已中。2过了追号期
         boolean result = true;
         try {
-            //Thread.sleep(1 * 1000);
+            Thread.sleep(1 * 1000);
             //updateLotteryStatus(caipiao);
 
             BetDOCondition betDOCondition = new BetDOCondition();
