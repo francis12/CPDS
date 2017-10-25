@@ -406,27 +406,31 @@ var RandomBollingTrategy = function() {
             var lastItems = 20;
             try {
                 var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
-                //添加处于boll下轨的判断
+                //
                 //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
                 var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
                 //var isAve = this.isAverage(j, 2);
-                var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
-                var isjxJc = this.isAverage(j,1);
-                return isBollUpCommon && isKlineMatch && kUp && isjxJc;
+                /*var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
+
+                if ( isBollUpCommon && isKlineMatch && kUp ){
+                    console.log(this.isKlineInbottom(j, 3));
+                    console.log(this.isKlineInbottom(j, 6));
+                    console.log(this.isKlineInbottom(j, 10));
+                    console.log(this.isKlineInbottom(j, 16));
+                    console.log(this.isKlineInbottom(j, 30));
+                    return true;
+                } else {
+                    return false;
+                }*/
+                //this.isAverage(j,2 , 2)&&
+                return  this.isMachJC(j, 3, 2) && this.isBollUp(j, 3);
+                //return this.isAverage(j,3) && this.isMacdBarRedPlus(j, 2, 4);
+
             } catch (err) {
                 return false;
             }
         },
-        //均线last期金叉
-        isAverage: function(j, last) {
-
-            for (var i = j.line60.length -last;i<j.line60.length - 1;i++) {
-                if (j.line15[i] < j.line60[i]) {
-                    return false;
-                }
-            }
-            return true;
-        },
+        //判断盘整src的偏离平均值情况
         isCommonRate: function(src, rate, last) {
             var total = 0;
             for (var i = src.length -last;i<src.length;i++) {
@@ -479,12 +483,139 @@ var RandomBollingTrategy = function() {
                 totalPost +=j.values[i][0];
             }
             return totalPre > totalPost;
+        },
+        //判断在近期低点
+        isBollUp: function(j, last) {
+            for (var i = j.bolldown.length -last;i<j.macdbar.length - 1;i++) {
+                if (j.bolldown[i + 1] < j.bolldown[i]) {
+                    return false;
+                }
+            }
+            return true;
+        },
+
+
+
+        //均线last期金叉
+        isAverage: function(j, last, last2) {
+
+            for (var i = j.line60.length -last;i<j.line60.length ;i++) {
+                if (j.line15[i] < j.line60[i]) {
+                    return false;
+                }
+            }
+
+            for (var i = j.line60.length -last-last2;i<j.line60.length  -last;i++) {
+                if (j.line15[i] > j.line60[i]) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        //均线last期金叉
+        isMachJC: function(j, last, last2) {
+
+            if(j.macdbar[j.macdbar.length - 1] < j.macdbar[j.macdbar.length - 2]) {
+                return false;
+            }
+            if(j.dif[j.dif.length-1] < 0 || j.dea[j.dea.length -1] < 0) {
+                return false;
+            }
+            for (var i = j.macdbar.length -last;i<j.macdbar.length - 1;i++) {
+                if (j.dif[i + 1] < j.dif[i] || j.dea[i + 1] < j.dea[i]) {
+                    return false;
+                }
+            }
+
+            for (var i = j.dif.length -last;i<j.dif.length ;i++) {
+                if (j.dif[i] < j.dea[i]) {
+                    return false;
+                }
+            }
+
+            for (var i = j.dif.length -last-last2;i<j.dif.length  -last;i++) {
+                if (j.dif[i] > j.dea[i]) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        //Macdbar 最近last期为红，之前为绿,last2:last2期为直线增长方向
+        isMacdBarRedPlus: function(j, last, last2) {
+
+            var maxValue = Math.max(j.values[j.values.length -1 ][0], j.values[j.values.length -1 ][1]);
+            //k线不能太高
+            if ((j.bollup[ j.bollup.length -1]  + j.bollmiddle[ j.bollmiddle.length -1] )/2 <
+                j.values[j.values.length -1 ][1]  ) {
+                return false;
+            }
+
+            //K线不能触碰上轨
+            /*if (j.values[j.values.length -1 ][0] >= (j.bollup[ j.bollup.length -1] )) {
+                return false;
+            }
+            if (j.values[j.values.length -1 ][1] >= (j.bollup[ j.bollup.length -1] )) {
+                return false;
+            }*/
+            /*var maxValue = Math.max(j.values[j.values.length -1 ][0], j.values[j.values.length -1 ][1]);
+            if ((j.bollup[ j.bollup.length -1] ) - j.values[j.values.length -1 ][1]  < 1) {
+                return false;
+            }*/
+            /*//刚好触碰中轨
+            if(!(j.bollmiddle[ j.bollup.length -1] > j.values[j.values.length -1 ][0] &&  j.bollmiddle[ j.bollup.length -1] < j.values[j.values.length -1 ][1])
+                && !(j.bollmiddle[ j.bollup.length -1] < j.values[j.values.length -1 ][0] &&  j.bollmiddle[ j.bollup.length -1] > j.values[j.values.length -1 ][1])
+                ) {
+                return false;
+            }*/
+            // if(maxValue > (j.bollup[ j.bollup.length -1] ) || ((j.bollup[ j.bollup.length -1] ) - maxValue)/maxValue < 0.16 ) {
+            // return false;
+            // }
+            // //last 前一期在水下
+            // if(j.dif[j.dif.length - last - 1] > 0) {
+            //     return false;
+            // }
+            //
+            // if(j.dif[j.dif.length - last ] < 0) {
+            //     return false;
+            //}
+
+            //最近两次macdbar大于0，再之前两次小于0
+            /*if (j.macdbar[j.macdbar.length -1] < 0 || j.macdbar[j.macdbar.length -2] < 0
+                    || (j.macdbar[j.macdbar.length -3] > 0 && j.macdbar[j.macdbar.length -4] > 0 ) ) {
+                    return false;
+                }*/
+
+            //第前last期大于0
+            /*if (j.macdbar[j.macdbar.length -last] < 0) {
+                return false;
+            }*/
+            //近last期macd上升曲线
+            for (var i = j.macdbar.length -last;i<j.macdbar.length - 1;i++) {
+                if (j.macdbar[i + 1] < j.macdbar[i]) {
+                    return false;
+                }
+            }
+
+            //近last2期上升曲线
+            for (var i = j.macdbar.length -last2;i<j.macdbar.length - 1;i++) {
+                if (j.dif[i + 1] < j.dif[i] || j.dea[i + 1] < j.dea[i]) {
+                    return false;
+                }
+            }
+
+            // for (var i = j.macdbar.length -last;i<j.macdbar.length;i++) {
+            //     if(j.macdbar[i] <0 || j.dif[i] <j.dea[i] || j.dif[i] < 0 || j.dea[i] < 0) {
+            //         return false;
+            //     }
+            // }
+
+
+
+            return true;
         }
     }
 
 }();
-
-
 
 var GodkeyDatas = function() {
 		var z = $("#startPrize");
@@ -3003,7 +3134,7 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 600){
+                        while(!dataMatched&&calCnt <= 1200){
                             RandomDatas.getRandomNums();
                             var str = ".randombox #rand1";
                             console.log($(str).html());
@@ -3188,7 +3319,8 @@ var RandomDatas = function() {
 						var f = this.prizesData(way, prizes, e, 1);
 						var g = "main" + i;
 						var itemResult = KlineMaps.createmap(d, f, g);
-						if (itemResult) {
+						var randomLength = $("#randombox li").length;
+						if (itemResult && randomLength > 1) {
 						    console.log(" 随机王第【" + i + "】组图");
 							//alert(" 随机王第【" + i + "】组图");
 								var str = ".randombox #rand" + i;
@@ -5408,7 +5540,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
-                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=panzheng" ,
+                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=doubleJC2" ,
                 dataType: "json",
                 success: function(a) {
                     console.log(a);
@@ -5423,7 +5555,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp + "&id=panzheng" ,
+                data: "caipiao=" + cp + "&id=doubleJC2" ,
                 dataType: "json",
                 success: function(a) {
                 	if(a){

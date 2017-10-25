@@ -1,4 +1,4 @@
-var caipiao = 'rd60s';
+var caipiao = 'flb90s';
 var caipiaoMenu = $(".caipiao");
 var dropCaipiao = $("#dropCaipiao");
 var caipiaoText = $("#caipiaoText");
@@ -387,105 +387,94 @@ var TimerData = function() {
 	
 	//新增策略
 	//1.布林盘整，在下轨买入
-var RandomBollingTrategy = function() {
-    return {
-        start: function() {
+	var RandomBollingTrategy = function() {
+		return { 
+			start: function() {
+					
+				randonButtonIntervalClick = window.setInterval(function() {
+					$('#randomNum').click();
+				}, 5000);
+				
+			},
+			
+			isMatch: function(j) {
+				var bollUp = j.bollup;
+				var bollMiddle = j.bollmiddle;
+				var bollDown = j.bolldown;
+				//defatul : 0.056,20
+				var rate = 0.056;
+				var lastItems = 20;
+				try {
+                    var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
+                    //添加处于boll下轨的判断
+                    //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
+                    var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
+                    return isBollUpCommon && isKlineMatch;
+                } catch (err) {
+					return false;
+				}
+			},
+			//判断盘整src的偏离平均值情况
+			isCommonRate: function(src, rate, last) {
+				var total = 0;
+				for (var i = src.length -last;i<src.length;i++) {
+					total += src[i-1];
+					if (i != src.length -last) {
+						var avg =  total/(i - (src.length -last) + 1);
 
-            randonButtonIntervalClick = window.setInterval(function() {
-                $('#randomNum').click();
-            }, 5000);
-
-        },
-
-        isMatch: function(j) {
-            var bollUp = j.bollup;
-            var bollMiddle = j.bollmiddle;
-            var bollDown = j.bolldown;
-            //defatul : 0.056,20
-            var rate = 0.056;
-            var lastItems = 20;
-            try {
-                var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
-                //添加处于boll下轨的判断
-                //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
-                var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
-                //var isAve = this.isAverage(j, 2);
-                var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
-                var isjxJc = this.isAverage(j,1);
-                return isBollUpCommon && isKlineMatch && kUp && isjxJc;
-            } catch (err) {
-                return false;
-            }
-        },
-        //均线last期金叉
-        isAverage: function(j, last) {
-
-            for (var i = j.line60.length -last;i<j.line60.length - 1;i++) {
-                if (j.line15[i] < j.line60[i]) {
-                    return false;
+						if ( Math.abs( (Math.abs(src[i])-Math.abs(avg) ))
+								> Math.abs(avg) * rate ) {
+							return false;
+						}
+					}
+				}
+				return true;
+			},
+			//判断k线位于中轨下且最后一期未开出
+			isKLineUnderBollMiddle: function(j) {
+				var kline =  j.values[j.values.length -1 ] ;
+				var bollMiddle = j.bollmiddle[ j.bollmiddle.length -1];
+				if (kline[0] > kline[1] &&kline[0]<bollMiddle) {
+					return  true;
+				}
+				return false;
+			},
+			//判断k线当前处于位置
+			isKlineLessThanLineCommon: function(j) {
+				var kline =  j.values[j.values.length -1 ] ;
+				
+				return kline[0] < j.line30[j.line30.length -1];
+			},
+			//判断在近期低点
+			isKlineInbottom2: function(j, last) {
+				var kline =  j.values[j.values.length -1 ] [0];					
+				var total = 0;
+				for (var i = j.values.length -last;i<j.values.length;i++) {
+					total +=j.values[i][0];
+				}
+				return total/last > kline ;
+			}
+            ,
+            //判断在近期低点
+            isKlineInbottom: function(j, last) {
+                var kline =  j.values[j.values.length -1 ] [0];
+                var totalPre = 0;
+                for (var i = j.values.length -last;i<j.values.length - last/2;i++) {
+                    totalPre +=j.values[i][0];
                 }
-            }
-            return true;
-        },
-        isCommonRate: function(src, rate, last) {
-            var total = 0;
-            for (var i = src.length -last;i<src.length;i++) {
-                total += src[i-1];
-                if (i != src.length -last) {
-                    var avg =  total/(i - (src.length -last) + 1);
-
-                    if ( Math.abs( (Math.abs(src[i])-Math.abs(avg) ))
-                        > Math.abs(avg) * rate ) {
-                        return false;
-                    }
+                var totalPost = 0;
+                for (var i = j.values.length - last/2;i<j.values.length;i++) {
+                    totalPost +=j.values[i][0];
                 }
+                //console.log(totalPre + "---" + totalPost)
+                return totalPre > totalPost;
             }
-            return true;
-        },
-        //判断k线位于中轨下且最后一期未开出
-        isKLineUnderBollMiddle: function(j) {
-            var kline =  j.values[j.values.length -1 ] ;
-            var bollMiddle = j.bollmiddle[ j.bollmiddle.length -1];
-            if (kline[0] > kline[1] &&kline[0]<bollMiddle) {
-                return  true;
-            }
-            return false;
-        },
-        //判断k线当前处于位置
-        isKlineLessThanLineCommon: function(j) {
-            var kline =  j.values[j.values.length -1 ] ;
+		}
 
-            return kline[0] < j.line30[j.line30.length -1];
-        },
-        //判断在近期低点
-        isKlineInbottom2: function(j, last) {
-            var kline =  j.values[j.values.length -1 ] [0];
-            var total = 0;
-            for (var i = j.values.length -last;i<j.values.length;i++) {
-                total +=j.values[i][0];
-            }
-            return total/last > kline ;
-        }
-        ,
-        //判断在近期低点
-        isKlineInbottom: function(j, last) {
-            var kline =  j.values[j.values.length -1 ] [0];
-            var totalPre = 0;
-            for (var i = j.values.length -last;i<j.values.length - last/2;i++) {
-                totalPre +=j.values[i][0];
-            }
-            var totalPost = 0;
-            for (var i = j.values.length - last/2;i<j.values.length;i++) {
-                totalPost +=j.values[i][0];
-            }
-            return totalPre > totalPost;
-        }
-    }
-
-}();
-
-
-
+	}();	
+	
+	
+	
 var GodkeyDatas = function() {
 		var z = $("#startPrize");
 		var A = $("#before");
@@ -2993,7 +2982,8 @@ var RandomDatas = function() {
                 var calCnt = 1;
 
                 F.on('click', function() {
-					dataMatched = false;
+                    console.time("randon initialize")
+                    dataMatched = false;
 					RandomDatas.getRandomNums();
 					C.show();
 					D.hide();
@@ -3003,10 +2993,10 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 600){
+                        while(!dataMatched&&calCnt <= 520){
                             RandomDatas.getRandomNums();
-                            var str = ".randombox #rand1";
-                            console.log($(str).html());
+                            // var str = ".randombox #rand1";
+                            // console.log($(str).html());
                             console.log(calCnt);
                             RandomDatas.getlocaldata();
                             calCnt++;
@@ -3019,6 +3009,7 @@ var RandomDatas = function() {
                              before = parseInt(z.val());*/
 
                         }
+                        console.timeEnd("randon initialize")
                         if(!dataMatched) {
                             window.location.reload(true);
                         }
@@ -5423,7 +5414,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp + "&id=panzheng" ,
+                data: "caipiao=" + cp+ "&id=panzheng" ,
                 dataType: "json",
                 success: function(a) {
                 	if(a){

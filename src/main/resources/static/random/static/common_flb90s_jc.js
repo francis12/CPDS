@@ -1,4 +1,4 @@
-var caipiao = 'chongqing';
+var caipiao = 'flb90s';
 var caipiaoMenu = $(".caipiao");
 var dropCaipiao = $("#dropCaipiao");
 var caipiaoText = $("#caipiaoText");
@@ -379,7 +379,7 @@ var TimerData = function() {
 				$.cookie('caipiao', a, {
 					expires: 7,
 					path: '/',
-					domain: 'localhost:8081'
+					domain: 'localhost:8080'
 				})
 			},
 		}
@@ -398,21 +398,23 @@ var TimerData = function() {
 			},
 			
 			isMatch: function(j) {
-				try {
 				var bollUp = j.bollup;
 				var bollMiddle = j.bollmiddle;
 				var bollDown = j.bolldown;
 				//defatul : 0.056,20
 				var rate = 0.056;
 				var lastItems = 20;
-				var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle,rate, lastItems)&&this.isCommonRate(bollDown, rate, lastItems);
-				//添加处于boll下轨的判断
-				//当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
-				var isKlineMatch = this.isKlineInbottom(j, 100)  &&  this.isKLineUnderBollMiddle(j) ;
-				return isBollUpCommon &&isKlineMatch;
+				try {
+                    //var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
+                    //添加处于boll下轨的判断
+                    //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
+                   // var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
+                    //return isBollUpCommon && isKlineMatch;
+                    return this.isAverage(j,3) && this.isMacdBarRedPlus(j, 2, 4);
+
                 } catch (err) {
-                    return false;
-                }
+					return false;
+				}
 			},
 			//判断盘整src的偏离平均值情况
 			isCommonRate: function(src, rate, last) {
@@ -452,9 +454,9 @@ var TimerData = function() {
 				for (var i = j.values.length -last;i<j.values.length;i++) {
 					total +=j.values[i][0];
 				}
-				var random = j.values[5][0] > kline && j.values[10][0] > kline && j.values[20][0] > kline  && j.values[50][0] > kline  && j.values[60][0] > kline
-                return total/last > kline && random;
-			},
+				return total/last > kline ;
+			}
+            ,
             //判断在近期低点
             isKlineInbottom: function(j, last) {
                 var kline =  j.values[j.values.length -1 ] [0];
@@ -468,6 +470,47 @@ var TimerData = function() {
                 }
                 console.log(totalPre + "---" + totalPost)
                 return totalPre > totalPost;
+            },
+            //均线last期金叉
+            isAverage: function(j, last) {
+
+                for (var i = j.line30.length -last;i<j.line30.length - 1;i++) {
+                    if (j.line15[i] < j.line30[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            //Macdbar 最近last期为红，之前为绿,last2:last2期为直线增长方向
+            isMacdBarRedPlus: function(j, last, last2) {
+
+                var maxValue = Math.max(j.values[j.values.length -1 ][0], j.values[j.values.length -1 ][1]);
+                if ((j.bollup[ j.bollup.length -1]  + j.bollmiddle[ j.bollmiddle.length -1] )/2 <
+                    j.values[j.values.length -1 ][1]  ) {
+                    return false;
+                }
+
+
+                //近last期macd上升曲线
+                for (var i = j.macdbar.length -last;i<j.macdbar.length - 1;i++) {
+                    if (j.macdbar[i + 1] < j.macdbar[i]) {
+                        return false;
+                    }
+                }
+
+                //近last2期上升曲线
+                for (var i = j.macdbar.length -last2;i<j.macdbar.length - 1;i++) {
+                    if (j.dif[i + 1] < j.dif[i] || j.dea[i + 1] < j.dea[i]) {
+                        return false;
+                    }
+                }
+
+
+                console.log(j.values[j.values.length -1 ][0] + "," + j.values[j.values.length -1 ][1]);
+                console.log(j.bollup[ j.bollup.length -1] + "," +  j.bollmiddle[ j.bollmiddle.length -1] );
+
+
+                return true;
             }
 		}
 
@@ -622,7 +665,7 @@ var GodkeyDatas = function() {
 				return a
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = G.val();
 					var c = parseInt(K.val());
@@ -633,7 +676,7 @@ var GodkeyDatas = function() {
 					KlineMaps.createmap('', e, f);
 					var g = "大数计划 " + d.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + d.join(' ') + "</textarea>";
 					$("#betting").html(g)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -664,11 +707,11 @@ var GodkeyDatas = function() {
 				})
 			},
 			godlist: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = parseInt(K.val());
 					prizeNum = this.searchGodKeys(prizes, way, b)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -884,13 +927,13 @@ var DansDatas = function() {
 				return
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = $('.tab-content .red').html().replace(/(^\s*)|(\s*$)/g, "") + " - " + before + "期胆出次统计";
 					var c = this.countdata(way, a.prizes);
 					this.createmap(b, c);
 					this.klinemap(a)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -900,7 +943,7 @@ var DansDatas = function() {
 				}
 			},
 			klinemap: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					P = P.length > 0 ? P : this.smartplan(way);
 					switch (R) {
@@ -918,7 +961,7 @@ var DansDatas = function() {
 						$("#tab_2").hide();
 						break
 					}
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -1429,13 +1472,13 @@ var DragonDatas = function() {
 				return
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = $('.tab-content .red').html().replace(/(^\s*)|(\s*$)/g, "") + " - " + before + "期胆出次统计";
 					var c = this.countdata(way, a.prizes);
 					this.createmap(b, c);
 					this.klinemap(a)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -1445,7 +1488,7 @@ var DragonDatas = function() {
 				}
 			},
 			klinemap: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					P = P.length > 0 ? P : this.smartplan(way);
 					switch (R) {
@@ -1463,7 +1506,7 @@ var DragonDatas = function() {
 						$("#tab_2").hide();
 						break
 					}
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -2204,7 +2247,7 @@ var KlineData = function() {
 				return
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = $('.tab-content .red').html().replace(/(^\s*)|(\s*$)/g, "") + " - " + stat + "选号玩法K线趋势图";
 					$('#title').html(b);
@@ -2216,7 +2259,7 @@ var KlineData = function() {
 					this.getYilouStatistic(e, 50);
 					var f = "大数计划 " + c.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + c.join(' ') + "</textarea>";
 					$("#betting").html(f)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -2226,14 +2269,14 @@ var KlineData = function() {
 				}
 			},
 			mapshow: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = this.getInput(act);
 					var c = this.prizesData(way, prizes, b, 1);
 					KlineMaps.createmap('', c, 'klinemap');
 					var d = "大数计划 " + b.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + b.join(' ') + "</textarea>";
 					$("#betting").html(d)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -2704,7 +2747,7 @@ var DudanDatas = function() {
 				})
 			},
 			bigmap: function(a, b) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var c = new Array();
 					if (ding) {
@@ -2724,7 +2767,7 @@ var DudanDatas = function() {
 					var g = $("#nextId").html();
 					var h = "大数计划 " + c.length + "注</br>第" + g + "期的投注号为：</br><textarea class='bettings span12'>" + c.join(' ') + "</textarea>";
 					$("#betting").html(h)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -2734,7 +2777,7 @@ var DudanDatas = function() {
 				}
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					this.getbox();
 					for (var i = 0; i < 10; i++) {
@@ -2757,7 +2800,7 @@ var DudanDatas = function() {
 						KlineMaps.createmap(b, d, e);
 						var f = d[2]
 					}
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -2957,7 +3000,6 @@ var RandomDatas = function() {
 					E.html('');
 					TimerData.getdata(caipiao);
 					$('#dropdownCaipiao').hide();
-
                     //F.click();
 				});
 				A.on('click', function() {
@@ -2983,8 +3025,6 @@ var RandomDatas = function() {
                 var calCnt = 1;
 
                 F.on('click', function() {
-                console.time("randon initialize")
-
 					dataMatched = false;
 					RandomDatas.getRandomNums();
 					C.show();
@@ -2995,7 +3035,7 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 1000){
+                        while(!dataMatched&&calCnt <= 1200){
                             RandomDatas.getRandomNums();
                             var str = ".randombox #rand1";
                             console.log($(str).html());
@@ -3015,7 +3055,7 @@ var RandomDatas = function() {
                             window.location.reload(true);
                         }
                         calCnt = 1;
-                        //NotifyData.checkis2Recall(caipiao);
+                        NotifyData.checkis2Recall(caipiao);
 
                     }, 100);
 
@@ -3038,8 +3078,7 @@ var RandomDatas = function() {
 					    //匹配成功，通知后台
                         calCnt = 1;
                     }*/
-			console.timeEnd("randon initialize")
-
+				   
 				});
 				G.on('click', function() {
 					RandomDatas.getRandomLock();
@@ -3102,7 +3141,7 @@ var RandomDatas = function() {
 				})
 			},
 			reviewmap: function(a, b) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var c = storeNums[b].length;
 					this.getbox(c);
@@ -3113,7 +3152,7 @@ var RandomDatas = function() {
 						var g = "main" + i;
 						KlineMaps.createmap(d, f, g)
 					}
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -3123,7 +3162,7 @@ var RandomDatas = function() {
 				}
 			},
 			bigmap: function(a, b) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var c = new Array();
 					if (ding) {
@@ -3143,7 +3182,7 @@ var RandomDatas = function() {
 					var g = $("#nextId").html();
 					var h = "大数计划 " + c.length + "注</br>第" + g + "期的投注号为：</br><textarea class='bettings span12'>" + c.join(' ') + "</textarea>";
 					$("#betting").html(h)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -3154,7 +3193,7 @@ var RandomDatas = function() {
 			},
 			// {"ret":0,"caipiao":"chongqing","prizes":[{"peroid":"20170919086","prize":"55530"},{"peroid":"20170919087","prize":"68006"},{"peroid":"20170919088","prize":"53607"},{"peroid":"20170919089","prize":"22044"},{"peroid":"20170919090","prize":"10328"},{"peroid":"20170919091","prize":"40112"},{"peroid":"20170919092","prize":"77897"},{"peroid":"20170919093","prize":"97088"},{"peroid":"20170919094","prize":"93836"},{"peroid":"20170919095","prize":"99832"},{"peroid":"20170919096","prize":"59481"},{"peroid":"20170919097","prize":"79115"},{"peroid":"20170919098","prize":"73861"},{"peroid":"20170919099","prize":"41643"},{"peroid":"20170919100","prize":"71092"},{"peroid":"20170919101","prize":"13194"},{"peroid":"20170919102","prize":"41899"},{"peroid":"20170919103","prize":"15866"},{"peroid":"20170919104","prize":"80284"},{"peroid":"20170919105","prize":"40796"},{"peroid":"20170919106","prize":"48781"},{"peroid":"20170919107","prize":"92688"},{"peroid":"20170919108","prize":"99864"},{"peroid":"20170919109","prize":"19749"},{"peroid":"20170919110","prize":"94753"},{"peroid":"20170919111","prize":"06872"},{"peroid":"20170919112","prize":"22628"},{"peroid":"20170919113","prize":"34621"},{"peroid":"20170919114","prize":"05788"},{"peroid":"20170919115","prize":"09622"},{"peroid":"20170919116","prize":"11315"},{"peroid":"20170919117","prize":"13328"},{"peroid":"20170919118","prize":"27310"},{"peroid":"20170919119","prize":"22482"},{"peroid":"20170919120","prize":"67492"},{"peroid":"20170920001","prize":"57157"},{"peroid":"20170920002","prize":"05740"},{"peroid":"20170920003","prize":"90868"},{"peroid":"20170920004","prize":"50779"},{"peroid":"20170920005","prize":"58414"},{"peroid":"20170920006","prize":"29747"},{"peroid":"20170920007","prize":"31430"},{"peroid":"20170920008","prize":"61108"},{"peroid":"20170920009","prize":"95126"},{"peroid":"20170920010","prize":"07120"},{"peroid":"20170920011","prize":"45602"},{"peroid":"20170920012","prize":"46938"},{"peroid":"20170920013","prize":"39628"},{"peroid":"20170920014","prize":"60600"},{"peroid":"20170920015","prize":"38760"},{"peroid":"20170920016","prize":"06023"},{"peroid":"20170920017","prize":"54468"},{"peroid":"20170920018","prize":"26060"},{"peroid":"20170920019","prize":"95306"},{"peroid":"20170920020","prize":"55824"},{"peroid":"20170920021","prize":"25732"},{"peroid":"20170920022","prize":"22214"},{"peroid":"20170920023","prize":"54214"},{"peroid":"20170920024","prize":"47975"},{"peroid":"20170920025","prize":"23560"},{"peroid":"20170920026","prize":"68813"},{"peroid":"20170920027","prize":"86668"},{"peroid":"20170920028","prize":"47572"},{"peroid":"20170920029","prize":"65977"},{"peroid":"20170920030","prize":"55728"},{"peroid":"20170920031","prize":"53241"},{"peroid":"20170920032","prize":"03970"},{"peroid":"20170920033","prize":"26787"},{"peroid":"20170920034","prize":"08925"},{"peroid":"20170920035","prize":"71958"},{"peroid":"20170920036","prize":"38770"},{"peroid":"20170920037","prize":"09743"},{"peroid":"20170920038","prize":"93950"},{"peroid":"20170920039","prize":"38209"},{"peroid":"20170920040","prize":"18844"},{"peroid":"20170920041","prize":"25632"},{"peroid":"20170920042","prize":"49025"},{"peroid":"20170920043","prize":"65776"},{"peroid":"20170920044","prize":"81921"},{"peroid":"20170920045","prize":"46986"},{"peroid":"20170920046","prize":"44899"},{"peroid":"20170920047","prize":"68562"},{"peroid":"20170920048","prize":"83267"},{"peroid":"20170920049","prize":"16924"},{"peroid":"20170920050","prize":"03078"},{"peroid":"20170920051","prize":"18056"},{"peroid":"20170920052","prize":"14750"},{"peroid":"20170920053","prize":"36354"},{"peroid":"20170920054","prize":"54773"},{"peroid":"20170920055","prize":"41740"},{"peroid":"20170920056","prize":"00028"},{"peroid":"20170920057","prize":"43748"},{"peroid":"20170920058","prize":"09575"},{"peroid":"20170920059","prize":"43632"},{"peroid":"20170920060","prize":"78254"},{"peroid":"20170920061","prize":"88878"},{"peroid":"20170920062","prize":"83593"},{"peroid":"20170920063","prize":"73491"},{"peroid":"20170920064","prize":"71155"},{"peroid":"20170920065","prize":"62571"}],"recentid":20170920065}
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = H.children('li').length;
 					this.getbox(b);
@@ -3181,12 +3220,13 @@ var RandomDatas = function() {
 						var f = this.prizesData(way, prizes, e, 1);
 						var g = "main" + i;
 						var itemResult = KlineMaps.createmap(d, f, g);
-						if (itemResult) {
+						var randomLength = $("#randombox li").length;
+						if (itemResult && randomLength > 1) {
 						    console.log(" 随机王第【" + i + "】组图");
 							//alert(" 随机王第【" + i + "】组图");
 								var str = ".randombox #rand" + i;
 								console.log($(str).html());
-                            //NotifyData.betCur(a.caipiao, a.recentid, $(str).html());
+                            NotifyData.betCur(a.caipiao, a.recentid, $(str).html());
 						} 
 						result = result || itemResult;
 					}
@@ -3199,7 +3239,7 @@ var RandomDatas = function() {
 						storeNums.pop()
 					}
 					storeNums.push(c)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -3687,7 +3727,7 @@ var GodnumDatas = function() {
 				return ding ? d : this.getPrizeNum(d)
 			},
 			reviewmap: function(a, b) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var c = storeNums[b];
 					curPrizeNum = c;
@@ -3696,7 +3736,7 @@ var GodnumDatas = function() {
 					KlineMaps.createmap('', d, e);
 					var f = "大数计划 " + c.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + c.join(' ') + "</textarea>";
 					$("#betting").html(f)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -3706,7 +3746,7 @@ var GodnumDatas = function() {
 				}
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = [];
 					if (lock) {
@@ -3727,7 +3767,7 @@ var GodnumDatas = function() {
 					KlineMaps.createmap('', e, f);
 					var g = "大数计划 " + b.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + b.join(' ') + "</textarea>";
 					$("#betting").html(g)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -4185,7 +4225,7 @@ var RotateDatas = function() {
 				})
 			},
 			bigmap: function(a, b) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var c = new Array();
 					if (ding) {
@@ -4205,7 +4245,7 @@ var RotateDatas = function() {
 					var g = $("#nextId").html();
 					var h = "大数计划 " + c.length + "注</br>第" + g + "期的投注号为：</br><textarea class='bettings span12'>" + c.join(' ') + "</textarea>";
 					$("#betting").html(h)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -4215,7 +4255,7 @@ var RotateDatas = function() {
 				}
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = parseInt($('.whirls .red').attr('init'));
 					this.getbox(b);
@@ -4231,7 +4271,7 @@ var RotateDatas = function() {
 						KlineMaps.createmap(c, e, f);
 						var g = e[2]
 					}
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -4529,7 +4569,7 @@ var FormulaDatas = function() {
 				})
 			},
 			layout: function(a) {
-				if (a.ret == 0 || a.ret == 1) {
+				if (a.ret == 0) {
 					prizes = a.prizes;
 					var b = J.val();
 					var c = this.getMetodPrizeNums(prizes, way, b, parseInt(K.val()));
@@ -4539,7 +4579,7 @@ var FormulaDatas = function() {
 					KlineMaps.createmap('', d, e);
 					var f = "大数计划 " + c.length + "注</br>第" + nextId + "期的投注号为：</br><textarea class='bettings span12'>" + d[4].join(' ') + "</textarea>";
 					$("#betting").html(f)
-				} else if (a.ret == -1) {
+				} else if (a.ret == 1) {
 					if (confirm(a.message)) {
 						 window.location.reload(true);
 						return true
@@ -5401,7 +5441,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
-                data: "caipiao=" + cp + "&no=" + no + "&data=" + data,
+                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=doubleJC" ,
                 dataType: "json",
                 success: function(a) {
                     console.log(a);
@@ -5416,15 +5456,25 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp,
+                data: "caipiao=" + cp + "&id=doubleJC" ,
                 dataType: "json",
                 success: function(a) {
                 	if(a){
                         window.location.reload(true);
 					} else {
-                        window.setTimeout(NotifyData.checkis2Recall(cp), 5000)
-					}
-                }
+                        window.setTimeout(
+
+                            function() {
+                                NotifyData.checkis2Recall(cp);
+                            }, 3000);					}
+                },
+                error: function(a) {
+                    window.setTimeout(
+
+                        function() {
+                            NotifyData.checkis2Recall(cp);
+                        }, 3000);                 }
+
             });
         }
 

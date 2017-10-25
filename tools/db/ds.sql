@@ -23,6 +23,7 @@ CREATE TABLE `t_bet` (
 `id`  bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id' ,
 `lottery_code`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '代码' ,
 `seq_no`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '流水号' ,
+`gen_id`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '打法标注' ,
 `prize_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '中奖期号' ,
 `start_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '开始期号' ,
 `end_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '结束期号' ,

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BetDOCondition  {
+public class BetDOCondition {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -715,6 +715,76 @@ public class BetDOCondition  {
             return (Criteria) this;
         }
 
+        public Criteria andGenIdIsNull() {
+            addCriterion("gen_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdIsNotNull() {
+            addCriterion("gen_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdEqualTo(String value) {
+            addCriterion("gen_id =", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdNotEqualTo(String value) {
+            addCriterion("gen_id <>", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdGreaterThan(String value) {
+            addCriterion("gen_id >", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdGreaterThanOrEqualTo(String value) {
+            addCriterion("gen_id >=", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdLessThan(String value) {
+            addCriterion("gen_id <", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdLessThanOrEqualTo(String value) {
+            addCriterion("gen_id <=", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdLike(String value) {
+            addCriterion("gen_id like", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdNotLike(String value) {
+            addCriterion("gen_id not like", value, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdIn(List<String> values) {
+            addCriterion("gen_id in", values, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdNotIn(List<String> values) {
+            addCriterion("gen_id not in", values, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdBetween(String value1, String value2) {
+            addCriterion("gen_id between", value1, value2, "genId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdNotBetween(String value1, String value2) {
+            addCriterion("gen_id not between", value1, value2, "genId");
+            return (Criteria) this;
+        }
+
         public Criteria andLotteryCodeLikeInsensitive(String value) {
             addCriterion("upper(lottery_code) like", value.toUpperCase(), "lotteryCode");
             return (Criteria) this;
@@ -747,6 +817,11 @@ public class BetDOCondition  {
 
         public Criteria andBetTypeLikeInsensitive(String value) {
             addCriterion("upper(bet_type) like", value.toUpperCase(), "betType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGenIdLikeInsensitive(String value) {
+            addCriterion("upper(gen_id) like", value.toUpperCase(), "genId");
             return (Criteria) this;
         }
     }

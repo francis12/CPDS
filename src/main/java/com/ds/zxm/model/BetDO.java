@@ -21,6 +21,8 @@ public class BetDO {
 
     private Date createTime;
 
+    private String genId;
+
     private String betNo;
 
     public Long getId() {
@@ -93,6 +95,14 @@ public class BetDO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getGenId() {
+        return genId;
+    }
+
+    public void setGenId(String genId) {
+        this.genId = genId == null ? null : genId.trim();
     }
 
     public String getBetNo() {

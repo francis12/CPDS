@@ -49,7 +49,7 @@ public class HttpUtil {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			System.out.println( url + "doPost error");
 		}
 		return result;
 	}
@@ -72,6 +72,7 @@ public class HttpUtil {
 		String result = null;
 
 		try {
+
 			httpClient = new SSLClient();
 			httpGet = new HttpGet(url);
 

@@ -751,7 +751,7 @@
 <script src="static/app.js?v=0517" type="text/javascript"></script>
 <script src="static/index.js?v=0517" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
-<script src="static/common_rd.js?v=0517" type="text/javascript"></script>
+<script src="static/common_rd_jc2.js?v=0517" type="text/javascript"></script>
 <script>
 	    var daShu = 'random';
 	    var storelength = 4;
@@ -762,18 +762,19 @@
 		   //Index.initIntro();
 		   TimerData.init();
 		   RandomDatas.init();
-           $("#tab_1_3 a")[1].click();
+            $("#tab_1_3 a")[1].click();
 
-			//选定rd60s
-			$("#tab_1_55").click();
-           $("#tab_1_55 li")[0].click();
-           $('#randomNum').click();
+            //选定rd60s
+            $("#tab_1_55").click();
+            $("#tab_1_55 li")[0].click();
+            $('#randomNum').click();
             //20s还没刷新的话自动刷新
             window.setTimeout(
                 function(){
                     window.location.reload(true);
                 },
                 1000 * 200);
+
 		});
 	</script>
 <!-- END JAVASCRIPTS -->
@@ -802,6 +803,7 @@
 	<!-- END FOOTER -->
 
 	<!-- END PAGE LEVEL SCRIPTS -->
+
 
 <!-- END BODY -->
 

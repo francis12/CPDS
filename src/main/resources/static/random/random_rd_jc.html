@@ -751,7 +751,7 @@
 <script src="static/app.js?v=0517" type="text/javascript"></script>
 <script src="static/index.js?v=0517" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
-<script src="static/common_rdssc.js?v=0517" type="text/javascript"></script>
+<script src="static/common_rd_jc.js?v=0517" type="text/javascript"></script>
 <script>
 	    var daShu = 'random';
 	    var storelength = 4;
@@ -762,8 +762,19 @@
 		   //Index.initIntro();
 		   TimerData.init();
 		   RandomDatas.init();
-           $("#tab_1_3 a")[1].click();
-           //$('#randomNum').click();
+            $("#tab_1_3 a")[1].click();
+
+            //选定rd60s
+            $("#tab_1_55").click();
+            $("#tab_1_55 li")[0].click();
+            $('#randomNum').click();
+            //20s还没刷新的话自动刷新
+            window.setTimeout(
+                function(){
+                    window.location.reload(true);
+                },
+                1000 * 200);
+
 		});
 	</script>
 <!-- END JAVASCRIPTS -->
@@ -793,16 +804,7 @@
 
 	<!-- END PAGE LEVEL SCRIPTS -->
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-58833329-1', 'auto');
-  ga('send', 'pageview');
-
-</script> 
 <!-- END BODY -->
 
 </html>

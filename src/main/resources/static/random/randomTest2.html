@@ -173,140 +173,7 @@
 
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
-	<!-- BEGIN SIDEBAR -->
-	<div class="page-sidebar nav-collapse collapse">
-		<!-- BEGIN SIDEBAR MENU -->
-<ul class="page-sidebar-menu">
-	<li>
-		<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-		<div class="sidebar-toggler hidden-phone"></div> <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-	</li>
-	<li>
-		<!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
-		<form class="sidebar-search">
-			<div class="input-box">
-				<a href="javascript:;" class="remove"></a> <input type="text"
-					placeholder="Search..." /> <input type="button" class="submit"
-					value=" " />
-			</div>
-		</form> <!-- END RESPONSIVE QUICK SEARCH FORM -->
-	</li>
-	<li class="start active "><a href="javascript:;"> <i
-			class="icon-home"></i> <span class="title">时时彩趋势图</span> <span
-			class="selected"></span> <span class="arrow open"></span>
-	</a>
 
-		<ul class="sub-menu">
-
-			<li class=""><a
-				href="/index/index"> 胆出次</a></li>
-			
-			<li class=""><a
-				href="/index/dragon"> 龙虎斗</a></li>
-				
-			<li class=""><a
-				href="/index/disk"> 选号盘</a></li>
-				
-			<li class=""><a
-				href="/index/dudan"> 毒胆同屏</a></li>
-
-			<li class=""><a
-				href="/index/godnum"> 搜形态</a></li>
-
-			<li class="active"><a
-				href="/index/random"> 随机王</a></li>
-
-			<li class=""><a
-				href="/index/rotate"> 黄金分割图</a></li>
-
-			<li class=""><a
-				href="/index/formula"> 公式趋势</a></li>
-
-		</ul></li>
-	
-	<li class="last  "><a href="javascript:;"> <i
-			class="icon-home"></i> <span class="title">PK10趋势图</span> <span class="arrow "></span>
-	</a>
-
-		<ul class="sub-menu">
-
-			<li class=""><a
-				href="/pkline/index"> 胆出次</a></li>
-
-			<li class=""><a
-				href="/pkline/disk"> 选号盘</a></li>
-
-		</ul></li>
-	
-	<li class="last  "><a href="javascript:;"> <i class="icon-wrench"></i>
-
-			<span class="title">彩票工具</span> <span class="arrow "></span>
-	</a>
-
-		<ul class="sub-menu">
-		
-			<li class=""><a href="/tool/betou"> 倍投工具</a></li>
-			
-			<li class=""><a href="/tool/short"> 缩水工具</a></li>
-
-		</ul></li>
-
-	<li class="last  "><a href="javascript:;"> <i class="icon-gift"></i>
-
-			<span class="title">大数学院</span> <span class="arrow "></span>
-	</a>
-
-		<ul class="sub-menu">
-
-			<li class=""><a href="/edu/news?cid=5"> 基础理念</a></li>
-
-			<li class=""><a href="/edu/news?cid=9"> 玩法方案</a></li>
-			
-			<li class=""><a href="/edu/news?cid=11"> 赚投教程</a></li>
-
-		</ul></li>
-
-	<li class="last  "><a href="javascript:;"> <i class="icon-money"></i>
-
-			<span class="title">积分中心</span> <span class="arrow "></span>
-	</a>
-
-		<ul class="sub-menu">
-		
-			<li class=""><a href="/shop/ecode"> 实时开奖接口</a></li>
-			
-			<li class=""><a href="/shop/download"> 开奖号码下载</a></li>
-
-			<li class=""><a href="/shop/credits"> 积分管理</a></li>
-
-			<li><a href="#"> 积分商城</a></li>
-
-		</ul></li>
-
-
-	<li class="last active ">
-      <a href="javascript:;"> 
-        <i class="icon-money"></i>
-        <span class="title">友情链接</span> 
-        <span	class="selected"></span> 
-        <span class="arrow open"></span>
-    	</a>
-  
-    	<ul class="sub-menu">
-        <li><a href="http://www.xiazai.com" target="_blank">雷达下载</a></li>
-        <li><a href="http://www.pmdown.com/" target="_blank">拼命下载站</a></li>
-        <li><a href="http://www.greenhua.com" target="_blank">绿化软件</a></li>
-        <li><a href="http://www.anwang.cn" target="_blank">安网软件下载</a></li>
-        <li><a href="http://www.pcsoft.com.cn/" target="_blank">PC下载网</a></li>
-        <li><a href="http://www.6ddd.com/" target="_blank">六度下载</a></li>
-        <li><a href="http://www.nxcp888.com/" target="_blank">逆袭彩票</a></li>
-    	</ul>
-    </li>
-</ul>
-
-
-	</div>
-	<!-- END SIDEBAR -->
 
 	<!-- BEGIN PAGE -->
 	<div class="page-content">
@@ -751,7 +618,7 @@
 <script src="static/app.js?v=0517" type="text/javascript"></script>
 <script src="static/index.js?v=0517" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
-<script src="static/common_rd.js?v=0517" type="text/javascript"></script>
+<script src="static/commonTest2.js?v=0517" type="text/javascript"></script>
 <script>
 	    var daShu = 'random';
 	    var storelength = 4;
@@ -763,17 +630,14 @@
 		   TimerData.init();
 		   RandomDatas.init();
            $("#tab_1_3 a")[1].click();
-
-			//选定rd60s
-			$("#tab_1_55").click();
-           $("#tab_1_55 li")[0].click();
            $('#randomNum').click();
-            //20s还没刷新的话自动刷新
-            window.setTimeout(
-                function(){
-                    window.location.reload(true);
-                },
-                1000 * 200);
+           //4分钟还没刷新的话自动刷新
+           window.setTimeout(
+            function(){
+			window.location.reload(true);
+			},
+           1000 * 60 * 4);
+
 		});
 	</script>
 <!-- END JAVASCRIPTS -->
@@ -802,6 +666,7 @@
 	<!-- END FOOTER -->
 
 	<!-- END PAGE LEVEL SCRIPTS -->
+
 
 <!-- END BODY -->
 

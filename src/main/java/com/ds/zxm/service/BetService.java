@@ -15,9 +15,11 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -225,14 +227,17 @@ public class BetService {
                         } else {
                             //方案正在进行中
                             BetRecordDOCondition betRecordDOCondition = new BetRecordDOCondition();
-                            betRecordDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andBetNoEqualTo(curNO).andStatusEqualTo("1");
+                            betRecordDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andBetNoEqualTo(curNO).andStatusEqualTo("1").andSeqNoEqualTo(item.getSeqNo());
                             List<BetRecordDO> betRecordDOList = betRecordDAO.selectByCondition(betRecordDOCondition);
                             for (BetRecordDO betRecordDOItem : betRecordDOList) {
                                 {
                                     if (item.getBetNo().indexOf(prize.substring(prize.length() - 3)) > 0) {
+
+                                        LotteryUtil.writeTmpTxt2PrizeFile(caipiao, item.getGenId());
+
                                         item.setStatus("3");
                                         item.setPrizeNo(curNO);
-                                        log.info(item.getSeqNo() + "("+ betRecordDOItem.getLotteryCode() + ":" + curNO + ")" + "已中奖");
+                                        log.info( "("+ betRecordDOItem.getLotteryCode() + ":" + curNO + ":" + item.getGenId() +  ")" + "已中奖" +"/" +  item.getSeqNo() );
                                         updateBetDO(item);
 
                                         BetRecordDO betRecordDO = new BetRecordDO();
@@ -247,7 +252,7 @@ public class BetService {
                                         betRecordDAO.updateByPrimaryKeySelective(betRecordDO);
                                         if (!curNO.equals(item.getEndNo())) {
                                             //投注下一期
-                                            log.info(item.getSeqNo() + "("+ betRecordDOItem.getLotteryCode() + ":" + betRecordDOItem.getBetNo() + ")" + "未中奖");
+                                            log.info("("+ betRecordDOItem.getLotteryCode() + ":" + betRecordDOItem.getBetNo() + ":" + item.getGenId() +  ")" + "未中奖"  +"/" +  item.getSeqNo() );
                                             String nextNo = LotteryUtil.getNextAwardNo(curNO, caipiao);
                                             String curScheduleNo = betRecordDOItem.getScheduleNo();
                                             TradeSchedule tradeSchedule = LotteryController.scheMap.get(curScheduleNo);
@@ -267,7 +272,7 @@ public class BetService {
                                             //betLottery(originNo, nextschedule.getMultiple(), item.getBetNo());
                                         } else {
                                             //跑完最后一期未中奖，更新方案状态
-                                            log.info(betRecordDOItem.getLotteryCode() + ":" + item.getSeqNo() + "未中奖");
+                                            log.info("("+ betRecordDOItem.getLotteryCode() + ":" + item.getGenId() +  ")" + "未中奖"  +"/" +  item.getSeqNo() );
                                             item.setStatus("2");
                                             updateBetDO(item);
                                         }

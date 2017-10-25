@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.ds.zxm.controller.LotteryController;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.ds.zxm.model.LotteryDetail;
 
 public class LotteryUtil {
+
+	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LotteryUtil.class);
 
 	//定位abc-aed-c转成aac,aec等
 	public static List<LotteryDetail> convertStr2DetailList(String src) {
@@ -157,6 +161,13 @@ public class LotteryUtil {
 			nextNo = ("0000" + (postNo + 1));
 			nextNo = nextNo.substring(nextNo.length() - 4);
 			nextNo = dateStr + nextNo;
+		} else if ("flb90s".equals(caipiao) ) {
+			//201710190726
+			String dateStr = no.substring(0, 8);
+			int postNo = Integer.valueOf(no.substring(8));
+			nextNo = ("000" + (postNo + 1));
+			nextNo = nextNo.substring(nextNo.length() - 3);
+			nextNo = dateStr + nextNo;
 		}
 		return nextNo;
 	}
@@ -194,6 +205,38 @@ public class LotteryUtil {
 			} else {
 				return -1;
 			}
+		}
+	}
+
+	public  static  void writeTmpTxt2PrizeFile(String caipiao, String id){
+		try {
+			//冲掉上次方案，防止赚投误取
+			FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator  + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
+			//FileUtils.write(new File("D:" + File.separator  + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
+			/*if("chongqing".equals(caipiao) && "panzheng".equals(id)) {
+				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+				//FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+
+			} else if("chongqing".equals(caipiao) && "panzheng".equals(id)) {
+				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "cqjc.txt"), "等待前台刷新方案中..."  + "\r",false);
+				//FileUtils.write(new File("D:" + File.separator  + "cqjc.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+
+			}else if("n198_60s".equals(caipiao)) {
+				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+				//FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
+
+
+			}else if("rd60s".equals(caipiao)) {
+				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
+				//FileUtils.write(new File("D:" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
+			} else if("flb90s".equals(caipiao)) {
+				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "flb90s.txt"), "等待前台刷新方案中..."  + "\r",false);
+				//FileUtils.write(new File("D:" + File.separator + "flb90s.txt"), "等待前台刷新方案中..."  + "\r",false);
+			}*/
+		} catch (IOException e) {
+			log.error("write tmp file data er", e);
 		}
 	}
  	    public static void main(String args[]) throws Exception {
