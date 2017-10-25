@@ -37,7 +37,8 @@ public class LotteryController {
     @RequestMapping(value = "/betCP", method = {RequestMethod.POST})
     public String initdata(@RequestParam(required = true, value = "caipiao") String caipiao,
                            @RequestParam(required = true, value = "no") String no,
-                           @RequestParam(required = true, value = "data") String data) {
+                           @RequestParam(required = true, value = "data") String data,
+                           @RequestParam(required = true, value = "id") String id) {
 
         String result = "";
         try {
@@ -52,22 +53,21 @@ public class LotteryController {
                 resultMap = JSON.parseObject(result2, Map.class);
                 if ("0".equals(resultMap.get("ret").toString())) {
                     String curNO = resultMap.get("peroid").toString();
-                    if(LotteryUtil.compare19860AwardNO(curNO, next1) >= 0) {
+                    if (LotteryUtil.compare19860AwardNO(curNO, next1) >= 0) {
                         //如果开奖号码大于开始号码重新出号
                         return result;
                     }
                 }
             } catch (ParseException e) {
-               log.error("比较当前开奖号和倍投开始号码失败,继续执行");
+                log.error("比较当前开奖号和倍投开始号码失败,继续执行");
             }
             //有未开奖记录
             BetDOCondition betDOCondition = new BetDOCondition();
-            betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1").andEndNoGreaterThan(no);
+            betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1").andEndNoGreaterThan(no).andGenIdEqualTo(id);
             List<BetDO> betDOList = betService.queryBetList(betDOCondition);
             if (betDOList != null && betDOList.size() > 0) {
                 return result;
             }
-            System.out.println(no + "投注:" + data);
             String next2 = LotteryUtil.getNextAwardNo(next1, caipiao);
             String next3 = LotteryUtil.getNextAwardNo(next2, caipiao);
             String next4 = LotteryUtil.getNextAwardNo(next3, caipiao);
@@ -77,22 +77,35 @@ public class LotteryController {
             String startPostfix = next1.substring(next1.length() - 3);
             String endPostfix = next6.substring(next6.length() - 3);
 
-            log.info("第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
-            if("chongqing".equals(caipiao)) {
-               // FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-                FileUtils.write(new File("D:" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+            log.info(id + "/" + caipiao + "--" + "第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
+            FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
+            //FileUtils.write(new File("D:" + File.separator + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
 
-            } else if("n198_60s".equals(caipiao)) {
-
-                //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-                FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
-
-            } else if("rd60s".equals(caipiao)) {
-
-                //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
-                FileUtils.write(new File("D:" + File.separator  + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
-
-            }
+//            if ("chongqing".equals(caipiao) && "panzheng".equals(id)) {
+//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
+//                //FileUtils.write(new File("D:" + File.separator + "198.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+//
+//            } else if ("chongqing".equals(caipiao) && "doubleJC".equals(id)) {
+//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "cqjc.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
+//                //FileUtils.write(new File("D:" + File.separator + "cqjc.txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+//
+//            } else if ("n198_60s".equals(caipiao)) {
+//
+//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
+//                //FileUtils.write(new File("D:" + File.separator  + "198ss.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
+//
+//            } else if ("rd60s".equals(caipiao)) {
+//
+//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
+//                //FileUtils.write(new File("D:" + File.separator  + "rd60s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
+//
+//            } else if ("flb90s".equals(caipiao)) {
+//
+//                FileUtils.write(new File("C:" + File.separator + "Users" + File.separator + "zxm" + File.separator + "log" + File.separator + "flb90s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---" + "\r", false);
+//                //FileUtils.write(new File("D:" + File.separator  + "flb90s.txt"), "第" + startPostfix + "-" + endPostfix + "期" + "\r\n" + data + " ---"  + "\r",false);
+//
+//            }
+            //
             //由于文件无法实时更新，需要自己写接口连接网站投注
 
             //FileUtils.writeStringToFile(new File("c://tz.txt"),startPostfix + "-" + endPostfix+"期" + data  + " ---" + "\r",true);
@@ -104,6 +117,7 @@ public class LotteryController {
             bet.setStatus("1");
             bet.setBetType("3");
             bet.setBetNo(data);
+            bet.setGenId(id);
             bet.setCreateTime(new Date());
             betService.insert(bet);
 
@@ -123,91 +137,72 @@ public class LotteryController {
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            log.error("initdata error", e);        }
+            log.error("initdata error");
+        }
         return result;
     }
 
     @ResponseBody
     @RequestMapping(value = "/checkRecall", method = {RequestMethod.POST})
-    public boolean checkRecall(@RequestParam(required = true, value = "caipiao") String caipiao) {
+    public boolean checkRecall(@RequestParam(required = true, value = "caipiao") String caipiao, @RequestParam(required = true, value = "id") String id) {
         //判断前台需要重新出号的条件.1.已中。2过了追号期
         boolean result = true;
         try {
-            Thread.sleep(5 * 1000);
+            //Thread.sleep(1 * 1000);
             //updateLotteryStatus(caipiao);
 
-
-                BetDOCondition betDOCondition = new BetDOCondition();
-                betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1");
-                List<BetDO> betDOList = betService.queryBetList(betDOCondition);
-                if (betDOList != null && betDOList.size() > 0) {
-                    result = false;
-                }
+            BetDOCondition betDOCondition = new BetDOCondition();
+            betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1").andGenIdEqualTo(id);
+            List<BetDO> betDOList = betService.queryBetList(betDOCondition);
+            if (betDOList != null && betDOList.size() > 0) {
+                result = false;
+            }
         } catch (Exception e) {
             result = false;
             log.error("checkRecall error");
         }
         if (result) {
-            log.info("当期" + caipiao + "方案已完成，刷新页面");
-            try {
-                //冲掉上次方案，防止赚投误取
-                if("chongqing".equals(caipiao)) {
-                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
-                    FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-                } else if("n198_60s".equals(caipiao)) {
-                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
-                    FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-                }else if("rd60s".equals(caipiao)) {
-                    //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
-                    FileUtils.write(new File("D:" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-                }
-            } catch (IOException e) {
-               log.error("write tmp file data er", e);
-            }
+            LotteryUtil.writeTmpTxt2PrizeFile(caipiao, id);
+            log.info("当期" + caipiao + "/" + id + "方案已完成，刷新页面");
         }
         return result;
     }
 
- public static Map<String,TradeSchedule> scheMap = null;
-    static  {
-        scheMap = new HashMap<String,TradeSchedule>();
-        TradeSchedule tradeSchedule1 =new TradeSchedule();
+    public static Map<String, TradeSchedule> scheMap = null;
+
+    static {
+        scheMap = new HashMap<String, TradeSchedule>();
+        TradeSchedule tradeSchedule1 = new TradeSchedule();
         tradeSchedule1.setWinNo(1);
         tradeSchedule1.setLoseNo(2);
         tradeSchedule1.setMultiple(8);
         scheMap.put("1", tradeSchedule1);
 
-        TradeSchedule tradeSchedule2 =new TradeSchedule();
+        TradeSchedule tradeSchedule2 = new TradeSchedule();
         tradeSchedule2.setWinNo(1);
         tradeSchedule2.setLoseNo(3);
         tradeSchedule2.setMultiple(13);
         scheMap.put("2", tradeSchedule2);
 
-        TradeSchedule tradeSchedule3 =new TradeSchedule();
+        TradeSchedule tradeSchedule3 = new TradeSchedule();
         tradeSchedule3.setWinNo(1);
         tradeSchedule3.setLoseNo(4);
         tradeSchedule3.setMultiple(19);
         scheMap.put("3", tradeSchedule3);
 
-        TradeSchedule tradeSchedule4 =new TradeSchedule();
+        TradeSchedule tradeSchedule4 = new TradeSchedule();
         tradeSchedule4.setWinNo(1);
         tradeSchedule4.setLoseNo(5);
         tradeSchedule4.setMultiple(29);
         scheMap.put("4", tradeSchedule4);
 
-        TradeSchedule tradeSchedule5 =new TradeSchedule();
+        TradeSchedule tradeSchedule5 = new TradeSchedule();
         tradeSchedule5.setWinNo(1);
         tradeSchedule5.setLoseNo(6);
         tradeSchedule5.setMultiple(45);
         scheMap.put("5", tradeSchedule5);
 
-        TradeSchedule tradeSchedule6 =new TradeSchedule();
+        TradeSchedule tradeSchedule6 = new TradeSchedule();
         tradeSchedule6.setWinNo(1);
         tradeSchedule6.setLoseNo(1);
         tradeSchedule6.setMultiple(68);
@@ -222,13 +217,13 @@ public class LotteryController {
         }*/
     }
 
-    public  static  void main(String[] args){
+    public static void main(String[] args) {
         try {
             while (true) {
                 //FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r",true);
-                FileUtils.write(new File("D:" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r\n" + "test",false);
+                FileUtils.write(new File("D:" + File.separator + "198.txt"), String.valueOf(new Date()) + "\r\n" + "test", false);
 
-                Thread.sleep(1000 *1);
+                Thread.sleep(1000 * 1);
             }
         } catch (Exception e) {
             e.printStackTrace();

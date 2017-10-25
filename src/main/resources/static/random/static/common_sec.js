@@ -2992,7 +2992,7 @@ var RandomDatas = function() {
 					RandomDatas.getdata(caipiao);
 
                     setTimeout(function () {
-                        while(!dataMatched&&calCnt <= 1200){
+                        while(!dataMatched&&calCnt <= 600){
                             RandomDatas.getRandomNums();
                             var str = ".randombox #rand1";
                             console.log($(str).html());
@@ -5418,12 +5418,18 @@ var NotifyData = function() {
                 	if(a){
                         window.location.reload(true);
 					} else {
-                        window.setTimeout(NotifyData.checkis2Recall(cp), 2000)
-					}
+                        window.setTimeout(
+
+                            function() {
+                                NotifyData.checkis2Recall(cp);
+                            }, 3000);					}
                 },
                 error: function(a) {
-                        window.setTimeout(NotifyData.checkis2Recall(cp), 2000)
-                 }
+                    window.setTimeout(
+
+                        function() {
+                            NotifyData.checkis2Recall(cp);
+                        }, 3000);                 }
 
             });
         }

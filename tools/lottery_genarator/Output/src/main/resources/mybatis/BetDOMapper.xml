@@ -11,6 +11,7 @@
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="bet_type" property="betType" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="gen_id" property="genId" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.ds.zxm.model.BetDO" extends="BaseResultMap" >
     <result column="bet_no" property="betNo" jdbcType="LONGVARCHAR" />
@@ -74,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, lottery_code, seq_no, prize_no, start_no, end_no, status, bet_type, create_time
+    id, lottery_code, seq_no, prize_no, start_no, end_no, status, bet_type, create_time, 
+    gen_id
   </sql>
   <sql id="Blob_Column_List" >
     bet_no
@@ -135,12 +137,12 @@
     </selectKey>
     insert into t_bet (lottery_code, seq_no, prize_no, 
       start_no, end_no, status, 
-      bet_type, create_time, bet_no
-      )
+      bet_type, create_time, gen_id, 
+      bet_no)
     values (#{lotteryCode,jdbcType=VARCHAR}, #{seqNo,jdbcType=VARCHAR}, #{prizeNo,jdbcType=VARCHAR}, 
       #{startNo,jdbcType=VARCHAR}, #{endNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{betType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{betNo,jdbcType=LONGVARCHAR}
-      )
+      #{betType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{genId,jdbcType=VARCHAR}, 
+      #{betNo,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.BetDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -172,6 +174,9 @@
       <if test="createTime != null" >
         create_time,
       </if>
+      <if test="genId != null" >
+        gen_id,
+      </if>
       <if test="betNo != null" >
         bet_no,
       </if>
@@ -200,6 +205,9 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="genId != null" >
+        #{genId,jdbcType=VARCHAR},
       </if>
       <if test="betNo != null" >
         #{betNo,jdbcType=LONGVARCHAR},
@@ -242,6 +250,9 @@
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.genId != null" >
+        gen_id = #{record.genId,jdbcType=VARCHAR},
+      </if>
       <if test="record.betNo != null" >
         bet_no = #{record.betNo,jdbcType=LONGVARCHAR},
       </if>
@@ -261,6 +272,7 @@
       status = #{record.status,jdbcType=VARCHAR},
       bet_type = #{record.betType,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      gen_id = #{record.genId,jdbcType=VARCHAR},
       bet_no = #{record.betNo,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -276,7 +288,8 @@
       end_no = #{record.endNo,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
       bet_type = #{record.betType,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      gen_id = #{record.genId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -308,6 +321,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="genId != null" >
+        gen_id = #{genId,jdbcType=VARCHAR},
+      </if>
       <if test="betNo != null" >
         bet_no = #{betNo,jdbcType=LONGVARCHAR},
       </if>
@@ -324,6 +340,7 @@
       status = #{status,jdbcType=VARCHAR},
       bet_type = #{betType,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
+      gen_id = #{genId,jdbcType=VARCHAR},
       bet_no = #{betNo,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -336,7 +353,8 @@
       end_no = #{endNo,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
       bet_type = #{betType,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      gen_id = #{genId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
