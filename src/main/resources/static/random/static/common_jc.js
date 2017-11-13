@@ -423,7 +423,11 @@ var RandomBollingTrategy = function() {
                     return false;
                 }*/
                 //this.isAverage(j,2 , 2)&&
-                return  this.isMachJC(j, 3, 2) && this.isBollUp(j, 3);
+                if (j.values[j.values.length -1 ][0] >= (j.bollup[ j.bollup.length -1] )) {
+                    return false;
+                }
+                var isNotInBollUp = (j.values[j.values.length -1 ][0] < (j.bollup[ j.bollup.length -1] )) && (j.values[j.values.length -1 ][1] < (j.bollup[ j.bollup.length -1] ));
+                return  this.isMachJC(j, 3, 2) && this.isBollUp(j, 3) && isNotInBollUp;
                 //return this.isAverage(j,3) && this.isMacdBarRedPlus(j, 2, 4);
 
             } catch (err) {
@@ -5540,7 +5544,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
-                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=doubleJC" ,
+                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=" + dsRandmomType ,
                 dataType: "json",
                 success: function(a) {
                     console.log(a);
@@ -5555,7 +5559,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp + "&id=doubleJC" ,
+                data: "caipiao=" + cp + "&id="+ dsRandmomType ,
                 dataType: "json",
                 success: function(a) {
                     if(a){

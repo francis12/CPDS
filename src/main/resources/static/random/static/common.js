@@ -411,12 +411,24 @@ var TimerData = function() {
                     var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
                     //var isAve = this.isAverage(j, 2);
                     var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
-         var isjxJc = this.isAverage(j,1);
-                    return isBollUpCommon && isKlineMatch && kUp && isjxJc;
+         			var isjxJc = this.isAverage(j,1);
+         			var isBolldoSma = this.isBolldoSma(j, 1);
+
+                    return isBollUpCommon && isKlineMatch && kUp && isjxJc && isBolldoSma;
                 } catch (err) {
 					return false;
 				}
 			},
+			//boll不能扩张
+            isBolldoSma: function(j, last) {
+
+                for (var i = j.bollup.length -last -1;i<j.bollup.length - 1;i++) {
+                    if ((j.bolldown[i+1]) <  (j.bolldown[i]) ) {
+                        return false;
+                    }
+                }
+                return true;
+            },
             //均线last期金叉
             isAverage: function(j, last) {
 

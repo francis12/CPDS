@@ -2358,7 +2358,6 @@ Zoom icon overlay on images
 }
 
 .zoom .zoom-icon {
-  background-image:url("image/overlay-icon.png");
   background-color: #222;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -2929,7 +2928,6 @@ Custom portlet tabs
   margin-right: 0px;
   border-left: 0;
   border-right: 0;
-  background-color: none !important;
   border-top-color:transparent !important;
 }
 
@@ -2940,7 +2938,6 @@ Custom portlet tabs
   margin-right: 0;
   border-left: 0;
   border-right: 0;
-  background-color: none !important;
   border-top-color:transparent;
   background-color: #fff;
 }
@@ -3454,7 +3451,6 @@ Styler Panel
 }
 
 .color-panel .icon-color {
-  background:#c9c9c9 url(image/icon-color.png) center no-repeat !important;
 }
 
 .color-panel .icon-color:hover {
@@ -3463,7 +3459,6 @@ Styler Panel
 
 .color-panel .icon-color-close {
   display:none;
-  background:#3d3d3d url(image/icon-color-close.png) center no-repeat !important;
 }
 
 .color-panel .icon-color-close:hover {
@@ -4472,7 +4467,6 @@ jQuery UI Datepicker(new in v1.2.2)
 }
 
 .ui-widget-header .ui-icon {
-  background-image: url(image/ui-icons_888888_256x240.png) !important;
 }
 
 .ui-widget-header .ui-datepicker-next,
@@ -4595,7 +4589,7 @@ jQuery UI Dialogs(new in v1.2.4)
   outline: none !important;
   border: 0 !important;
   box-shadow: none;
-  background: url(../../image/hor-menu-search-close.png) no-repeat center;
+  background:  no-repeat center;
   margin-top: -12px !important;
 }
 
@@ -4611,7 +4605,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-blue .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 
 .ui-dialog.ui-dialog-red .ui-dialog-titlebar {
@@ -4620,7 +4614,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-red .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 
 .ui-dialog.ui-dialog-yellow .ui-dialog-titlebar {
@@ -4629,7 +4623,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-yellow .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 
 .ui-dialog.ui-dialog-green .ui-dialog-titlebar {
@@ -4638,7 +4632,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-green .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 
 .ui-dialog.ui-dialog-purple .ui-dialog-titlebar {
@@ -4647,7 +4641,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-purple .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 
 .ui-dialog.ui-dialog-grey .ui-dialog-titlebar {
@@ -4656,7 +4650,7 @@ jQuery UI Dialogs(new in v1.2.4)
 }
 
 .ui-dialog.ui-dialog-grey .ui-dialog-titlebar-close {
-  background: url(../../image/hor-menu-search-close-white.png) no-repeat center;
+  background:  no-repeat center;
 }
 /*dialog title bg colors*/
 
@@ -4802,7 +4796,6 @@ Horezantal Menu(new in v1.2)
   display: inline-block;
   padding: 11px 22px 11px 22px !important;
   cursor: pointer;
-  background: url(../../image/hor-menu-search.png) no-repeat center;
 }
 
 .header .hor-menu .hor-menu-search-form-toggler:hover {
@@ -4811,7 +4804,6 @@ Horezantal Menu(new in v1.2)
 }
 
 .header .hor-menu .hor-menu-search-form-toggler.hide {
-  background: #101010 url(../../image/hor-menu-search-close.png) no-repeat center;
 }
 
 .header .hor-menu a.hor-menu-search-form-toggler-close {
@@ -5075,36 +5067,6 @@ Social Icons(new in v1.2.2)
   background-position:0 -38px;
 }
 
-.social-icons .amazon {background: url(../../image/amazon.png) no-repeat;}
-.social-icons .behance {background: url(../../image/behance.png) no-repeat;}
-.social-icons .blogger {background: url(../../image/blogger.png) no-repeat;}
-.social-icons .deviantart {background: url(../../image/deviantart.png) no-repeat;}
-.social-icons .dribbble {background: url(../../image/dribbble.png) no-repeat;}
-.social-icons .dropbox {background: url(../../image/dropbox.png) no-repeat;}
-.social-icons .evernote {background: url(../../image/evernote.png) no-repeat;}
-.social-icons .facebook {background: url(../../image/facebook.png) no-repeat;}
-.social-icons .forrst {background: url(../../image/forrst.png) no-repeat;}
-.social-icons .github {background: url(../../image/github.png) no-repeat;}
-.social-icons .googleplus {background: url(../../image/googleplus.png) no-repeat;}
-.social-icons .jolicloud {background: url(../../image/jolicloud.png) no-repeat;}
-.social-icons .last-fm {background: url(../../image/last-fm.png) no-repeat;}
-.social-icons .linkedin {background: url(../../image/linkedin.png) no-repeat;}
-.social-icons .picasa {background: url(../../image/picasa.png) no-repeat;}
-.social-icons .pintrest {background: url(../../image/pintrest.png) no-repeat;}
-.social-icons .rss {background: url(../../image/rss.png) no-repeat;}
-.social-icons .skype {background: url(../../image/skype.png) no-repeat;}
-.social-icons .spotify {background: url(../../image/spotify.png) no-repeat;}
-.social-icons .stumbleupon {background: url(../../image/stumbleupon.png) no-repeat;}
-.social-icons .tumblr {background: url(../../image/tumblr.png) no-repeat;}
-.social-icons .twitter {background: url(../../image/twitter.png) no-repeat;}
-.social-icons .vimeo {background: url(../../image/vimeo.png) no-repeat;}
-.social-icons .wordpress {background: url(../../image/wordpress.png) no-repeat;}
-.social-icons .xing {background: url(../../image/xing.png) no-repeat;}
-.social-icons .yahoo {background: url(../../image/yahoo.png) no-repeat;}
-.social-icons .youtube {background: url(../../image/youtube.png) no-repeat;}
-.social-icons .vk {background: url(../../image/vk.png) no-repeat;}
-.social-icons .instagram {background: url(../../image/instagram.png) no-repeat;}
-
 
 /***
 Responsive tables(new in v1.2.3)
@@ -5313,13 +5275,11 @@ Datatables Plugin(in v1.3)
 .dataTable .details td,
 .dataTable .details th {
   padding: 4px;
-  background-color: none !important;
   border: 0;
 }
 
 .dataTable .details tr:hover td,
 .dataTable .details tr:hover th {
-  background-color: none !important;
 }
 
 .dataTable .details tr:nth-child(odd) td,

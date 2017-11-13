@@ -2,10 +2,8 @@ package com.ds.zxm.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ds.zxm.mapper.BetRecordDAO;
-import com.ds.zxm.model.BetDO;
-import com.ds.zxm.model.BetDOCondition;
-import com.ds.zxm.model.BetRecordDO;
-import com.ds.zxm.model.TradeSchedule;
+import com.ds.zxm.mapper.ScheduleDAO;
+import com.ds.zxm.model.*;
 import com.ds.zxm.service.BetService;
 import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
@@ -32,6 +30,8 @@ public class LotteryController {
     private BetService betService;
     @Autowired
     private BetRecordDAO betRecordDAO;
+    @Autowired
+    private ScheduleDAO scheduleDAO;
 
     @ResponseBody
     @RequestMapping(value = "/betCP", method = {RequestMethod.POST})
@@ -55,12 +55,12 @@ public class LotteryController {
                     String nextid = resultMap.get("nextid").toString();
                     if (LotteryUtil.compare19860AwardNO(nextid, next1) > 0) {
                         //如果开奖号码大于开始号码重新出号
-                        log.info("已过开奖号" + caipiao + "/" + id);
+                        log.info("already updated prize no" + caipiao + "/" + id);
                         return result;
                     }
                 }
             } catch (ParseException e) {
-                log.error("比较当前开奖号和倍投开始号码失败,继续执行");
+                log.error("compare no error,continue");
             }
             //有未开奖记录
             BetDOCondition betDOCondition = new BetDOCondition();
@@ -69,27 +69,44 @@ public class LotteryController {
             if (betDOList != null && betDOList.size() > 0) {
                 return result;
             }
-            String next2 = LotteryUtil.getNextAwardNo(next1, caipiao);
-            String next3 = LotteryUtil.getNextAwardNo(next2, caipiao);
-            String next4 = LotteryUtil.getNextAwardNo(next3, caipiao);
-            String next5 = LotteryUtil.getNextAwardNo(next4, caipiao);
-            String next6 = LotteryUtil.getNextAwardNo(next5, caipiao);
+//            String next2 = LotteryUtil.getNextAwardNo(next1, caipiao);
+//            String next3 = LotteryUtil.getNextAwardNo(next2, caipiao);
+//            String next4 = LotteryUtil.getNextAwardNo(next3, caipiao);
+//            String next5 = LotteryUtil.getNextAwardNo(next4, caipiao);
+//            String next6 = LotteryUtil.getNextAwardNo(next5, caipiao);
 
             String startPostfix = next1.substring(next1.length() - 3);
             String endNo = "";
             String endPostfix = "";
-            if("chongqing".equals(caipiao)) {
+
+            ScheduleDOCondition scheduleDOCondition = new ScheduleDOCondition();
+            scheduleDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andGenIdEqualTo(id);
+            List<ScheduleDO> scheduleDOList = scheduleDAO.selectByCondition(scheduleDOCondition);
+
+            int maxNo = 0;
+            for(ScheduleDO item : scheduleDOList) {
+                maxNo = maxNo <Integer.valueOf(item.getNo())? Integer.valueOf(item.getNo()) :maxNo;
+            }
+
+            String lastNo = next1;
+            for(int i=0;i<maxNo;i++) {
+                lastNo = LotteryUtil.getNextAwardNo(lastNo,caipiao);
+            }
+            endPostfix  = lastNo.substring(lastNo.length() - 3);
+            endNo = lastNo;
+
+          /*  if("chongqing".equals(caipiao)) {
                 endPostfix  = next6.substring(next6.length() - 3);
                 endNo = next6;
             } else if("flb90s".equals(caipiao)) {
                 //flb做三期计划平刷
                 endPostfix  = next3.substring(next3.length() - 3);
                 endNo = next3;
-            }
+            }*/
 
-            log.info(id + "/" + caipiao + "--" + "第" + startPostfix + "-" + endPostfix + "期" + data + " ---");
+            log.info(id + "/" + caipiao + "--" + "per" + startPostfix + "-" + endPostfix + ":" + data + " ---");
             //FileUtils.write(new File(LotteryUtil.noPath + caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---" + "\r", false);
-            FileUtils.write(new File(LotteryUtil.noPath +  caipiao + id + ".txt"), "第" + startPostfix + "-" + endPostfix + "期" + data + " ---"  + "\r",false);
+            FileUtils.write(new File(LotteryUtil.noPath +  caipiao + id + ".txt"), "start" + startPostfix + "-" + endPostfix + "end" + data + " ---"  + "\r",false);
 
             BetDO bet = new BetDO();
             bet.setSeqNo(next1 + UUID.randomUUID().toString().substring(0,8) + endNo);
@@ -110,12 +127,11 @@ public class LotteryController {
             betRecordDO.setSeqNo(bet.getSeqNo());
             betRecordDO.setStatus("1");
             betRecordDO.setCreateTime(new Date());
-            TradeSchedule startSchedule = scheMap.get("1");
             betRecordDO.setScheduleNo("1");
 
             betRecordDAO.insert(betRecordDO);
             String originNo = next1.substring(0, 8) + "-" + next1.substring(8);
-            betLottery(originNo, startSchedule.getMultiple(), data);
+            betLottery(originNo, Integer.valueOf(scheduleDOList.get(0).getMultiple()), data);
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -145,7 +161,7 @@ public class LotteryController {
         }
         if (result) {
             LotteryUtil.writeTmpTxt2PrizeFile(caipiao, id);
-            log.info("当期" + caipiao + "/" + id + "方案已完成，刷新页面");
+            log.info("current:" + caipiao + "/" + id + "end,refresh");
         }
         return result;
     }

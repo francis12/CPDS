@@ -99,7 +99,7 @@ public class LotteryService implements  ApplicationContextAware  {
             if (1 == (int) parameter.get("code")) {
                     parameter.putAll(JSON.parseObject(parameter.get("result").toString(), Map.class));
                     if (null == parameter.get("openCode")) {
-                        System.out.println(lotteryCode + ":" + no + "未找到开奖数据！");
+                        System.out.println(lotteryCode + ":" + no + "cannot found prize data！");
                         return 0;
                     }
                     String openCode = parameter.get("openCode").toString();
@@ -147,7 +147,7 @@ public class LotteryService implements  ApplicationContextAware  {
         }
 
         this.lotteryDetailSaveOnUnExist(LotteryDetail);
-        log.info("完成处理---" + lotteryCode + ":" + no);
+        log.info("finished---" + lotteryCode + ":" + no);
         return 0;
     }
 
@@ -262,19 +262,6 @@ public class LotteryService implements  ApplicationContextAware  {
      * @param
      * @return
      */
-    public static void main(String[] args) {
-        // System.out.println(LotteryServiceImpl.getParseInfoFromNo("21-06-2017-0002").next().getUseNo());
-        // LotteryparseInfo lotteryParseInfo =
-        // LotteryServiceImpl.getParseInfoFromNo("21-06-2017-0002");
-
-        // LotteryServiceImpl.queryOneDayNos(lotteryParseInfo);
-        try {
-            String next = LotteryService.getNextAwardNo("171010119", CQSSCLotteryCode);
-            System.out.println(next);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void fetchOneDayLottery(String lotteryCode, LotteryparseInfo lotteryParseInfo) throws Exception {
         LotteryparseInfo next = lotteryParseInfo.next();

@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+
 @EnableAutoConfiguration
 @SpringBootApplication
 @ComponentScan
@@ -64,7 +65,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         BetService betService = (BetService)context.getBean("betService");
-        DsUtil.init();
+
 
         Runnable runnable = new Runnable() {
             public void run() {
@@ -104,6 +105,11 @@ public class Application implements EmbeddedServletContainerCustomizer {
             }
         };
 
+        Runnable authRunnable = new Runnable() {
+            public void run() {
+                DsUtil.init();
+            }
+        };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
@@ -111,6 +117,8 @@ public class Application implements EmbeddedServletContainerCustomizer {
         service.scheduleAtFixedRate(runnable2, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable3, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable4, 1, 12, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(authRunnable, 0, 30, TimeUnit.MINUTES);
+
 
 
 

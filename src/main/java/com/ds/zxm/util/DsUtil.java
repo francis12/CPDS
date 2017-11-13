@@ -66,15 +66,8 @@ public class DsUtil {
 
     public static  String auth = null;
     public  static void init (){
-        while(StringUtils.isEmpty(auth)) {
             auth = DsUtil.login2FetchAuth();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        log.info("初始化auth:" + auth);
+            log.info("init auth:" + auth);
     }
 }
 

@@ -263,6 +263,27 @@ AUTO_INCREMENT=1
 
 ;
 
+
+-- ----------------------------
+-- Table structure for `t_schedule`
+-- ----------------------------
+DROP TABLE IF EXISTS `t_schedule`;
+CREATE TABLE `t_schedule` (
+`id`  bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id' ,
+`lottery_code`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '彩票代码' ,
+`gen_id`  varchar(32)  COMMENT '彩票生成类型' ,
+`no`  varchar(32)  COMMENT '当前期' ,
+`win_no`  varchar(32)  COMMENT '中下一期' ,
+`lose_no`  varchar(32)  COMMENT '挂下一期' ,
+`multiple`  varchar(32)  COMMENT '倍数' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='倍投计划表'
+AUTO_INCREMENT=1
+
+;
 -- ----------------------------
 -- Records of t_stock_realtime
 -- ----------------------------

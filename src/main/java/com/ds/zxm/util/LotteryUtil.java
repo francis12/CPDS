@@ -17,7 +17,7 @@ import com.ds.zxm.model.LotteryDetail;
 
 public class LotteryUtil {
 
-	//"C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator
+	//public static  final  String noPath =  "C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator;
 	public static  final  String noPath = "D:" + File.separator  + "log" + File.separator;
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LotteryUtil.class);
 
@@ -153,8 +153,8 @@ public class LotteryUtil {
 				nextNo = nextNo.substring(nextNo.length() - 3);
 				return dateStr + nextNo;
 			} else {
-				Date curDate = DateUtils.String2Date(dateStr, "yyMMdd");
-				nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyMMdd") + "001";
+				Date curDate = DateUtils.String2Date(dateStr, "yyyyMMdd");
+				nextNo = DateUtils.date2String(DateUtils.addDate(1, curDate), "yyyyMMdd") + "001";
 			}
 		} else if ("n198_60s".equals(caipiao) || "rd60s".equals(caipiao)) {
 			//201710190726
@@ -175,8 +175,8 @@ public class LotteryUtil {
 	}
 
 	public static int compareCQAwardNO(String no1, String no2) throws ParseException {
-		Date date1 = DateUtils.String2Date(no1.substring(0, 6), "yyMMdd");
-		Date date2 = DateUtils.String2Date(no2.substring(0, 6), "yyMMdd");
+		Date date1 = DateUtils.String2Date(no1.substring(0, 8), "yyyyMMdd");
+		Date date2 = DateUtils.String2Date(no2.substring(0, 8), "yyyyMMdd");
 		if(date1.compareTo(date2) != 0) {
 			return date1.compareTo(date2);
 		} else {
@@ -213,43 +213,12 @@ public class LotteryUtil {
 	public  static  void writeTmpTxt2PrizeFile(String caipiao, String id){
 		try {
 			//冲掉上次方案，防止赚投误取
-			//FileUtils.write(new File(  noPath + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
 			FileUtils.write(new File(noPath + caipiao + id + ".txt"), "等待前台刷新方案中..."  + "\r",false);
-			/*if("chongqing".equals(caipiao) && "panzheng".equals(id)) {
-				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
-				//FileUtils.write(new File("D:" + File.separator  + "198.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-			} else if("chongqing".equals(caipiao) && "panzheng".equals(id)) {
-				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "cqjc.txt"), "等待前台刷新方案中..."  + "\r",false);
-				//FileUtils.write(new File("D:" + File.separator  + "cqjc.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-			}else if("n198_60s".equals(caipiao)) {
-				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
-				//FileUtils.write(new File("D:" + File.separator + "198ss.txt"), "等待前台刷新方案中..."  + "\r",false);
-
-
-			}else if("rd60s".equals(caipiao)) {
-				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
-				//FileUtils.write(new File("D:" + File.separator + "rd60s.txt"), "等待前台刷新方案中..."  + "\r",false);
-			} else if("flb90s".equals(caipiao)) {
-				FileUtils.write(new File("C:" + File.separator + "Users"+ File.separator + "zxm" + File.separator + "log" + File.separator + "flb90s.txt"), "等待前台刷新方案中..."  + "\r",false);
-				//FileUtils.write(new File("D:" + File.separator + "flb90s.txt"), "等待前台刷新方案中..."  + "\r",false);
-			}*/
 		} catch (IOException e) {
 			log.error("write tmp file data er", e);
 		}
 	}
  	    public static void main(String args[]) throws Exception {
-	        
-	        //permutation("135".toCharArray(),0); 
-	    	//convertStr2DetailList("345-012-7");
-			while (true) {
-				Thread.sleep(5000);
-				File file = new File("C:\\test.txt");
-				new FileOutputStream(file).write(new Date().toString().getBytes());
-
-			}
+	       System.out.println(LotteryUtil.getNextAwardNo("20171025120", "chongqing"));
 	    }  
 }
