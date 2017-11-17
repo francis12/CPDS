@@ -190,12 +190,11 @@ public class BetService {
     }
 
     public int updateBetDO(BetDO bet) {
-        log.info("update bet :" + bet.getLotteryCode() + "/" + bet.getGenId() + "/" + bet.getStatus());
+        //log.info("update bet :" + bet.getLotteryCode() + "/" + bet.getGenId() + "/" + ("3".equals(bet.getStatus())? "is prized!" : "not prize"));
        return betDAO.updateByPrimaryKeySelective(bet);
     }
 
     /**
-     * 暂时只支持一个方案
      *
      * @param caipiao
      * @throws ParseException
@@ -227,8 +226,8 @@ public class BetService {
                         //历史记录置为2
                         if (LotteryUtil.compareCQAwardNO(item.getEndNo(), curNO) < 0
                                 || LotteryUtil.compareCQAwardNO(item.getStartNo(), LotteryUtil.getNextAwardNo(curNO,caipiao)) > 0) {
-                            item.setStatus("2");
-                            updateBetDO(item);
+                            //item.setStatus("2");
+                            //updateBetDO(item);
                         } else {
                             //方案正在进行中
                             BetRecordDOCondition betRecordDOCondition = new BetRecordDOCondition();
@@ -287,7 +286,7 @@ public class BetService {
                                             //betLottery(originNo, nextschedule.getMultiple(), item.getBetNo());
                                         } else {
                                             //跑完最后一期未中奖，更新方案状态
-                                            log.info("("+ betRecordDOItem.getLotteryCode() + ":" + item.getGenId() +  ")" + "not prize"  +"/" +  item.getSeqNo() );
+                                            log.info("("+ betRecordDOItem.getLotteryCode()+ ":" + item.getEndNo() + ":" + item.getGenId() +  ")" + "not prize"  +"/" +  item.getSeqNo() );
                                             item.setStatus("2");
                                             updateBetDO(item);
                                         }

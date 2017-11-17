@@ -89,7 +89,7 @@ public class LotteryController {
             }
 
             String lastNo = next1;
-            for(int i=0;i<maxNo;i++) {
+            for(int i=1;i<maxNo;i++) {
                 lastNo = LotteryUtil.getNextAwardNo(lastNo,caipiao);
             }
             endPostfix  = lastNo.substring(lastNo.length() - 3);
@@ -146,8 +146,7 @@ public class LotteryController {
         //判断前台需要重新出号的条件.1.已中。2过了追号期
         boolean result = true;
         try {
-            Thread.sleep(1 * 1000);
-            //updateLotteryStatus(caipiao);
+            //Thread.sleep(1 * 1000);
 
             BetDOCondition betDOCondition = new BetDOCondition();
             betDOCondition.createCriteria().andLotteryCodeEqualTo(caipiao).andStatusEqualTo("1").andGenIdEqualTo(id);
@@ -161,7 +160,7 @@ public class LotteryController {
         }
         if (result) {
             LotteryUtil.writeTmpTxt2PrizeFile(caipiao, id);
-            log.info("current:" + caipiao + "/" + id + "end,refresh");
+            log.info("current:" + caipiao + "/" + id + " end,refresh");
         }
         return result;
     }

@@ -384,7 +384,6 @@ var TimerData = function() {
         },
     }
 }();
-
 //新增策略
 //1.布林盘整，在下轨买入
 var RandomBollingTrategy = function() {
@@ -423,7 +422,12 @@ var RandomBollingTrategy = function() {
                     return false;
                 }*/
                 //this.isAverage(j,2 , 2)&&
-                return  this.isMachJC(j, 3, 2) && this.isBollUp(j, 3);
+				var isNotInBOllUp = (j.values[j.values.length -1 ][0] < (j.bollup[ j.bollup.length -1] )) &&( j.values[j.values.length -1 ][1] < (j.bollup[ j.bollup.length -1] ));
+				var isInBollMiddle = (j.bollmiddle[ j.bollup.length -1] > j.values[j.values.length -1 ][0] &&  j.bollmiddle[ j.bollup.length -1] < j.values[j.values.length -1 ][1])
+                || (j.bollmiddle[ j.bollup.length -1] < j.values[j.values.length -1 ][0] &&  j.bollmiddle[ j.bollup.length -1] > j.values[j.values.length -1 ][1]);
+
+
+                return  this.isMachJC(j, 3, 2) && isInBollMiddle && this.isAverage(j, 6, 2);
                 //return this.isAverage(j,3) && this.isMacdBarRedPlus(j, 2, 4);
 
             } catch (err) {
@@ -505,11 +509,11 @@ var RandomBollingTrategy = function() {
                 }
             }
 
-            for (var i = j.line60.length -last-last2;i<j.line60.length  -last;i++) {
-                if (j.line15[i] > j.line60[i]) {
-                    return false;
-                }
-            }
+           // for (var i = j.line60.length -last-last2;i<j.line60.length  -last;i++) {
+             //   if (j.line15[i] > j.line60[i]) {
+               //     return false;
+                //}
+            //}
             return true;
         },
         //均线last期金叉
@@ -518,9 +522,9 @@ var RandomBollingTrategy = function() {
             if(j.macdbar[j.macdbar.length - 1] < j.macdbar[j.macdbar.length - 2]) {
                 return false;
             }
-            if(j.dif[j.dif.length-1] < 0 || j.dea[j.dea.length -1] < 0) {
-                return false;
-            }
+            //if(j.dif[j.dif.length-1] < 0 || j.dea[j.dea.length -1] < 0) {
+              //  return false;
+            //}
             for (var i = j.macdbar.length -last;i<j.macdbar.length - 1;i++) {
                 if (j.dif[i + 1] < j.dif[i] || j.dea[i + 1] < j.dea[i]) {
                     return false;
@@ -533,11 +537,11 @@ var RandomBollingTrategy = function() {
                 }
             }
 
-            for (var i = j.dif.length -last-last2;i<j.dif.length  -last;i++) {
-                if (j.dif[i] > j.dea[i]) {
-                    return false;
-                }
-            }
+            //for (var i = j.dif.length -last-last2;i<j.dif.length  -last;i++) {
+              //  if (j.dif[i] > j.dea[i]) {
+                //    return false;
+                //}
+            //}
             return true;
         },
         //Macdbar 最近last期为红，之前为绿,last2:last2期为直线增长方向
@@ -616,7 +620,6 @@ var RandomBollingTrategy = function() {
     }
 
 }();
-
 
 
 var GodkeyDatas = function() {
@@ -3136,7 +3139,7 @@ var RandomDatas = function() {
                 RandomDatas.getdata(caipiao);
 
                 setTimeout(function () {
-                    while(!dataMatched&&calCnt <= 1200){
+                    while(!dataMatched&&calCnt <= 600){
                         RandomDatas.getRandomNums();
                         console.log(calCnt);
                         RandomDatas.getlocaldata();
@@ -5565,14 +5568,14 @@ var NotifyData = function() {
 
                             function() {
                                 NotifyData.checkis2Recall(cp);
-                            }, 3000);                    }
+                            }, 1000);                    }
                 },
                 error: function(a) {
                     window.setTimeout(
 
                         function() {
                             NotifyData.checkis2Recall(cp);
-                        }, 3000);                }
+                        }, 1000);                }
 
             });
         }
