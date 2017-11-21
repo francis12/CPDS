@@ -405,6 +405,7 @@ var TimerData = function() {
 				var rate = 0.056;
 				var lastItems = 20;
 				try {
+				    //boll线平滑度
                     var isBollUpCommon = this.isCommonRate(bollUp, rate, lastItems) && this.isCommonRate(bollMiddle, rate, lastItems) && this.isCommonRate(bollDown, rate, lastItems);
                     //添加处于boll下轨的判断
                     //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
@@ -413,8 +414,9 @@ var TimerData = function() {
                     var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
          			var isjxJc = this.isAverage(j,1);
          			var isBolldoSma = this.isBolldoSma(j, 1);
-
-                    return isBollUpCommon && isKlineMatch && kUp && isjxJc && isBolldoSma;
+                    //最近N期没有开出记录
+                    var isPrizedlast = this.isPrizedlast(j, 3);
+                    return isBollUpCommon && isKlineMatch && kUp && isjxJc && isBolldoSma && isPrizedlast;
                 } catch (err) {
 					return false;
 				}
@@ -425,6 +427,16 @@ var TimerData = function() {
                 for (var i = j.bollup.length -last -1;i<j.bollup.length - 1;i++) {
                     if ((j.bolldown[i+1]) <  (j.bolldown[i]) ) {
                         return false;
+                    }
+                }
+                return true;
+            },
+            //最近last期开出情况
+            isPrizedlast: function(j, last) {
+				var kline =  j.values[j.values.length -1 ] ;
+                for (var i = j.values.length -last;i<j.values.length - 1;i++) {
+                    if (j.values[i][0] < j.values[i][1]) {
+                    	return  false;
                     }
                 }
                 return true;
@@ -5420,7 +5432,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/betCP",
-                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=panzheng" ,
+                data: "caipiao=" + cp + "&no=" + no + "&data=" + data+ "&id=" + dsRandmomType ,
                 dataType: "json",
                 success: function(a) {
                     console.log(a);
@@ -5435,7 +5447,7 @@ var NotifyData = function() {
                 type: "post",
                 async: false,
                 url: "http://localhost:8011/checkRecall",
-                data: "caipiao=" + cp + "&id=panzheng" ,
+                data: "caipiao=" + cp + "&id="+ dsRandmomType ,
                 dataType: "json",
                 success: function(a) {
                 	if(a){

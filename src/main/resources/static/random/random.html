@@ -620,6 +620,13 @@
 <!-- END PAGE LEVEL SCRIPTS -->
 <script src="static/common.js?v=0517" type="text/javascript"></script>
 <script>
+    var dsRandmomType = GetQueryString("type");
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
 	    var daShu = 'random';
 	    var storelength = 4;
 		jQuery(document).ready(function() {    
