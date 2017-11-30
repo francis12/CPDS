@@ -5,9 +5,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.ds.zxm.model.BetDO;
 import com.ds.zxm.model.BetDOCondition;
 import com.ds.zxm.service.BetService;
+import com.ds.zxm.service.LotteryDetailService;
+import com.ds.zxm.service.TecentOnlineService;
 import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
 import com.ds.zxm.util.LotteryUtil;
+import com.github.abel533.echarts.Option;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,10 @@ public class DsController {
     //请求直接转发
     @Autowired
     private BetService betService;
+    @Autowired
+    private TecentOnlineService tecentOnlineService;
+    @Autowired
+    private LotteryDetailService lotteryDetailService;
 
     @ResponseBody
     @RequestMapping(value = "/data", method = {RequestMethod.POST})
@@ -94,7 +101,7 @@ public class DsController {
                     result = HttpUtil.doPost("http://www.ds018.com/caipiao/kline/init", map, "utf-8", DsUtil.genRequestHeaderMap(caipiao));
                     resultMap = JSON.parseObject(result, Map.class);
                 } catch (Exception e) {
-                    log.error("initdata error, retry");
+                    log.error("post init json error, retry...");
                 }
             }
             //ret  不为0 重新获取
@@ -106,4 +113,43 @@ public class DsController {
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/tecentOnlineData", method = {RequestMethod.GET})
+    public Map<String, Object> tecentOnlineData( @RequestParam(required = true, value = "type") String type,
+                                                 @RequestParam(required = true, value = "value") String value,
+                                                 @RequestParam(required = true, value = "value2") String value2) {
+        Map<String, Object> option = null;
+        try {
+            option = tecentOnlineService.queryTecentOnlineData2Option(type, value, value2);
+        } catch (Exception e) {
+            log.error("tecentOnlineData error");
+        }
+        return option;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryQQh3", method = {RequestMethod.GET})
+    public Map<String, Object> queryQQh3( @RequestParam(required = true, value = "type") String type,
+                                                 @RequestParam(required = true, value = "value") String value,
+                                                 @RequestParam(required = true, value = "value2") String value2) {
+        Map<String, Object> option = null;
+        try {
+            option = lotteryDetailService.analysisQQffcData(type, value, value2);
+        } catch (Exception e) {
+            log.error("tecentOnlineData error");
+        }
+        return option;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getNextPrizeNums", method = {RequestMethod.GET})
+    public List<String> getNextPrizeNums() {
+        List<String> list = null;
+        try {
+            list = tecentOnlineService.generateNextPrizeNo();
+        } catch (Exception e) {
+            log.error("getNextPrizeNums error");
+        }
+        return list;
+    }
 }

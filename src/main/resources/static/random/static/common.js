@@ -411,8 +411,10 @@ var TimerData = function() {
                     //当图表类型为K线图时，其数值设置比较特殊，他的数值内容为长度为4的数组，分别代表[开盘价，收盘价，最低值，最高值]
                     var isKlineMatch = this.isKlineInbottom(j, 100) && this.isKLineUnderBollMiddle(j);
                     //var isAve = this.isAverage(j, 2);
-                    var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10) ||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30) || !this.isKlineInbottom(j, 3);
-         			var isjxJc = this.isAverage(j,1);
+					//||!this.isKlineInbottom(j, 16)||!this.isKlineInbottom(j, 30)
+                    var kUp = !this.isKlineInbottom(j, 6) || !this.isKlineInbottom(j, 10)
+
+         			var isjxJc = this.isAverage(j,2);
          			var isBolldoSma = this.isBolldoSma(j, 1);
                     //最近N期没有开出记录
                     var isPrizedlast = this.isPrizedlast(j, 3);

@@ -20,25 +20,22 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `t_bet`;
 CREATE TABLE `t_bet` (
-`id`  bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id' ,
-`lottery_code`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '代码' ,
-`seq_no`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '流水号' ,
-`gen_id`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '打法标注' ,
-`prize_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '中奖期号' ,
-`start_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '开始期号' ,
-`end_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '结束期号' ,
-`status`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '状态:1.等待开奖 2.未中奖 3.已中奖' ,
-`bet_type`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '投注类型:3.三星后3' ,
-`bet_no`  text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '投注号码' ,
-`create_time`  datetime NULL DEFAULT NULL COMMENT '创建时间' ,
-PRIMARY KEY (`id`)
-)
-ENGINE=InnoDB
-DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-COMMENT='投注记录表'
-AUTO_INCREMENT=35
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `seq_no` varchar(512) DEFAULT NULL COMMENT '流水号',
+  `gen_id` varchar(50) DEFAULT NULL,
+  `prize_no` varchar(50) DEFAULT NULL COMMENT '中奖期号',
+  `start_no` varchar(50) DEFAULT NULL COMMENT '开始期号',
+  `end_no` varchar(50) DEFAULT NULL COMMENT '结束期号',
+  `status` varchar(50) DEFAULT NULL COMMENT '状态:1.等待开奖 2.未中奖 3.已中奖',
+  `bet_type` varchar(50) DEFAULT NULL COMMENT '投注类型:3.三星后3',
+  `bet_no` mediumtext NOT NULL COMMENT '投注号码',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `index_start_no` (`start_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='投注记录表';
 
-;
+
 
 
 -- ----------------------------
@@ -52,14 +49,10 @@ CREATE TABLE `t_bet_record` (
   `schedule_no` varchar(6) NOT NULL COMMENT '倍投顺序',
   `seq_no` varchar(512) NOT NULL COMMENT '流水号',
   `bet_no` varchar(50) DEFAULT NULL COMMENT '投注期号',
-  `status` varchar(50) COMMENT '状态:1.等待开奖 2.未中奖 3.已中奖',
+  `status` varchar(50) DEFAULT NULL COMMENT '状态:1.等待开奖 2.未中奖 3.已中奖',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-)
-ENGINE=InnoDB
-DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-COMMENT='网站投注记录表'
-AUTO_INCREMENT=25
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='网站投注记录表';
 
 ;
 
@@ -154,30 +147,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `t_lottery_detail`;
 CREATE TABLE `t_lottery_detail` (
-`id`  bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id' ,
-`lottery_code`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '代码' ,
-`no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '期号' ,
-`time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间' ,
-`num1`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第一位 个位' ,
-`num2`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第二位 十位' ,
-`num3`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第三位 百位' ,
-`num4`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第四位 千位' ,
-`num5`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第五位 万位' ,
-`num6`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第六位' ,
-`num7`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第七位' ,
-`num8`  varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '第八位' ,
-`alias_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '期号别名' ,
-`lottery_date`  varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '开奖日期' ,
-PRIMARY KEY (`id`),
-UNIQUE INDEX `no` (`no`) USING BTREE ,
-UNIQUE INDEX `alias_no` (`alias_no`) USING BTREE 
-)
-ENGINE=InnoDB
-DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-COMMENT='开奖详情表'
-AUTO_INCREMENT=42614
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `no` varchar(50) NOT NULL COMMENT '期号',
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  `num1` varchar(1) DEFAULT NULL COMMENT '第一位 个位',
+  `num2` varchar(1) DEFAULT NULL COMMENT '第二位 十位',
+  `num3` varchar(1) DEFAULT NULL COMMENT '第三位 百位',
+  `num4` varchar(1) DEFAULT NULL COMMENT '第四位 千位',
+  `num5` varchar(1) DEFAULT NULL COMMENT '第五位 万位',
+  `num6` varchar(1) DEFAULT NULL COMMENT '第六位',
+  `num7` varchar(1) DEFAULT NULL COMMENT '第七位',
+  `num8` varchar(1) DEFAULT NULL COMMENT '第八位',
+  `alias_no` varchar(50) NOT NULL COMMENT '期号别名',
+  `lottery_date` varchar(8) DEFAULT NULL COMMENT '开奖日期',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `no` (`no`) USING BTREE,
+  UNIQUE KEY `alias_no` (`alias_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=178222 DEFAULT CHARSET=utf8 COMMENT='开奖详情表';
 
-;
+
 
 -- ----------------------------
 -- Table structure for `t_stock`
@@ -310,6 +299,44 @@ AUTO_INCREMENT=1
 
 ;
 
+CREATE TABLE `t_tecent_online` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `time` varchar(30) NOT NULL COMMENT '时间',
+  `online_num` bigint(10) DEFAULT NULL COMMENT '在线数',
+  `adjust_num` varchar(10) DEFAULT NULL COMMENT '波动值',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `time` (`time`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=173806 DEFAULT CHARSET=utf8 COMMENT='tecent在线人数表';
+
+CREATE TABLE `t_tecent_time` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `start_time` varchar(20) DEFAULT NULL COMMENT '生效时间',
+  `end_time` varchar(20) DEFAULT NULL COMMENT '失效时间',
+  `start` varchar(10) DEFAULT NULL COMMENT '调整开始值',
+  `end` varchar(10) DEFAULT NULL COMMENT '调整结束值',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=173808 DEFAULT CHARSET=utf8 COMMENT='tecent在线人数表';
+
+INSERT INTO `t_tecent_time` VALUES (173790, '18:00:00', '18:59:59', '-40000', '00000');
+INSERT INTO `t_tecent_time` VALUES (173791, '19:00:00', '19:59:59', '10000', '50000');
+INSERT INTO `t_tecent_time` VALUES (173792, '20:00:00', '20:59:59', '10000', '50000');
+INSERT INTO `t_tecent_time` VALUES (173793, '21:00:00', '21:59:59', '-50000', '-10000');
+INSERT INTO `t_tecent_time` VALUES (173794, '22:00:00', '22:59:59', '-180000', '-140000');
+INSERT INTO `t_tecent_time` VALUES (173795, '23:00:00', '23:59:59', '-360000', '-320000');
+INSERT INTO `t_tecent_time` VALUES (173796, '00:00:00', '00:59:59', '-320000', '-280000');
+INSERT INTO `t_tecent_time` VALUES (173797, '02:00:00', '02:59:59', '-110000', '-70000');
+INSERT INTO `t_tecent_time` VALUES (173798, '04:00:00', '04:59:59', '-50000', '-10000');
+INSERT INTO `t_tecent_time` VALUES (173799, '05:00:00', '05:59:59', '00000', '40000');
+INSERT INTO `t_tecent_time` VALUES (173800, '10:00:00', '10:59:59', '50000', '90000');
+INSERT INTO `t_tecent_time` VALUES (173801, '11:00:00', '11:59:59', '70000', '110000');
+INSERT INTO `t_tecent_time` VALUES (173802, '12:00:00', '12:59:59', '70000', '110000');
+INSERT INTO `t_tecent_time` VALUES (173803, '13:00:00', '13:59:59', '-110000', '-70000');
+INSERT INTO `t_tecent_time` VALUES (173804, '17:00:00', '17:59:59', '-60000', '-20000');
+INSERT INTO `t_tecent_time` VALUES (173805, '15:00:00', '15:59:59', '10000', '50000');
+INSERT INTO `t_tecent_time` VALUES (173806, '14:00:00', '15:59:59', '-60000', '-20000');
+INSERT INTO `t_tecent_time` VALUES (173807, '16:00:00', '16:59:59', '20000', '60000');
+
+
 -- ----------------------------
 -- Records of t_stock_realtime_level
 -- ----------------------------
@@ -344,7 +371,7 @@ ALTER TABLE `t_lottery` AUTO_INCREMENT=3;
 -- ----------------------------
 -- Auto increment value for `t_lottery_detail`
 -- ----------------------------
-ALTER TABLE `t_lottery_detail` AUTO_INCREMENT=42614;
+ALTER TABLE `t_lottery_detail` AUTO_INCREMENT=1;
 
 -- ----------------------------
 -- Auto increment value for `t_stock`

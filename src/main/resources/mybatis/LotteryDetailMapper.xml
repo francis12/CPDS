@@ -93,6 +93,21 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByConditionWithH3" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_lottery_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+      and (num1 = num2 or num1 = num3   or num2=num3  )
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

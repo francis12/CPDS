@@ -1,7 +1,6 @@
 package com.ds.zxm.service;
 
 import com.alibaba.fastjson.JSON;
-import com.ds.zxm.controller.LotteryController;
 import com.ds.zxm.mapper.BetDAO;
 import com.ds.zxm.mapper.BetRecordDAO;
 import com.ds.zxm.mapper.ScheduleDAO;
@@ -10,17 +9,14 @@ import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
 import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

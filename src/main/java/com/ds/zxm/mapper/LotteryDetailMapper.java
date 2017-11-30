@@ -18,6 +18,8 @@ public interface LotteryDetailMapper {
     int insertSelective(LotteryDetail record);
 
     List<LotteryDetail> selectByCondition(LotteryDetailCondition example);
+    List<LotteryDetail> selectByConditionWithH3(LotteryDetailCondition example);
+
 
     LotteryDetail selectByPrimaryKey(Long id);
 

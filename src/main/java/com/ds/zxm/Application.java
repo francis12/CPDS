@@ -1,6 +1,7 @@
 package com.ds.zxm;
 
 import com.ds.zxm.service.BetService;
+import com.ds.zxm.service.TecentOnlineService;
 import com.ds.zxm.util.DsUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.text.ParseException;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +67,8 @@ public class Application implements EmbeddedServletContainerCustomizer {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         BetService betService = (BetService)context.getBean("betService");
+        TecentOnlineService tecentOnlineService = (TecentOnlineService)context.getBean("tecentOnlineService");
+
 
 
         Runnable runnable = new Runnable() {
@@ -110,6 +114,19 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 DsUtil.init();
             }
         };
+
+        Runnable qq5star = new Runnable() {
+            public void run() {
+                try {
+                    List<String> qq5start = tecentOnlineService.generateNextPrizeNo();
+                    for(String num : qq5start) {
+                        System.out.print(num + " ");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
@@ -118,11 +135,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
         service.scheduleAtFixedRate(runnable3, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable4, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(authRunnable, 0, 30, TimeUnit.MINUTES);
-
-
-
-
-
+        service.scheduleAtFixedRate(qq5star, 1, 5, TimeUnit.SECONDS);
         logger.info("SpringBoot Start Success");
     }
 

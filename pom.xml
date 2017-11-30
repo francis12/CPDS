@@ -133,6 +133,13 @@
             <version>3.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.github.abel533/ECharts -->
+        <dependency>
+            <groupId>com.github.abel533</groupId>
+            <artifactId>ECharts</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
     </dependencies>
 
 

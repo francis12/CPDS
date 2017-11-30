@@ -135,7 +135,7 @@ public class LotteryController {
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            log.error("initdata error");
+            log.error("betCP error");
         }
         return result;
     }
