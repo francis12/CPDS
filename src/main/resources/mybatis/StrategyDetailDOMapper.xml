@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.zxm.mapper.StrategyDetailDAO" >
+  <resultMap id="BaseResultMap" type="com.ds.zxm.model.StrategyDetailDO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sid" property="sid" jdbcType="BIGINT" />
+    <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="amt" property="amt" jdbcType="DECIMAL" />
+    <result column="cur_profit" property="curProfit" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, sid, lottery_code, no, amt, cur_profit, status
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.StrategyDetailDOCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_strategy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_strategy_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_strategy_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.StrategyDetailDOCondition" >
+    delete from t_strategy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ds.zxm.model.StrategyDetailDO" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_strategy_detail (sid, lottery_code, no, 
+      amt, cur_profit, status
+      )
+    values (#{sid,jdbcType=BIGINT}, #{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, 
+      #{amt,jdbcType=DECIMAL}, #{curProfit,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertBatch">
+    insert into t_strategy_detail (sid, lottery_code, no,
+    amt, cur_profit, status
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.sid,jdbcType=BIGINT}, #{item.lotteryCode,jdbcType=VARCHAR}, #{item.no,jdbcType=VARCHAR},
+      #{item.amt,jdbcType=DECIMAL}, #{item.curProfit,jdbcType=DECIMAL}, #{item.status,jdbcType=VARCHAR})</foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.ds.zxm.model.StrategyDetailDO" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_strategy_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="lotteryCode != null" >
+        lottery_code,
+      </if>
+      <if test="no != null" >
+        no,
+      </if>
+      <if test="amt != null" >
+        amt,
+      </if>
+      <if test="curProfit != null" >
+        cur_profit,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        #{sid,jdbcType=BIGINT},
+      </if>
+      <if test="lotteryCode != null" >
+        #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="amt != null" >
+        #{amt,jdbcType=DECIMAL},
+      </if>
+      <if test="curProfit != null" >
+        #{curProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByCondition" parameterType="com.ds.zxm.model.StrategyDetailDOCondition" resultType="java.lang.Integer" >
+    select count(*) from t_strategy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByConditionSelective" parameterType="map" >
+    update t_strategy_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.sid != null" >
+        sid = #{record.sid,jdbcType=BIGINT},
+      </if>
+      <if test="record.lotteryCode != null" >
+        lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.no != null" >
+        no = #{record.no,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amt != null" >
+        amt = #{record.amt,jdbcType=DECIMAL},
+      </if>
+      <if test="record.curProfit != null" >
+        cur_profit = #{record.curProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByCondition" parameterType="map" >
+    update t_strategy_detail
+    set id = #{record.id,jdbcType=BIGINT},
+      sid = #{record.sid,jdbcType=BIGINT},
+      lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      no = #{record.no,jdbcType=VARCHAR},
+      amt = #{record.amt,jdbcType=DECIMAL},
+      cur_profit = #{record.curProfit,jdbcType=DECIMAL},
+      status = #{record.status,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.StrategyDetailDO" >
+    update t_strategy_detail
+    <set >
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=BIGINT},
+      </if>
+      <if test="lotteryCode != null" >
+        lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        no = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="amt != null" >
+        amt = #{amt,jdbcType=DECIMAL},
+      </if>
+      <if test="curProfit != null" >
+        cur_profit = #{curProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.StrategyDetailDO" >
+    update t_strategy_detail
+    set sid = #{sid,jdbcType=BIGINT},
+      lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      no = #{no,jdbcType=VARCHAR},
+      amt = #{amt,jdbcType=DECIMAL},
+      cur_profit = #{curProfit,jdbcType=DECIMAL},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

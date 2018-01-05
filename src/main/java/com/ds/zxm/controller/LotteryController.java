@@ -165,46 +165,14 @@ public class LotteryController {
         return result;
     }
 
-    public static Map<String, TradeSchedule> scheMap = null;
+    @ResponseBody
+    @RequestMapping(value = "/testSchedule", method = {RequestMethod.POST})
+    public String testSchedule( ) {
 
-    static {
-        scheMap = new HashMap<String, TradeSchedule>();
-        TradeSchedule tradeSchedule1 = new TradeSchedule();
-        tradeSchedule1.setWinNo(1);
-        tradeSchedule1.setLoseNo(2);
-        tradeSchedule1.setMultiple(8);
-        scheMap.put("1", tradeSchedule1);
+        return  null;
 
-        TradeSchedule tradeSchedule2 = new TradeSchedule();
-        tradeSchedule2.setWinNo(1);
-        tradeSchedule2.setLoseNo(3);
-        tradeSchedule2.setMultiple(13);
-        scheMap.put("2", tradeSchedule2);
-
-        TradeSchedule tradeSchedule3 = new TradeSchedule();
-        tradeSchedule3.setWinNo(1);
-        tradeSchedule3.setLoseNo(4);
-        tradeSchedule3.setMultiple(19);
-        scheMap.put("3", tradeSchedule3);
-
-        TradeSchedule tradeSchedule4 = new TradeSchedule();
-        tradeSchedule4.setWinNo(1);
-        tradeSchedule4.setLoseNo(5);
-        tradeSchedule4.setMultiple(29);
-        scheMap.put("4", tradeSchedule4);
-
-        TradeSchedule tradeSchedule5 = new TradeSchedule();
-        tradeSchedule5.setWinNo(1);
-        tradeSchedule5.setLoseNo(6);
-        tradeSchedule5.setMultiple(45);
-        scheMap.put("5", tradeSchedule5);
-
-        TradeSchedule tradeSchedule6 = new TradeSchedule();
-        tradeSchedule6.setWinNo(1);
-        tradeSchedule6.setLoseNo(1);
-        tradeSchedule6.setMultiple(68);
-        scheMap.put("6", tradeSchedule6);
     }
+
 
     private void betLottery(String originNo, int multi, String nums) {
         /*try {
@@ -213,6 +181,7 @@ public class LotteryController {
             log.error("betLottery", e);
         }*/
     }
+
 
     public static void main(String[] args) {
         try {

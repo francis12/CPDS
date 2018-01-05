@@ -16,8 +16,11 @@ public interface LotteryDetailMapper {
     int insert(LotteryDetail record);
 
     int insertSelective(LotteryDetail record);
+    int insertBatch(List<LotteryDetail> list);
 
     List<LotteryDetail> selectByCondition(LotteryDetailCondition example);
+    List<LotteryDetail> queryAllTestData(LotteryDetailCondition example);
+
     List<LotteryDetail> selectByConditionWithH3(LotteryDetailCondition example);
 
 

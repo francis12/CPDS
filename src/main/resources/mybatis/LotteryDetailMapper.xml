@@ -93,6 +93,28 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="queryAllTestData" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_lottery_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+      and lottery_code = 'QQFFC'
+      and lottery_date is not null
+      and ((num5 in ('0', '3', '6', '9') and num4 in ('0', '3', '6', '9') )
+      or 	(num4 in ('0', '3', '6', '9') and num3  in ('0', '3', '6', '9') )
+      or 	(num3 in ('0', '3', '6', '9') and num2  in ('0', '3', '6', '9') )
+
+      )
+
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByConditionWithH3" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.LotteryDetailCondition" >
     select
     <if test="distinct" >
@@ -150,6 +172,19 @@
       #{num1,jdbcType=VARCHAR}, #{num2,jdbcType=VARCHAR}, #{num3,jdbcType=VARCHAR}, #{num4,jdbcType=VARCHAR}, 
       #{num5,jdbcType=VARCHAR}, #{num6,jdbcType=VARCHAR}, #{num7,jdbcType=VARCHAR}, #{num8,jdbcType=VARCHAR}, 
       #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertBatch">
+    insert into t_lottery_detail
+    (lottery_code, no, time,
+    num1, num2, num3, num4,
+    num5, num6, num7, num8,
+    alias_no, lottery_date)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.lotteryCode,jdbcType=VARCHAR}, #{item.no,jdbcType=VARCHAR}, #{item.time,jdbcType=TIMESTAMP},
+      #{item.num1,jdbcType=VARCHAR}, #{item.num2,jdbcType=VARCHAR}, #{item.num3,jdbcType=VARCHAR}, #{item.num4,jdbcType=VARCHAR},
+      #{item.num5,jdbcType=VARCHAR}, #{item.num6,jdbcType=VARCHAR}, #{item.num7,jdbcType=VARCHAR}, #{item.num8,jdbcType=VARCHAR},
+      #{item.aliasNo,jdbcType=VARCHAR}, #{item.lotteryDate,jdbcType=VARCHAR})</foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.LotteryDetail" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >

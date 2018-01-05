@@ -340,6 +340,29 @@ INSERT INTO `t_tecent_time` VALUES (173807, '16:00:00', '16:59:59', '20000', '60
 -- ----------------------------
 -- Records of t_stock_realtime_level
 -- ----------------------------
+
+CREATE TABLE `t_strategy` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `start_no` varchar(50) NOT NULL COMMENT '开始期号',
+  `end_no` varchar(50) NOT NULL COMMENT '结束期号',
+  `total_amt` DECIMAL(12,4) NOT NULL COMMENT '总投注金额',
+  `cur_profit` DECIMAL(12,4) NOT NULL COMMENT '盈利金额',
+  `max_profit` DECIMAL(12,4) NOT NULL COMMENT '盈利金额',
+  `min_profit` DECIMAL(12,4) NOT NULL COMMENT '盈利金额',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='策略表';
+
+CREATE TABLE `t_strategy_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `sid` bigint(20) NOT NULL  COMMENT 't_strategy id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `no` varchar(50) NOT NULL COMMENT '期号',
+  `amt` DECIMAL(12,4) NOT NULL COMMENT '投注金额',
+  `cur_profit` DECIMAL(12,4) NOT NULL COMMENT '当前盈利金额',
+  `status` varchar(2) NOT NULL COMMENT '中挂结果',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='策略详情表';
 BEGIN;
 COMMIT;
 

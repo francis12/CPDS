@@ -1,26 +1,22 @@
 package com.ds.zxm.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.ds.zxm.model.BetDO;
-import com.ds.zxm.model.BetDOCondition;
 import com.ds.zxm.service.BetService;
 import com.ds.zxm.service.LotteryDetailService;
 import com.ds.zxm.service.TecentOnlineService;
+import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.DsUtil;
 import com.ds.zxm.util.HttpUtil;
-import com.ds.zxm.util.LotteryUtil;
-import com.github.abel533.echarts.Option;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,4 +148,62 @@ public class DsController {
         }
         return list;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/testQw", method = {RequestMethod.GET})
+    public  Map<String, Object>  testQw( @RequestParam(required = true, value = "type") String time) {
+        Map<String,java.lang.Object>  result = null;
+        try {
+            result=  lotteryDetailService.testBatchLotteryDetails(time);
+        } catch (Exception e) {
+            log.error("getNextPrizeNums error", e);
+        }
+        return result;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/runStrategy", method = {RequestMethod.GET})
+    public  Map<String, Object>  runStrategy( @RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end) {
+        Map<String,java.lang.Object>  result = null;
+        try {
+            lotteryDetailService.runStrategy(start, end);
+            /*String startt = "20171120";
+            String endd = "20180104";
+            Date startDate = DateUtils.String2Date(startt, "yyyyMMdd");
+            Date endDate = DateUtils.String2Date(endd, "yyyyMMdd");
+
+            Date curDate = startDate;
+            while (curDate.compareTo(endDate) < 0) {
+                String day = DateUtils.date2String(curDate, "yyyyMMdd");
+                lotteryDetailService.batchCheckData(day + "-0001", day + "-1440");
+                curDate = DateUtils.addDate(1, curDate);
+            }*/
+        } catch (Exception e) {
+            log.error("getNextPrizeNums error", e);
+        }
+        return result;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/batchCheckData", method = {RequestMethod.GET})
+    public  Map<String, Object>  batchCheckData( @RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end) {
+        Map<String,java.lang.Object>  result = null;
+        try {
+            lotteryDetailService.batchCheckData(start, end);
+            /*String startt = "20171120";
+            String endd = "20180104";
+            Date startDate = DateUtils.String2Date(startt, "yyyyMMdd");
+            Date endDate = DateUtils.String2Date(endd, "yyyyMMdd");
+
+            Date curDate = startDate;
+            while (curDate.compareTo(endDate) < 0) {
+                String day = DateUtils.date2String(curDate, "yyyyMMdd");
+                lotteryDetailService.batchCheckData(day + "-0001", day + "-1440");
+                curDate = DateUtils.addDate(1, curDate);
+            }*/
+        } catch (Exception e) {
+            log.error("getNextPrizeNums error", e);
+        }
+        return result;
+    }
+
+
 }

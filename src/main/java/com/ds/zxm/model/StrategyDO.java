@@ -3,81 +3,83 @@ package com.ds.zxm.model;
 import java.math.BigDecimal;
 
 public class StrategyDO {
+    private Long id;
 
-	//当前期
-	private String currentNo;
-	//当前投入金额
-	private BigDecimal currentAmount;
-	//总投入金额
-	private BigDecimal totalAmount;
-	//当前局盈亏
-	private BigDecimal currentProfit;
-	private BigDecimal maxWinAmount = BigDecimal.ZERO;
-	private BigDecimal maxLoseAmount= BigDecimal.ZERO;
-	public BigDecimal getMaxWinAmount() {
-		return maxWinAmount;
-	}
+    private String lotteryCode;
 
-	public void setMaxWinAmount(BigDecimal maxWinAmount) {
-		this.maxWinAmount = maxWinAmount;
-	}
+    private String startNo;
 
-	public BigDecimal getMaxLoseAmount() {
-		return maxLoseAmount;
-	}
+    private String endNo;
 
-	public void setMaxLoseAmount(BigDecimal maxLoseAmount) {
-		this.maxLoseAmount = maxLoseAmount;
-	}
+    private BigDecimal totalAmt;
 
-	//策略盈亏
-	private BigDecimal totalProfit;
-	
-	public String getCurrentNo() {
-		return currentNo;
-	}
+    private BigDecimal curProfit;
 
-	public void setCurrentNo(String currentNo) {
-		this.currentNo = currentNo;
-	}
+    private BigDecimal maxProfit;
 
-	public BigDecimal getCurrentAmount() {
-		return currentAmount;
-	}
+    private BigDecimal minProfit;
 
-	public void setCurrentAmount(BigDecimal currentAmount) {
-		this.currentAmount = currentAmount;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
-	}
+    public String getLotteryCode() {
+        return lotteryCode;
+    }
 
-	public BigDecimal getCurrentProfit() {
-		return currentProfit;
-	}
+    public void setLotteryCode(String lotteryCode) {
+        this.lotteryCode = lotteryCode == null ? null : lotteryCode.trim();
+    }
 
-	public void setCurrentProfit(BigDecimal currentProfit) {
-		this.currentProfit = currentProfit;
-	}
+    public String getStartNo() {
+        return startNo;
+    }
 
-	public BigDecimal getTotalProfit() {
-		return totalProfit;
-	}
+    public void setStartNo(String startNo) {
+        this.startNo = startNo == null ? null : startNo.trim();
+    }
 
-	public void setTotalProfit(BigDecimal totalProfit) {
-		this.totalProfit = totalProfit;
-	}
+    public String getEndNo() {
+        return endNo;
+    }
 
-	public String toManageString() {
-		return String.format("第%s期投入%s盈亏%s,总投注%s总盈亏%s", 
-				currentNo, String.valueOf(currentAmount),
-				String.valueOf(currentProfit.setScale(4)), String.valueOf(totalAmount.setScale(4)),
-				String.valueOf(totalProfit.setScale(4)));
-	}
+    public void setEndNo(String endNo) {
+        this.endNo = endNo == null ? null : endNo.trim();
+    }
 
+    public BigDecimal getTotalAmt() {
+        return totalAmt;
+    }
+
+    public void setTotalAmt(BigDecimal totalAmt) {
+        this.totalAmt = totalAmt;
+    }
+
+    public BigDecimal getCurProfit() {
+        return curProfit;
+    }
+
+    public void setCurProfit(BigDecimal curProfit) {
+        this.curProfit = curProfit;
+    }
+
+    public BigDecimal getMaxProfit() {
+        return maxProfit;
+    }
+
+    public void setMaxProfit(BigDecimal maxProfit) {
+        this.maxProfit = maxProfit;
+    }
+
+    public BigDecimal getMinProfit() {
+        return minProfit;
+    }
+
+    public void setMinProfit(BigDecimal minProfit) {
+        this.minProfit = minProfit;
+    }
 }

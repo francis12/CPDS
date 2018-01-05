@@ -29,6 +29,7 @@ public class FetchDataController {
         try {
             Date startDate = DateUtils.String2Date(start, "yyyyMMdd");
             Date endDate = DateUtils.String2Date(end, "yyyyMMdd");
+
             lotteryDetailService.fetchQQffcData(startDate, endDate);
         } catch (Exception e) {
             e.printStackTrace();
