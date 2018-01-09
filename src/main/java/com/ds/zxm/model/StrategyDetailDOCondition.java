@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StrategyDetailDOCondition {
+public class StrategyDetailDOCondition  {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -552,6 +552,66 @@ public class StrategyDetailDOCondition {
 
         public Criteria andStatusNotBetween(String value1, String value2) {
             addCriterion("status not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitIsNull() {
+            addCriterion("total_profit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitIsNotNull() {
+            addCriterion("total_profit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitEqualTo(BigDecimal value) {
+            addCriterion("total_profit =", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitNotEqualTo(BigDecimal value) {
+            addCriterion("total_profit <>", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitGreaterThan(BigDecimal value) {
+            addCriterion("total_profit >", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("total_profit >=", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitLessThan(BigDecimal value) {
+            addCriterion("total_profit <", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("total_profit <=", value, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitIn(List<BigDecimal> values) {
+            addCriterion("total_profit in", values, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitNotIn(List<BigDecimal> values) {
+            addCriterion("total_profit not in", values, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("total_profit between", value1, value2, "totalProfit");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProfitNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("total_profit not between", value1, value2, "totalProfit");
             return (Criteria) this;
         }
 

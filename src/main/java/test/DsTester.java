@@ -1,28 +1,28 @@
 package test;
 
-import com.alibaba.fastjson.JSON;
-import com.ds.zxm.service.BetService;
-import com.ds.zxm.service.LotteryDetailService;
-import com.ds.zxm.service.TecentOnlineService;
-import com.ds.zxm.util.DsUtil;
-import com.ds.zxm.util.HttpUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-
 public class DsTester {
 
+    public static void main(String[] arg) {
+        try {
+            System.err.println("测试->将emoji表情替换成*");
+            String text = "This is a smiley \uD83C\uDFA6 face\uD860\uDD5D \uD860\uDE07 \uD860\uDEE2 \uD863\uDCCA \uD863\uDCCD \uD863\uDCD2 \uD867\uDD98 ";
+            System.out.println(text);
+            System.out.println(text.length());
+            System.out.println(text.replaceAll("[\\ud83c\\udc00-\\ud83c\\udfff]|[\\ud83d\\udc00-\\ud83d\\udfff]|[\\u2600-\\u27ff]", "*"));
+            System.out.println((text));
+            //输出结果
+            //This is a smiley �� face�� �� �� �� �� �� ��
+            //45
+            //This is a smiley * face�� �� �� �� �� �� ��
+            //This is a smiley * face* * * * * * *
 
+            System.err.println("测试->替换四个字节的字符 '\\xF0\\x9F\\x98\\x84\\xF0\\x9F）的解决方案 ��");
+            String title = "ff的范德萨分��������Llfldakf;dsk。f������������daslfjdsa;lfkjdsd'j'l'f'k'd'j'sa'l'k";
+            System.out.println((title));
+            //输出结果：ff的范德萨分Llfldakf;dsk。fdaslfjdsa;lfkjdsd'j'l'f'k'd'j'sa'l'k
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

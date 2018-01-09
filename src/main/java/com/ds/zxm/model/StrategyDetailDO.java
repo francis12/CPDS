@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class StrategyDetailDO {
     private Long id;
 
-    private Long sid;
+    private String sid;
 
     private String lotteryCode;
 
@@ -17,6 +17,8 @@ public class StrategyDetailDO {
 
     private String status;
 
+    private BigDecimal totalProfit;
+
     public Long getId() {
         return id;
     }
@@ -25,11 +27,11 @@ public class StrategyDetailDO {
         this.id = id;
     }
 
-    public Long getSid() {
+    public String getSid() {
         return sid;
     }
 
-    public void setSid(Long sid) {
+    public void setSid(String sid) {
         this.sid = sid;
     }
 
@@ -71,5 +73,13 @@ public class StrategyDetailDO {
 
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
+    }
+
+    public BigDecimal getTotalProfit() {
+        return totalProfit;
+    }
+
+    public void setTotalProfit(BigDecimal totalProfit) {
+        this.totalProfit = totalProfit;
     }
 }

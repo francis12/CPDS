@@ -19,6 +19,8 @@ public class StrategyDO {
 
     private BigDecimal minProfit;
 
+    private String seqNo;
+
     public Long getId() {
         return id;
     }
@@ -81,5 +83,13 @@ public class StrategyDO {
 
     public void setMinProfit(BigDecimal minProfit) {
         this.minProfit = minProfit;
+    }
+
+    public String getSeqNo() {
+        return seqNo;
+    }
+
+    public void setSeqNo(String seqNo) {
+        this.seqNo = seqNo == null ? null : seqNo.trim();
     }
 }

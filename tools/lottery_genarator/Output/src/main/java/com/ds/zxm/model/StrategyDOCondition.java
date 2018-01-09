@@ -1,10 +1,11 @@
 package com.ds.zxm.model;
 
+import com.netfinworks.restx.persist.jdbc.QueryConditionBase;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StrategyDOCondition  {
+public class StrategyDOCondition extends QueryConditionBase {
     protected String orderByClause;
 
     protected boolean distinct;

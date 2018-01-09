@@ -10,6 +10,7 @@
     <result column="cur_profit" property="curProfit" jdbcType="DECIMAL" />
     <result column="max_profit" property="maxProfit" jdbcType="DECIMAL" />
     <result column="min_profit" property="minProfit" jdbcType="DECIMAL" />
+    <result column="seq_no" property="seqNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, lottery_code, start_no, end_no, total_amt, cur_profit, max_profit, min_profit
+    id, lottery_code, start_no, end_no, total_amt, cur_profit, max_profit, min_profit, 
+    seq_no
   </sql>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.StrategyDOCondition" >
     select
@@ -108,10 +110,10 @@
     </selectKey>
     insert into t_strategy (lottery_code, start_no, end_no, 
       total_amt, cur_profit, max_profit, 
-      min_profit)
+      min_profit, seq_no)
     values (#{lotteryCode,jdbcType=VARCHAR}, #{startNo,jdbcType=VARCHAR}, #{endNo,jdbcType=VARCHAR}, 
       #{totalAmt,jdbcType=DECIMAL}, #{curProfit,jdbcType=DECIMAL}, #{maxProfit,jdbcType=DECIMAL}, 
-      #{minProfit,jdbcType=DECIMAL})
+      #{minProfit,jdbcType=DECIMAL}, #{seqNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.StrategyDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -140,6 +142,9 @@
       <if test="minProfit != null" >
         min_profit,
       </if>
+      <if test="seqNo != null" >
+        seq_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="lotteryCode != null" >
@@ -162,6 +167,9 @@
       </if>
       <if test="minProfit != null" >
         #{minProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="seqNo != null" >
+        #{seqNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -198,6 +206,9 @@
       <if test="record.minProfit != null" >
         min_profit = #{record.minProfit,jdbcType=DECIMAL},
       </if>
+      <if test="record.seqNo != null" >
+        seq_no = #{record.seqNo,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -212,7 +223,8 @@
       total_amt = #{record.totalAmt,jdbcType=DECIMAL},
       cur_profit = #{record.curProfit,jdbcType=DECIMAL},
       max_profit = #{record.maxProfit,jdbcType=DECIMAL},
-      min_profit = #{record.minProfit,jdbcType=DECIMAL}
+      min_profit = #{record.minProfit,jdbcType=DECIMAL},
+      seq_no = #{record.seqNo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -241,6 +253,9 @@
       <if test="minProfit != null" >
         min_profit = #{minProfit,jdbcType=DECIMAL},
       </if>
+      <if test="seqNo != null" >
+        seq_no = #{seqNo,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -252,7 +267,8 @@
       total_amt = #{totalAmt,jdbcType=DECIMAL},
       cur_profit = #{curProfit,jdbcType=DECIMAL},
       max_profit = #{maxProfit,jdbcType=DECIMAL},
-      min_profit = #{minProfit,jdbcType=DECIMAL}
+      min_profit = #{minProfit,jdbcType=DECIMAL},
+      seq_no = #{seqNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

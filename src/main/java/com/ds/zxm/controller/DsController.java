@@ -162,10 +162,11 @@ public class DsController {
     }
     @ResponseBody
     @RequestMapping(value = "/runStrategy", method = {RequestMethod.GET})
-    public  Map<String, Object>  runStrategy( @RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end) {
+    public  Map<String, Object>  runStrategy( @RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end,
+                                              @RequestParam(required = true, value = "tz") String tz, @RequestParam(required = true, value = "lastCnt") Integer lastCnt, @RequestParam(required = true, value = "btqs") Integer btqs) {
         Map<String,java.lang.Object>  result = null;
         try {
-            lotteryDetailService.runStrategy(start, end);
+            lotteryDetailService.runStrategy(start, end, tz, lastCnt, btqs);
             /*String startt = "20171120";
             String endd = "20180104";
             Date startDate = DateUtils.String2Date(startt, "yyyyMMdd");
