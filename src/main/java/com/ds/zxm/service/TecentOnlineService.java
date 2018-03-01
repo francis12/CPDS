@@ -278,6 +278,30 @@ public class TecentOnlineService {
         }
         try {
             result = tecentTimeDAO.selectCalResultByTime(map);
+
+
+
+            //查询最近7天这一期的在线人数和最近7期的在线人数取平均数
+            List<String> timeList = new ArrayList<>();
+            Date date = DateUtils.String2Date(time, "yyyy-MM-dd HH:mm:ss");
+            String datePre1 = DateUtils.date2String(DateUtils.addMinutes(-1, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre2 = DateUtils.date2String(DateUtils.addMinutes(-2, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre3 = DateUtils.date2String(DateUtils.addMinutes(-3, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre4 = DateUtils.date2String(DateUtils.addMinutes(-4, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre5 = DateUtils.date2String(DateUtils.addMinutes(-5, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre6 = DateUtils.date2String(DateUtils.addMinutes(-6, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre7 = DateUtils.date2String(DateUtils.addMinutes(-7, date),"yyyy-MM-dd HH:mm:ss" );
+
+            timeList.add(datePre1);
+            timeList.add(datePre2);
+            timeList.add(datePre3);
+            timeList.add(datePre4);
+            timeList.add(datePre5);
+            timeList.add(datePre6);
+            timeList.add(datePre7);
+            TecentTimeDOCondition condition = new TecentTimeDOCondition();
+            condition.createCriteria().andEndTimeIn(timeList);
+
             if(null == result) {
                 return calResult;
             }
