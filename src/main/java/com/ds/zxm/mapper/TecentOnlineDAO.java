@@ -13,7 +13,7 @@ public interface TecentOnlineDAO {
     int deleteByPrimaryKey(Long id);
 
     int insert(TecentOnlineDO record);
-
+    int insertBatch(List<TecentOnlineDO> list);
     int insertSelective(TecentOnlineDO record);
 
     List<TecentOnlineDO> selectByCondition(TecentOnlineDOCondition example);

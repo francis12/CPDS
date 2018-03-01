@@ -148,6 +148,20 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  <select id="selectCalResultByTime" parameterType="map" resultType="map" >
+    SELECT time, online_num AS react
+    ,(
+    SELECT CONCAT(online_num + (
+    SELECT ROUND(AVG(adjust_num), 0)
+    FROM t_tecent_online
+    WHERE time LIKE concat('% ', #{params.time}, '%')
+    ), '')
+    FROM t_tecent_online
+    WHERE time =#{params.curTime}
+    ) AS calres
+    FROM t_tecent_online t
+    WHERE t.time = #{params.nextTime}
+  </select>
   <update id="updateByConditionSelective" parameterType="map" >
     update t_tecent_time
     <set >

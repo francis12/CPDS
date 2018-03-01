@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/ds")
+@RequestMapping("ds")
 public class DsController {
 
     Logger log = Logger.getLogger(DsController.class);
@@ -123,6 +123,28 @@ public class DsController {
         return option;
     }
 
+    @RequestMapping(value = "genCurrentNumByHisRateAndPreNum", method = {RequestMethod.GET})
+    public Map<String, Object>  genCurrentNumByHisRateAndPreNum(@RequestParam(required = true, value = "time") String time ) {
+        Map<String, Object> result = null;
+        try {
+            result = tecentOnlineService.genCurrentNumByHisRateAndPreNum(time);
+        } catch (Exception e) {
+            log.error("tecentOnlineData error");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/genCurrentNumByHisRateAndPreNumWithInterval", method = {RequestMethod.GET})
+    public Map<String, Object>  genCurrentNumByHisRateAndPreNumWithInterval(@RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end ) {
+        Map<String, Object> result = null;
+        try {
+            result = tecentOnlineService.genCurrentNumByHisRateAndPreNumWithInterval(start, end);
+        } catch (Exception e) {
+            log.error("tecentOnlineData error");
+        }
+        return result;
+    }
+
     @ResponseBody
     @RequestMapping(value = "/queryQQh3", method = {RequestMethod.GET})
     public Map<String, Object> queryQQh3( @RequestParam(required = true, value = "type") String type,
@@ -155,6 +177,17 @@ public class DsController {
         Map<String,java.lang.Object>  result = null;
         try {
             result=  lotteryDetailService.testBatchLotteryDetails(time);
+        } catch (Exception e) {
+            log.error("getNextPrizeNums error", e);
+        }
+        return result;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/runStaticNumStrategy", method = {RequestMethod.GET})
+    public  Map<String, Object>  runStaticNumStrategy( @RequestParam(required = true, value = "start") String start, @RequestParam(required = true, value = "end") String end ) {
+        Map<String,java.lang.Object>  result = null;
+        try {
+            lotteryDetailService.runStaticNumStrategy(start, end);
         } catch (Exception e) {
             log.error("getNextPrizeNums error", e);
         }

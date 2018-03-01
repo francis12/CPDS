@@ -295,6 +295,20 @@ public class DateUtils {
         date = cl.getTime();
         return date;
     }
+    /***
+     * 日期加减分钟
+     *
+     * @return 减一天：2014-11-23或(加一天：2014-11-25)
+     */
+    public static Date addMinutes(int amount, Date date) {
+        Calendar cl = Calendar.getInstance();
+
+        cl.setTime(date);
+        cl.add(Calendar.MINUTE, amount);
+
+        date = cl.getTime();
+        return date;
+    }
     public  static  void main(String[] args){
         try {
            Date date = DateUtils.String2Date("171010", "yyMMdd");

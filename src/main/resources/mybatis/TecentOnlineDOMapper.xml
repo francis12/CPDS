@@ -107,6 +107,16 @@
     values (#{time,jdbcType=VARCHAR}, #{onlineNum,jdbcType=BIGINT}, #{adjustNum,jdbcType=VARCHAR}
       )
   </insert>
+  <insert id="insertBatch">
+    replace into t_tecent_online (time, online_num, adjust_num
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.time,jdbcType=VARCHAR}, #{item.onlineNum,jdbcType=BIGINT}, #{item.adjustNum,jdbcType=VARCHAR}
+      )
+
+    </foreach>
+  </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.TecentOnlineDO" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY

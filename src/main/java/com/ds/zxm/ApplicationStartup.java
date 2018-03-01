@@ -10,4 +10,29 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     public void onApplicationEvent(ContextRefreshedEvent event) {
         DsUtil.init();
     }
+
+    public static void main (String[] args) {
+        String[] base = {"2","5","8"};
+        StringBuffer sb = new StringBuffer();
+
+        for(String item : base) {
+            for(int i=0;i<10;i++) {
+                sb.append(item + item + i + " ");
+            }
+            for(int i=0;i<10;i++) {
+                String tmp = item + i + item;
+                if (!tmp.equals(item + item + item)) {
+                    sb.append(tmp + " ");
+                }
+            }
+
+            for(int i=0;i<10;i++) {
+                String tmp = i + item  + item;
+                if (!tmp.equals(item + item + item)) {
+                    sb.append(tmp + " ");
+                }
+            }
+        }
+        System.out.println(sb.toString());
+    }
 }

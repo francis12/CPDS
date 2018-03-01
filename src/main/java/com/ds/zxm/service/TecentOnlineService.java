@@ -1,9 +1,6 @@
 package com.ds.zxm.service;
 
-import com.ds.zxm.mapper.BetDAO;
-import com.ds.zxm.mapper.CurNoDAO;
-import com.ds.zxm.mapper.TecentOnlineDAO;
-import com.ds.zxm.mapper.TecentTimeDAO;
+import com.ds.zxm.mapper.*;
 import com.ds.zxm.model.*;
 import com.ds.zxm.util.DateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,12 +26,47 @@ public class TecentOnlineService {
     private CurNoDAO curNoDAO;
     @Autowired
     private TecentTimeDAO tecentTimeDAO;
+    @Autowired
+    private StrategyDetailDAO strategyDetailDAO;
 
     org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TecentOnlineService.class);
 
     public static void main(String[] args) {
+
+
+        Map<String,Integer> map = new HashMap<>();
+        for(int i1=1;i1<3;i1++) {
+            for(int i2=0;i2<10;i2++) {
+                for(int i3=0;i3<10;i3++) {
+                    for(int i4=0;i4<10;i4++) {
+                        for(int i5=0;i5<10;i5++) {
+                            for(int i6=0;i6<10;i6++) {
+                                for(int i7=0;i7<10;i7++) {
+                                    for(int i8=0;i8<10;i8++) {
+                                        for(int i9=0;i9<10;i9++) {
+                                            int sum = i1+i2+i3+i4+i5+i6+i7+i8+i9;
+                                            int result = sum % 10;
+
+                                            if (null == map.get("" + result) ) {
+                                                map.put(""+result, 1);
+                                            }else {
+                                                map.put(""+result, map.get(""+result) + 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for(Map.Entry<String, Integer> entry :map.entrySet()) {
+            System.out.println(entry.getKey() + "---" + entry.getValue());
+        }
         try {
-             new TecentOnlineService().checkIsPrized();
+            // new TecentOnlineService().checkIsPrized();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -201,13 +233,171 @@ public class TecentOnlineService {
         }
         return nextOnlineMap;
     }
+    public Map<String,Object> genCurrentNumByHisRateAndPreNumWithInterval(String startTime, String endTime) {
+        Map<String,Object> result = new HashMap<>();
+        List<StrategyDetailDO> strategyDetailDOList = new ArrayList<>();
+        try {
+            Date start = DateUtils.String2Date(startTime, "yyyy-MM-dd HH:mm:ss");
+            Date end = DateUtils.String2Date(endTime, "yyyy-MM-dd HH:mm:ss");
+            while (start.compareTo(end)<=0) {
+                try {
+                    StrategyDetailDO strategyDetailDO = new StrategyDetailDO();
+                    String curTime = DateUtils.date2String(start, "yyyy-MM-dd HH:mm:ss");
+                    Map<String,Object> itemResult = this.genCurrentNumByHisRateAndPreNum(curTime);
+                    result.putAll(itemResult);
+                    strategyDetailDO.setLotteryCode("TXFF");
+                    strategyDetailDO.setNo(curTime);
+                    strategyDetailDO.setStatus((String) itemResult.get(curTime));
+                    strategyDetailDOList.add(strategyDetailDO);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    start = DateUtils.addMinutes(1,start);
+                }
+            }
+            strategyDetailDAO.insertBatch(strategyDetailDOList);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    //根据下一期的历史波动率和当前的在线人数，计算下一期人数
+    public Map<String,Object> genCurrentNumByHisRateAndPreNum(String time) {
+        Map<String,Object> calResult = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> result = null;
+        try {
+            Date date = DateUtils.String2Date(time, "yyyy-MM-dd HH:mm:ss");
+            String curTime = DateUtils.date2String(DateUtils.addMinutes(-1, date),"yyyy-MM-dd HH:mm:ss" );
+            map.put("curTime", curTime);
+            map.put("nextTime", time);
+            map.put("time", DateUtils.date2String(date,"HH:mm"));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            result = tecentTimeDAO.selectCalResultByTime(map);
+            if(null == result) {
+                return calResult;
+            }
+            String calres = result.get("calres").toString();
+            char[] calresItems = calres.toCharArray();
+            String react = result.get("react").toString();
+            char[] reactItems = react.toCharArray();
+
+            int calresSum=0;
+            for(char ch : calresItems) {
+                calresSum = calresSum + Integer.valueOf(String.valueOf(ch));
+            }
+
+            int reactSum=0;
+            for(char ch : reactItems) {
+                reactSum = reactSum +  Integer.valueOf(String.valueOf(ch));
+            }
+
+            int wanCal = calresSum%10;
+            int wanRes = reactSum%10;
+
+            log.info(time +",计算：" + calres + ", 实际：" + react +  ",计算万位:"+ wanCal + ",实际万位：" + wanRes);
+
+            //重写，char转有问题
+            int qianCal = Integer.valueOf(String.valueOf(calres.charAt(calres.length()-4)));
+            int qianRes = Integer.valueOf(String.valueOf(react.charAt(react.length()-4)));
+
+
+            if (this.isAdjustInInterval(wanCal, wanRes, 3)) {
+                if(this.isAdjustInInterval(qianCal, qianRes, 3)) {
+                    calResult.put(time,"中奖");
+                } else {
+                    calResult.put(time,"未中奖");
+                }
+            } else {
+                calResult.put(time,"未中奖");
+            }
+
+            System.out.println(time + "---" + calResult.get(time));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return calResult;
+    }
+
+    //以basic为基准，adjust为调整基数
+    private boolean isAdjustInInterval(int basic,int toJudge, int adjust) {
+        adjust=3;
+        switch (basic){
+            case 0:
+                if(toJudge==0||toJudge==1||toJudge==2||toJudge==3||toJudge==7||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 1:
+                if(toJudge==0||toJudge==1||toJudge==2||toJudge==3||toJudge==4||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 2:
+                if(toJudge==0||toJudge==1||toJudge==2||toJudge==3||toJudge==4||toJudge==5||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 3:
+                if(toJudge==0||toJudge==1||toJudge==2||toJudge==3||toJudge==4||toJudge==5||toJudge==6) {
+                    return true;
+                }
+                break;
+            case 4:
+                if(toJudge==7||toJudge==1||toJudge==2||toJudge==3||toJudge==4||toJudge==5||toJudge==6) {
+                    return true;
+                }
+                break;
+            case 5:
+                if(toJudge==7||toJudge==8||toJudge==2||toJudge==3||toJudge==4||toJudge==5||toJudge==6) {
+                    return true;
+                }
+                break;
+            case 6:
+                if(toJudge==3||toJudge==4||toJudge==5||toJudge==6||toJudge==7||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 7:
+                if(toJudge==0||toJudge==4||toJudge==5||toJudge==6||toJudge==7||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 8:
+                if(toJudge==0||toJudge==1||toJudge==5||toJudge==6||toJudge==7||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            case 9:
+                if(toJudge==0||toJudge==1||toJudge==2||toJudge==6||toJudge==7||toJudge==8||toJudge==9) {
+                    return true;
+                }
+                break;
+            default:;
+        }
+        return  false;
+    }
     public void fetchTecentOnlineData(int startPage, int endPage) throws Exception {
         while ( startPage <= endPage) {
             try {
                 Document doc = this.fetchDateData(startPage);
+
+                int count = 0;
+                while (null == doc && count<10) {
+                        try {
+                            Thread.sleep(3000);
+                            doc = this.fetchDateData(startPage);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        count++;
+                }
                 Elements els = null;
                 els  = doc.select(".main_detail_bar");
-                log.info(startPage + " --- " + els.size());
                 DigLotteryProc(els);
                 log.info("完成处理第" + startPage + "页" );
             } catch (Exception e) {
@@ -223,21 +413,31 @@ public class TecentOnlineService {
             Connection conn = Jsoup.connect("http://www.cndgv.com/")
                     .data("hdPage", curPage + "")
                     .data("hdLastPage", "");
-            conn.timeout(3000);
+            conn.timeout(5000);
             doc = conn.post();
         }catch(Exception e){
            log.error("fetchDateData error:" + curPage ,e);
+        }finally {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return  doc;
     }
 
     private void DigLotteryProc(Elements els) throws ParseException {
-        for (Element row : els) {
-            Elements details = row.select(".main_detail_word .col-lg-3" );
 
-            TecentOnlineDO tecentOnlineDO = this.convertElements2Do(details);
-            this.saveIfNotExist(tecentOnlineDO);
-        }
+        List<TecentOnlineDO> tecentOnlineDOS = new ArrayList<>();
+            for (Element row : els) {
+                Elements details = row.select(".main_detail_word .col-lg-3" );
+                TecentOnlineDO tecentOnlineDO = this.convertElements2Do(details);
+                tecentOnlineDOS.add(tecentOnlineDO);
+            }
+
+        System.out.println("insert:" + tecentOnlineDOS.get(0).getTime() + " --- " + tecentOnlineDOS.get(tecentOnlineDOS.size()-1).getTime());
+        tecentOnlineDAO.insertBatch(tecentOnlineDOS);
     }
 
     private TecentOnlineDO convertElements2Do(Elements details) {
@@ -275,7 +475,7 @@ public class TecentOnlineService {
             Elements els = null;
             els  = doc.select(".gridview").select("tbody tr");
             log.info(curPage + " --- " + els.size());
-            DigLotteryProc(els);
+            //DigLotteryProc(els);
         }catch(Exception e){
             log.error("fetchDateData error:" + curPage ,e);
         }
@@ -345,7 +545,9 @@ public class TecentOnlineService {
 
         for(TecentOnlineDO item : tecentOnlineDOList) {
             timeList.add(item.getTime());
-            numList.add(Integer.valueOf(item.getAdjustNum().replace(" ", "")));
+            //numList.add(Integer.valueOf(item.getAdjustNum().replace(" ", "")));
+            String onlineNum = item.getOnlineNum().toString();
+            numList.add(Integer.valueOf(onlineNum.substring(onlineNum.length()-4, onlineNum.length()-3)));
         }
         Map<String, Object> map = new HashMap<>();
         map.put("xAxis", timeList);

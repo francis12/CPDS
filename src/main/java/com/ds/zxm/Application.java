@@ -134,8 +134,8 @@ public class Application implements EmbeddedServletContainerCustomizer {
         service.scheduleAtFixedRate(runnable2, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable3, 1, 12, TimeUnit.SECONDS);
         service.scheduleAtFixedRate(runnable4, 1, 12, TimeUnit.SECONDS);
-        service.scheduleAtFixedRate(authRunnable, 0, 30, TimeUnit.MINUTES);
-        service.scheduleAtFixedRate(qq5star, 1, 5, TimeUnit.SECONDS);*/
+        service.scheduleAtFixedRate(authRunnable, 0, 30, TimeUnit.MINUTES);*/
+        service.scheduleAtFixedRate(qq5star, 1, 5, TimeUnit.SECONDS);
         logger.info("SpringBoot Start Success");
     }
 

@@ -3,6 +3,8 @@ package com.ds.zxm.mapper;
 import com.ds.zxm.model.TecentTimeDO;
 import com.ds.zxm.model.TecentTimeDOCondition;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TecentTimeDAO {
@@ -17,6 +19,7 @@ public interface TecentTimeDAO {
     int insertSelective(TecentTimeDO record);
 
     List<TecentTimeDO> selectByCondition(TecentTimeDOCondition example);
+    Map<String, Object> selectCalResultByTime(@Param("params") Map<String, Object> example) throws Exception;
 
     TecentTimeDO selectByPrimaryKey(Long id);
 
