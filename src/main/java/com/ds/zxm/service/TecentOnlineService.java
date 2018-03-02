@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.mockito.internal.util.collections.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -239,16 +240,42 @@ public class TecentOnlineService {
         try {
             Date start = DateUtils.String2Date(startTime, "yyyy-MM-dd HH:mm:ss");
             Date end = DateUtils.String2Date(endTime, "yyyy-MM-dd HH:mm:ss");
+
+            String winOrLoseStr= "";
+            //中停挂跟
+            int loseCnt = 0;
+            int winTotal = 0;
+            Map<String, Integer> calWinOrLose = new HashMap<>();
             while (start.compareTo(end)<=0) {
                 try {
                     StrategyDetailDO strategyDetailDO = new StrategyDetailDO();
                     String curTime = DateUtils.date2String(start, "yyyy-MM-dd HH:mm:ss");
-                    Map<String,Object> itemResult = this.genCurrentNumByHisRateAndPreNum(curTime);
+                    //Map<String,Object> itemResult = this.genCurrentNumByHisRateAndPreNum(curTime);
+                    Map<String,Object> itemResult = this.genCurrentNumBySameNo(curTime);
                     result.putAll(itemResult);
                     strategyDetailDO.setLotteryCode("TXFF");
                     strategyDetailDO.setNo(curTime);
                     strategyDetailDO.setStatus((String) itemResult.get(curTime));
                     strategyDetailDOList.add(strategyDetailDO);
+
+                    winOrLoseStr = winOrLoseStr + ((String) itemResult.get(curTime));
+                    if (winOrLoseStr.endsWith("中") && loseCnt == 0) {
+                        winOrLoseStr = "";
+                        winTotal++;
+                    } else if ((winOrLoseStr.endsWith("挂")  && loseCnt == 0)) {
+                        loseCnt = 1;
+                    } else if ((winOrLoseStr.endsWith("中中")  && loseCnt > 0)) {
+                        if (calWinOrLose.get("" + loseCnt) == null) {
+                            calWinOrLose.put("" + loseCnt,1);
+                        } else {
+                            calWinOrLose.put("" + loseCnt,calWinOrLose.get("" + loseCnt)+ 1);
+                        }
+                        winOrLoseStr = "";
+                        winTotal++;
+                        loseCnt = 0;
+                    } else if((winOrLoseStr.endsWith("中挂")  && loseCnt > 0)){
+                        loseCnt++;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -261,6 +288,121 @@ public class TecentOnlineService {
         }
         return result;
     }
+
+    //通过计算最近N期和最近N天同一期的数据得到当前期数据
+    public Map<String,Object> genCurrentNumBySameNo(String time) {
+        Map<String,Object> calResult = new HashMap<>();
+        try {
+            //查询最近7天这一期的在线人数和最近7期的在线人数取平均数
+            List<String> timeList = new ArrayList<>();
+            Date date = DateUtils.String2Date(time, "yyyy-MM-dd HH:mm:ss");
+            String datePre1 = DateUtils.date2String(DateUtils.addMinutes(-1, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre2 = DateUtils.date2String(DateUtils.addMinutes(-2, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre3 = DateUtils.date2String(DateUtils.addMinutes(-3, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre4 = DateUtils.date2String(DateUtils.addMinutes(-4, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre5 = DateUtils.date2String(DateUtils.addMinutes(-5, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre6 = DateUtils.date2String(DateUtils.addMinutes(-6, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre7 = DateUtils.date2String(DateUtils.addMinutes(-7, date),"yyyy-MM-dd HH:mm:ss" );
+
+            String datePre11 = DateUtils.date2String(DateUtils.addDate(-1, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre12 = DateUtils.date2String(DateUtils.addDate(-2, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre13 = DateUtils.date2String(DateUtils.addDate(-3, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre14 = DateUtils.date2String(DateUtils.addDate(-4, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre15 = DateUtils.date2String(DateUtils.addDate(-5, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre16 = DateUtils.date2String(DateUtils.addDate(-6, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre17 = DateUtils.date2String(DateUtils.addDate(-7, date),"yyyy-MM-dd HH:mm:ss" );
+
+
+            timeList.add(datePre1);
+            timeList.add(datePre2);
+            timeList.add(datePre3);
+            timeList.add(datePre4);
+            timeList.add(datePre5);
+            timeList.add(datePre6);
+            timeList.add(datePre7);
+
+            timeList.add(datePre11);
+            timeList.add(datePre12);
+            timeList.add(datePre13);
+            timeList.add(datePre14);
+            timeList.add(datePre15);
+            timeList.add(datePre16);
+            timeList.add(datePre17);
+
+
+            TecentOnlineDOCondition condition1 = new TecentOnlineDOCondition();
+            condition1.createCriteria().andTimeIn(timeList);
+            List<TecentOnlineDO> tecentOnlineDOList = tecentOnlineDAO.selectByCondition(condition1);
+
+            Long avgOnlineNum = 0l;
+            Long avgAdjustNum = 0l;
+            for (TecentOnlineDO item: tecentOnlineDOList) {
+                Long onlineNum = item.getOnlineNum();
+                Long adjustNum = Long.valueOf(item.getAdjustNum().replace(" ",""));;
+
+                if (avgOnlineNum == 0l) {
+                    avgOnlineNum = onlineNum;
+                }else  {
+                    avgOnlineNum = (avgOnlineNum + onlineNum)/2;
+                }
+                if (avgAdjustNum == 0l) {
+                    avgAdjustNum = adjustNum;
+                } else {
+                    avgAdjustNum = (avgAdjustNum + adjustNum)/2;
+                }
+            }
+
+            String calres = "" + (avgAdjustNum + avgOnlineNum);
+            char[] calresItems = calres.toCharArray();
+
+            TecentOnlineDOCondition condition2 = new TecentOnlineDOCondition();
+            condition2.createCriteria().andTimeEqualTo(time);
+            List<TecentOnlineDO> reactTecentOnline = tecentOnlineDAO.selectByCondition(condition2);
+            if (reactTecentOnline == null && reactTecentOnline.size() <= 0) {
+                return null;
+            }
+            String react = "" + reactTecentOnline.get(0).getOnlineNum();
+            char[] reactItems = react.toCharArray();
+
+            int calresSum=0;
+            for(char ch : calresItems) {
+                calresSum = calresSum + Integer.valueOf(String.valueOf(ch));
+            }
+
+            int reactSum=0;
+            for(char ch : reactItems) {
+                reactSum = reactSum +  Integer.valueOf(String.valueOf(ch));
+            }
+
+            int wanCal = calresSum%10;
+            int wanRes = reactSum%10;
+
+            log.info(time +",计算：" + calres + ", 实际：" + react +  ",计算万位:"+ wanCal + ",实际万位：" + wanRes);
+
+            //重写，char转有问题
+            int qianCal = Integer.valueOf(String.valueOf(calres.charAt(calres.length()-4)));
+            int qianRes = Integer.valueOf(String.valueOf(react.charAt(react.length()-4)));
+
+            int baiCal = Integer.valueOf(String.valueOf(calres.charAt(calres.length()-3)));
+            int baiRes = Integer.valueOf(String.valueOf(react.charAt(react.length()-3)));
+
+            if (this.isAdjustInInterval(baiCal, baiRes, 3)) {
+                if(this.isAdjustInInterval(qianCal, qianRes, 3)) {
+                    calResult.put(time,"中");
+                } else {
+                    calResult.put(time,"挂");
+                }
+            } else {
+                calResult.put(time,"挂");
+            }
+
+            System.out.println(time + "---" + calResult.get(time));
+        } catch (Exception e) {
+            System.out.println(time + "计算出错");
+        }
+        return calResult;
+    }
+
     //根据下一期的历史波动率和当前的在线人数，计算下一期人数
     public Map<String,Object> genCurrentNumByHisRateAndPreNum(String time) {
         Map<String,Object> calResult = new HashMap<>();
@@ -292,6 +434,15 @@ public class TecentOnlineService {
             String datePre6 = DateUtils.date2String(DateUtils.addMinutes(-6, date),"yyyy-MM-dd HH:mm:ss" );
             String datePre7 = DateUtils.date2String(DateUtils.addMinutes(-7, date),"yyyy-MM-dd HH:mm:ss" );
 
+            String datePre11 = DateUtils.date2String(DateUtils.addDate(-1, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre12 = DateUtils.date2String(DateUtils.addDate(-2, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre13 = DateUtils.date2String(DateUtils.addDate(-3, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre14 = DateUtils.date2String(DateUtils.addDate(-4, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre15 = DateUtils.date2String(DateUtils.addDate(-5, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre16 = DateUtils.date2String(DateUtils.addDate(-6, date),"yyyy-MM-dd HH:mm:ss" );
+            String datePre17 = DateUtils.date2String(DateUtils.addDate(-7, date),"yyyy-MM-dd HH:mm:ss" );
+
+
             timeList.add(datePre1);
             timeList.add(datePre2);
             timeList.add(datePre3);
@@ -299,8 +450,19 @@ public class TecentOnlineService {
             timeList.add(datePre5);
             timeList.add(datePre6);
             timeList.add(datePre7);
+
+            timeList.add(datePre11);
+            timeList.add(datePre12);
+            timeList.add(datePre13);
+            timeList.add(datePre14);
+            timeList.add(datePre15);
+            timeList.add(datePre16);
+            timeList.add(datePre17);
+
             TecentTimeDOCondition condition = new TecentTimeDOCondition();
             condition.createCriteria().andEndTimeIn(timeList);
+
+            List<TecentTimeDO> tecentTimeDOList = tecentTimeDAO.selectByCondition(condition);
 
             if(null == result) {
                 return calResult;
