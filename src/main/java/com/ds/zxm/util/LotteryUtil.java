@@ -1,19 +1,14 @@
 package com.ds.zxm.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.ds.zxm.controller.LotteryController;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-
-import com.ds.zxm.model.LotteryDetail;
 
 public class LotteryUtil {
 
@@ -22,7 +17,7 @@ public class LotteryUtil {
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LotteryUtil.class);
 
 	//定位abc-aed-c转成aac,aec等
-	public static List<LotteryDetail> convertStr2DetailList(String src) {
+	/*public static List<LotteryDetail> convertStr2DetailList(String src) {
 		if (StringUtils.isEmpty(src)) {
 			return null;
 		}
@@ -67,7 +62,7 @@ public class LotteryUtil {
 			}
 		}
 		return result;
-	}
+	}*/
 	/** 
      * 递归实现dimValue中的笛卡尔积，结果放在result中 
      * @param dimValue 原始数据 

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ds.zxm.mapper.TCFFCPRIZEDAO" >
+  <resultMap id="BaseResultMap" type="com.ds.zxm.model.TCFFCPRIZE" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="prize" property="prize" jdbcType="VARCHAR" />
+    <result column="wan" property="wan" jdbcType="INTEGER" />
+    <result column="qian" property="qian" jdbcType="INTEGER" />
+    <result column="bai" property="bai" jdbcType="INTEGER" />
+    <result column="shi" property="shi" jdbcType="INTEGER" />
+    <result column="ge" property="ge" jdbcType="INTEGER" />
+    <result column="online_num" property="onlineNum" jdbcType="INTEGER" />
+    <result column="adjust_num" property="adjustNum" jdbcType="INTEGER" />
+    <result column="alias_no" property="aliasNo" jdbcType="VARCHAR" />
+    <result column="lottery_date" property="lotteryDate" jdbcType="DATE" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, lottery_code, no, prize, wan, qian, bai, shi, ge, online_num, adjust_num, alias_no, 
+    lottery_date, time
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_tcffc_prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_tcffc_prize
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_tcffc_prize
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" >
+    delete from t_tcffc_prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_tcffc_prize (lottery_code, no, prize, 
+      wan, qian, bai, shi, 
+      ge, online_num, adjust_num, 
+      alias_no, lottery_date, time
+      )
+    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR}, 
+      #{wan,jdbcType=INTEGER}, #{qian,jdbcType=INTEGER}, #{bai,jdbcType=INTEGER}, #{shi,jdbcType=INTEGER}, 
+      #{ge,jdbcType=INTEGER}, #{onlineNum,jdbcType=INTEGER}, #{adjustNum,jdbcType=INTEGER}, 
+      #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=DATE}, #{time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_tcffc_prize
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lotteryCode != null" >
+        lottery_code,
+      </if>
+      <if test="no != null" >
+        no,
+      </if>
+      <if test="prize != null" >
+        prize,
+      </if>
+      <if test="wan != null" >
+        wan,
+      </if>
+      <if test="qian != null" >
+        qian,
+      </if>
+      <if test="bai != null" >
+        bai,
+      </if>
+      <if test="shi != null" >
+        shi,
+      </if>
+      <if test="ge != null" >
+        ge,
+      </if>
+      <if test="onlineNum != null" >
+        online_num,
+      </if>
+      <if test="adjustNum != null" >
+        adjust_num,
+      </if>
+      <if test="aliasNo != null" >
+        alias_no,
+      </if>
+      <if test="lotteryDate != null" >
+        lottery_date,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lotteryCode != null" >
+        #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="prize != null" >
+        #{prize,jdbcType=VARCHAR},
+      </if>
+      <if test="wan != null" >
+        #{wan,jdbcType=INTEGER},
+      </if>
+      <if test="qian != null" >
+        #{qian,jdbcType=INTEGER},
+      </if>
+      <if test="bai != null" >
+        #{bai,jdbcType=INTEGER},
+      </if>
+      <if test="shi != null" >
+        #{shi,jdbcType=INTEGER},
+      </if>
+      <if test="ge != null" >
+        #{ge,jdbcType=INTEGER},
+      </if>
+      <if test="onlineNum != null" >
+        #{onlineNum,jdbcType=INTEGER},
+      </if>
+      <if test="adjustNum != null" >
+        #{adjustNum,jdbcType=INTEGER},
+      </if>
+      <if test="aliasNo != null" >
+        #{aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryDate != null" >
+        #{lotteryDate,jdbcType=DATE},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByCondition" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" resultType="java.lang.Integer" >
+    select count(*) from t_tcffc_prize
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByConditionSelective" parameterType="map" >
+    update t_tcffc_prize
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.lotteryCode != null" >
+        lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.no != null" >
+        no = #{record.no,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prize != null" >
+        prize = #{record.prize,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wan != null" >
+        wan = #{record.wan,jdbcType=INTEGER},
+      </if>
+      <if test="record.qian != null" >
+        qian = #{record.qian,jdbcType=INTEGER},
+      </if>
+      <if test="record.bai != null" >
+        bai = #{record.bai,jdbcType=INTEGER},
+      </if>
+      <if test="record.shi != null" >
+        shi = #{record.shi,jdbcType=INTEGER},
+      </if>
+      <if test="record.ge != null" >
+        ge = #{record.ge,jdbcType=INTEGER},
+      </if>
+      <if test="record.onlineNum != null" >
+        online_num = #{record.onlineNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.adjustNum != null" >
+        adjust_num = #{record.adjustNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.aliasNo != null" >
+        alias_no = #{record.aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lotteryDate != null" >
+        lottery_date = #{record.lotteryDate,jdbcType=DATE},
+      </if>
+      <if test="record.time != null" >
+        time = #{record.time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByCondition" parameterType="map" >
+    update t_tcffc_prize
+    set id = #{record.id,jdbcType=BIGINT},
+      lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
+      no = #{record.no,jdbcType=VARCHAR},
+      prize = #{record.prize,jdbcType=VARCHAR},
+      wan = #{record.wan,jdbcType=INTEGER},
+      qian = #{record.qian,jdbcType=INTEGER},
+      bai = #{record.bai,jdbcType=INTEGER},
+      shi = #{record.shi,jdbcType=INTEGER},
+      ge = #{record.ge,jdbcType=INTEGER},
+      online_num = #{record.onlineNum,jdbcType=INTEGER},
+      adjust_num = #{record.adjustNum,jdbcType=INTEGER},
+      alias_no = #{record.aliasNo,jdbcType=VARCHAR},
+      lottery_date = #{record.lotteryDate,jdbcType=DATE},
+      time = #{record.time,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+    update t_tcffc_prize
+    <set >
+      <if test="lotteryCode != null" >
+        lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        no = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="prize != null" >
+        prize = #{prize,jdbcType=VARCHAR},
+      </if>
+      <if test="wan != null" >
+        wan = #{wan,jdbcType=INTEGER},
+      </if>
+      <if test="qian != null" >
+        qian = #{qian,jdbcType=INTEGER},
+      </if>
+      <if test="bai != null" >
+        bai = #{bai,jdbcType=INTEGER},
+      </if>
+      <if test="shi != null" >
+        shi = #{shi,jdbcType=INTEGER},
+      </if>
+      <if test="ge != null" >
+        ge = #{ge,jdbcType=INTEGER},
+      </if>
+      <if test="onlineNum != null" >
+        online_num = #{onlineNum,jdbcType=INTEGER},
+      </if>
+      <if test="adjustNum != null" >
+        adjust_num = #{adjustNum,jdbcType=INTEGER},
+      </if>
+      <if test="aliasNo != null" >
+        alias_no = #{aliasNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryDate != null" >
+        lottery_date = #{lotteryDate,jdbcType=DATE},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+    update t_tcffc_prize
+    set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+      no = #{no,jdbcType=VARCHAR},
+      prize = #{prize,jdbcType=VARCHAR},
+      wan = #{wan,jdbcType=INTEGER},
+      qian = #{qian,jdbcType=INTEGER},
+      bai = #{bai,jdbcType=INTEGER},
+      shi = #{shi,jdbcType=INTEGER},
+      ge = #{ge,jdbcType=INTEGER},
+      online_num = #{onlineNum,jdbcType=INTEGER},
+      adjust_num = #{adjustNum,jdbcType=INTEGER},
+      alias_no = #{aliasNo,jdbcType=VARCHAR},
+      lottery_date = #{lotteryDate,jdbcType=DATE},
+      time = #{time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -365,7 +365,23 @@ CREATE TABLE `t_strategy_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='策略详情表';
 BEGIN;
 COMMIT;
-
+CREATE TABLE `t_tcffc_prize` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `no` varchar(50) NOT NULL COMMENT '期号',
+  `prize` varchar(10) NOT NULL COMMENT '开奖号',
+  `wan` varchar(1) DEFAULT NULL COMMENT '万位',
+  `qian` varchar(1) DEFAULT NULL COMMENT '千位',
+  `bai` varchar(1) DEFAULT NULL COMMENT '百位',
+  `shi` varchar(1) DEFAULT NULL COMMENT '十位',
+  `ge` varchar(1) DEFAULT NULL COMMENT '个位',
+	`online_num` INT NOT NULL COMMENT '在线总数',
+	`adjust_num` INT NOT NULL COMMENT '波动数',
+  `alias_no` varchar(50) NOT NULL COMMENT '期号别名',
+  `lottery_date` varchar(8) DEFAULT NULL COMMENT '开奖日期',
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='腾讯分分开奖详情表';
 -- ----------------------------
 -- Auto increment value for `t_bet`
 -- ----------------------------
