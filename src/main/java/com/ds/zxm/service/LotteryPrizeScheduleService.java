@@ -5,6 +5,11 @@ import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.model.*;
 import com.ds.zxm.util.DateUtils;
 import org.apache.log4j.Logger;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -82,7 +87,6 @@ public class LotteryPrizeScheduleService {
                     buffer.append(line);
                 }
                 String result = buffer.toString();
-                System.out.println("result:" + result);
                 result = result.substring(12);
                 result = result.substring(0, result.length() - 1);
                 JSONObject jsonObject = JSONObject.parseObject(result);
@@ -118,7 +122,9 @@ public class LotteryPrizeScheduleService {
                 String qs = new SimpleDateFormat("yyyyMMdd").format(new Date());
                 int min = d * 60 + c;
                 String qs1 = "";
-                if (min < 100) {
+                if (min < 10) {
+                    qs1 = "000" + min;
+                }else if (min >=10 && min < 100) {
                     qs1 = "00" + min;
                 } else if (min >= 100 && min < 1000) {
                     qs1 = "0" + min;
@@ -160,5 +166,79 @@ public class LotteryPrizeScheduleService {
             return 0;
         }
         return cha;
+    }
+
+    public static void main(String[] args) {
+        new LotteryPrizeScheduleService().batchFetchTCFFCData(1,1);
+    }
+
+    public void batchFetchTCFFCData(int start, int end) {
+
+        int cur = start;
+        while (cur <= end) {
+            try {
+                fetchTcFFCDateData(cur);
+            } catch (Exception e) {
+                log.error("batchFetchTCFFCData error", e);
+            }
+            cur++;
+        }
+    }
+    //每页15条数据
+    public void fetchTcFFCDateData(int cur) throws ParseException {
+
+        Document doc = this.fetchOnlineDataFrom77Org(cur);
+        Elements elements = doc.select(".gridview").select("tbody tr");
+
+        for (Element item : elements) {
+            Elements tdsItem  = item.select("td");
+            if (null != tdsItem && tdsItem.size() > 0) {
+                TCFFCPRIZE tcffcprize = parseOnlineTdItem(tdsItem);
+                System.out.println(tcffcprize.getTime() + ":" + tcffcprize.getOnlineNum());
+
+                TCFFCPRIZE curPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                tcffcprizedao.insert(curPrize);
+            }
+        }
+    }
+
+    private TCFFCPRIZE parseOnlineTdItem(Elements item) throws ParseException {
+        TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+        String time = "";
+        String onlineNum = "";
+        String adjustNum = "";
+        for (int i = 0;i<item.size();i++) {
+            switch (i) {
+                case 0: time = item.get(i).text();break;
+                case 1: onlineNum = item.get(i).text();break;
+                case 2: adjustNum = item.get(i).text();break;
+                default:;
+            }
+        }
+
+        tcffcprize.setTime(DateUtils.String2Date(time,"yyyy-MM-dd HH:mm:ss"));
+        tcffcprize.setOnlineNum(Integer.valueOf(onlineNum.replace(",", "")));
+        tcffcprize.setAdjustNum(Integer.valueOf(adjustNum.replace(",", "")));
+        return tcffcprize;
+    }
+
+    private Document fetchOnlineDataFrom77Org(int curPage){
+        Document doc = null;
+        try{
+            Connection conn = Jsoup.connect("http://www.77tj.org/tencent")
+                    .data("PageIndex", curPage + "")
+                    .data("__RequestVerificationToken", "CfDJ8NXRK3EZpUdPv6SH5UJzslcO5-4sLSbpW4zMNbMfH3P3OZ3QB2vL_ZXVQsJ-bj8noyeNsbFaVQHqdypKJBCZZeSJdzKOtG4xidySW4TFHT1s9tDMMmSmJw3dKBx4vSppr4Har_JrOH5UQ-jji9UcEfc");
+            conn.timeout(5000);
+            doc = conn.post();
+        }catch(Exception e){
+            log.error("fetchDateData error:" + curPage ,e);
+        }finally {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return  doc;
     }
 }
