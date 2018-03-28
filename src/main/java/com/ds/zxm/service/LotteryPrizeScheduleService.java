@@ -176,10 +176,11 @@ public class LotteryPrizeScheduleService {
 
         int cur = start;
         while (cur <= end) {
+            log.info("tcffc开始抓取第" + cur + "页数据!");
             try {
                 fetchTcFFCDateData(cur);
             } catch (Exception e) {
-                log.error("batchFetchTCFFCData error", e);
+                log.error("batchFetchTCFFCData , cur: " + cur + "error" , e);
             }
             cur++;
         }
