@@ -1,9 +1,14 @@
 package com.ds.zxm.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
-import com.ds.zxm.model.*;
+import com.ds.zxm.model.TCFFCPRIZE;
+import com.ds.zxm.model.TCFFCPRIZECondition;
+import com.ds.zxm.model.TcffcPrizeConverter;
 import com.ds.zxm.util.DateUtils;
+import com.ds.zxm.util.HttpUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -27,10 +32,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @Service
-public class LotteryPrizeScheduleService {
+public class LotteryPrizeScheduleService{
 
     @Resource
     private TCFFCPRIZEDAO tcffcprizedao;
+    @Resource
+    private TcffcGenNumsService tcffcGenNumsService;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryPrizeScheduleService.class);
 
@@ -39,26 +46,26 @@ public class LotteryPrizeScheduleService {
 
     public void fetchTcffcPrize() {
         String s;
-            try {
-                s = new SimpleDateFormat("HHmmss").format(new Date());
-                String hh = s.substring(0, 2);
-                String mm = s.substring(2, 4);
-                String ss = s.substring(4, 6);
-                int c = 0;
-                c = Integer.parseInt(mm);
-                int d = Integer.parseInt(hh);
-                if (ss.equals("10")) {
-                    if (Integer.parseInt(ss) > 30) {
-                        c = c + 1;
-                    }
-                    int result = pcqqOnline(c, d);
-                    while (result == 0) {
-                        result = pcqqOnline(c, d);
-                    }
+        try {
+            s = new SimpleDateFormat("HHmmss").format(new Date());
+            String hh = s.substring(0, 2);
+            String mm = s.substring(2, 4);
+            String ss = s.substring(4, 6);
+            int c = 0;
+            c = Integer.parseInt(mm);
+            int d = Integer.parseInt(hh);
+            if (ss.equals("10")) {
+                if (Integer.parseInt(ss) > 30) {
+                    c = c + 1;
                 }
-            } catch (Exception e) {
-                log.error("fetchTcffcPrize error",e);
+                int result = pcqqOnline(c, d);
+                while (result == 0) {
+                    result = pcqqOnline(c, d);
+                }
             }
+        } catch (Exception e) {
+            log.error("fetchTcffcPrize error", e);
+        }
 
     }
 
@@ -124,23 +131,23 @@ public class LotteryPrizeScheduleService {
                 String qs1 = "";
                 if (min < 10) {
                     qs1 = "000" + min;
-                }else if (min >=10 && min < 100) {
+                } else if (min >= 10 && min < 100) {
                     qs1 = "00" + min;
                 } else if (min >= 100 && min < 1000) {
                     qs1 = "0" + min;
                 } else {
                     qs1 = min + "";
                 }
-                log.info("开奖结果:" + sum % 10 + "," + a[3] + "," + a[2] + "," + a[1] + "," + a[0]);
-                log.info("期数:" + qs + "-" + qs1 + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + s + " " + (cha >= 0 ? "+" + cha : cha));
+                //log.info("开奖结果:" + sum % 10 + "," + a[3] + "," + a[2] + "," + a[1] + "," + a[0]);
+                //log.info("期数:" + qs + "-" + qs1 + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + s + " " + (cha >= 0 ? "+" + cha : cha));
 
                 String no = qs + "-" + qs1;
-                int wan = sum%10;
+                int wan = sum % 10;
                 int qian = a[3];
                 int bai = a[2];
                 int shi = a[1];
                 int ge = a[0];
-                int onlineNum = Integer.valueOf(s.replace(",",""));
+                int onlineNum = Integer.valueOf(s.replace(",", ""));
                 int adjustNum = cha;
                 String prize = "" + wan + qian + bai + shi + ge + "";
                 tcffcprize.setNo(no);
@@ -153,25 +160,87 @@ public class LotteryPrizeScheduleService {
                 tcffcprize.setOnlineNum(onlineNum);
                 tcffcprize.setAdjustNum(adjustNum);
                 try {
-                    Date date = DateUtils.String2Date( DateUtils.date2String(new Date(), "yyyyMMdd"),"yyyyMMdd" ) ;
+                    Date date = DateUtils.String2Date(DateUtils.date2String(new Date(), "yyyyMMdd"), "yyyyMMdd");
                     tcffcprize.setLotteryDate(date);
                 } catch (ParseException e) {
-                    log.error("日期转换错误",e);
+                    log.error("日期转换错误", e);
                 }
                 tcffcprize.setTime(new Date());
-                tcffcprizedao.insert(tcffcprize);
+                this.insertOnUnexist(tcffcprize);
             }
         } catch (IOException e) {
-            log.error("连接超时，重新采集......",e);
+            log.error("连接超时，重新采集......", e);
             return 0;
         }
         return cha;
     }
 
     public static void main(String[] args) {
-        new LotteryPrizeScheduleService().batchFetchTCFFCData(1,1);
+        //new LotteryPrizeScheduleService().fetchTcffcPrizeFrom77Org();
     }
 
+    public void fetchTcffcPrizeFrom77Org() {
+        Date curTime = new Date();
+        String formatCurTimeStr="";
+        try {
+            String curTimeStr = DateUtils.date2String(curTime, "yyyy-MM-dd HH:mm");
+            formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
+            while (!StringUtils.isEmpty(formatCurTimeStr)) {
+                log.info("开始抓取第:" + formatCurTimeStr);
+                try {
+                    TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
+                    this.insertOnUnexist(parsedTcffcPrize);
+                    //notice出号中心
+                    tcffcGenNumsService.generateNextNums(parsedTcffcPrize);
+                } catch (Exception e) {
+                    log.error("fetchExactTimePrize error, formatCurTimeStr:" + formatCurTimeStr, e);
+                }
+                Date nextMin = DateUtils.addMinutes(1, DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
+                formatCurTimeStr = DateUtils.date2String(nextMin,"yyyy-MM-dd HH:mm:ss" );
+
+                Thread.sleep(15 *1000);
+            }
+        } catch (Exception e) {
+            log.error("fetchTcffcPrizeFrom77Org error", e);
+        }
+    }
+    //获取指定期
+    private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) {
+        TCFFCPRIZE parsedTcffcPrize = null;
+        boolean isGet = false;
+        int retryCnt = 0;
+        while(!isGet && retryCnt < 100) {
+            String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
+
+            JSONArray prizeArray = JSONObject.parseArray(result);
+            for (int i = 0; i < prizeArray.size(); i++) {
+                JSONObject prize = prizeArray.getJSONObject(i);
+                String onlineTime = (String) prize.get("onlinetime");
+                if (formatCurTimeStr.equals(onlineTime)) {
+                    //获取到了当前期
+                    isGet = true;
+                    TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+                    try {
+                        tcffcprize.setTime(DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
+                        tcffcprize.setLotteryCode("TCFFC");
+                        tcffcprize.setOnlineNum(prize.getIntValue("onlinenumber"));
+                        tcffcprize.setAdjustNum(prize.getIntValue("onlinechange"));
+                        parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                    } catch (ParseException e) {
+                        log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr,e );
+                    }
+                    break;
+                }
+            }
+            retryCnt++;
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return parsedTcffcPrize;
+    }
     public void batchFetchTCFFCData(int start, int end) {
 
         int cur = start;
@@ -180,25 +249,34 @@ public class LotteryPrizeScheduleService {
             try {
                 fetchTcFFCDateData(cur);
             } catch (Exception e) {
-                log.error("batchFetchTCFFCData , cur: " + cur + "error" , e);
+                log.error("batchFetchTCFFCData , cur: " + cur + "error", e);
             }
             cur++;
         }
     }
+
+    private void insertOnUnexist(TCFFCPRIZE curPrize) {
+        TCFFCPRIZECondition conditon = new TCFFCPRIZECondition();
+        conditon.createCriteria().andNoEqualTo(curPrize.getNo());
+        int cnt = tcffcprizedao.countByCondition(conditon);
+        if (cnt <= 0) {
+            tcffcprizedao.insert(curPrize);
+        }
+    }
+
     //每页15条数据
     public void fetchTcFFCDateData(int cur) throws ParseException {
 
         Document doc = this.fetchOnlineDataFrom77Org(cur);
         Elements elements = doc.select(".gridview").select("tbody tr");
 
+        log.info("第" + cur + "页抓取到" + (elements.size() - 1) + "条数据!");
         for (Element item : elements) {
-            Elements tdsItem  = item.select("td");
+            Elements tdsItem = item.select("td");
             if (null != tdsItem && tdsItem.size() > 0) {
                 TCFFCPRIZE tcffcprize = parseOnlineTdItem(tdsItem);
-                System.out.println(tcffcprize.getTime() + ":" + tcffcprize.getOnlineNum());
-
                 TCFFCPRIZE curPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
-                tcffcprizedao.insert(curPrize);
+                this.insertOnUnexist(curPrize);
             }
         }
     }
@@ -208,38 +286,45 @@ public class LotteryPrizeScheduleService {
         String time = "";
         String onlineNum = "";
         String adjustNum = "";
-        for (int i = 0;i<item.size();i++) {
+        for (int i = 0; i < item.size(); i++) {
             switch (i) {
-                case 0: time = item.get(i).text();break;
-                case 1: onlineNum = item.get(i).text();break;
-                case 2: adjustNum = item.get(i).text();break;
-                default:;
+                case 0:
+                    time = item.get(i).text();
+                    break;
+                case 1:
+                    onlineNum = item.get(i).text();
+                    break;
+                case 2:
+                    adjustNum = item.get(i).text();
+                    break;
+                default:
+                    ;
             }
         }
 
-        tcffcprize.setTime(DateUtils.String2Date(time,"yyyy-MM-dd HH:mm:ss"));
+        tcffcprize.setTime(DateUtils.String2Date(time, "yyyy-MM-dd HH:mm:ss"));
         tcffcprize.setOnlineNum(Integer.valueOf(onlineNum.replace(",", "")));
         tcffcprize.setAdjustNum(Integer.valueOf(adjustNum.replace(",", "")));
         return tcffcprize;
     }
 
-    private Document fetchOnlineDataFrom77Org(int curPage){
+    private Document fetchOnlineDataFrom77Org(int curPage) {
         Document doc = null;
-        try{
+        try {
             Connection conn = Jsoup.connect("http://www.77tj.org/tencent")
                     .data("PageIndex", curPage + "")
                     .data("__RequestVerificationToken", "CfDJ8NXRK3EZpUdPv6SH5UJzslcO5-4sLSbpW4zMNbMfH3P3OZ3QB2vL_ZXVQsJ-bj8noyeNsbFaVQHqdypKJBCZZeSJdzKOtG4xidySW4TFHT1s9tDMMmSmJw3dKBx4vSppr4Har_JrOH5UQ-jji9UcEfc");
             conn.timeout(5000);
             doc = conn.post();
-        }catch(Exception e){
-            log.error("fetchDateData error:" + curPage ,e);
-        }finally {
+        } catch (Exception e) {
+            log.error("fetchDateData error:" + curPage, e);
+        } finally {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        return  doc;
+        return doc;
     }
 }
