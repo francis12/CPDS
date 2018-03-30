@@ -210,6 +210,8 @@ public class LotteryPrizeScheduleService{
         boolean isGet = false;
         int retryCnt = 0;
         while(!isGet && retryCnt < 100) {
+
+            try {
             String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
 
             JSONArray prizeArray = JSONObject.parseArray(result);
@@ -233,7 +235,6 @@ public class LotteryPrizeScheduleService{
                 }
             }
             retryCnt++;
-            try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
