@@ -1,5 +1,6 @@
 package com.ds.zxm;
 
+import com.ds.zxm.service.LotteryGenService;
 import com.ds.zxm.service.LotteryPrizeScheduleService;
 import com.ds.zxm.util.DateUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -65,6 +66,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         LotteryPrizeScheduleService lotteryPrizeScheduleService = (LotteryPrizeScheduleService)context.getBean("lotteryPrizeScheduleService");
+        LotteryGenService lotteryGenService = (LotteryGenService)context.getBean("lotteryGenService");
 
         Runnable tcPrizeSchedule = new Runnable() {
             public void run() {
@@ -76,6 +78,12 @@ public class Application implements EmbeddedServletContainerCustomizer {
         Runnable orgPrizeSchedule = new Runnable() {
             public void run() {
                 lotteryPrizeScheduleService.fetchTcffcPrizeFrom77Org();
+            }
+        };
+
+        Runnable initCurNo = new Runnable() {
+            public void run() {
+                lotteryGenService.initCurNO();
             }
         };
 

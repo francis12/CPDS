@@ -18,7 +18,7 @@
     <jdbcConnection driverClass="com.mysql.jdbc.Driver"
         connectionURL="jdbc:mysql://127.0.0.1:3306/stock"
         userId="root"
-        password="111111">
+        password="230679">
     </jdbcConnection>
 
     <javaTypeResolver >
@@ -52,7 +52,7 @@
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
   </table>-->
-  <table tableName="t_tcffc_prize" domainObjectName="TCFFCPRIZE"
+  <table tableName="t_gen_prize" domainObjectName="GenPrizeModel"
     enableDeleteByExample="true"
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />

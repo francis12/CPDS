@@ -213,7 +213,91 @@ public class LotteryUtil {
 			log.error("write tmp file data er", e);
 		}
 	}
- 	    public static void main(String args[]) throws Exception {
-	       System.out.println(LotteryUtil.getNextAwardNo("20171025120", "chongqing"));
-	    }  
+	public static  String genPy3NumStr(int num) {
+		String result = "";
+		switch (num) {
+			case 0: return "7890123";
+			case 1: return "8901234";
+			case 2: return "9012345";
+			case 3: return "0123456";
+			case 4: return "1234567";
+			case 5: return "2345678";
+			case 6: return "3456789";
+			case 7: return "4567890";
+			case 8: return "5678901";
+			case 9: return "6789012";
+		}
+		return  result;
+	}
+	//3,0     6,5
+
+	public static void main(String[] args) {
+		judgeIsmatchBetween3(3,0);
+		judgeIsmatchBetween3(6,5);
+	}
+
+	//比较两个数相差不超过3
+	public static boolean judgeIsmatchBetween3(int src, int dst) {
+		String dstStr = dst + "";
+		switch (src) {
+			case 0 :
+				if ("7890123".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+
+			case 1 :
+				if ("8901234".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 2 :
+				if ("9012345".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 3 :
+				if ("0123456".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 4 :
+				if ("1234567".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 5 :
+				if ("2345678".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 6 :
+				if ("3456789".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 7 :
+				if ("4567890".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 8 :
+				if ("5678901".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 9 :
+				if ("6789012".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			default: break;
+		}
+		return  false;
+	}
+
+	//a*bc玩法转成通用注数
+	public static String convertCha2Normal(String src1, String src2) {
+		return "";
+	}
 }

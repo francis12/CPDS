@@ -2,12 +2,13 @@ package com.ds.zxm.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ds.zxm.mapper.CurNOModelDAO;
+import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
-import com.ds.zxm.model.TCFFCPRIZE;
-import com.ds.zxm.model.TCFFCPRIZECondition;
-import com.ds.zxm.model.TcffcPrizeConverter;
+import com.ds.zxm.model.*;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.HttpUtil;
+import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -37,11 +38,16 @@ public class TcffcGenNumsService {
 
     @Resource
     private TCFFCPRIZEDAO tcffcprizedao;
+    @Resource
+    private CurNOModelDAO curNOModelDAO;
+    @Resource
+    private GenPrizeModelDAO genPrizeModelDAO;
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
     private TCFFCPRIZE genPrize = null;
     public void generateNextNums(TCFFCPRIZE  curPrize) {
         File file = new File("gen.txt");
+        File file2 = new File("update.txt");
         try {
             Date curTime = curPrize.getTime();
             //当天过去三分钟的开奖数据
@@ -66,9 +72,8 @@ public class TcffcGenNumsService {
             Date next2Minlast2Day = DateUtils.addDate(-2, next2Min);
             Date next2Minlast3Day = DateUtils.addDate(-3, next2Min);
 
-
-
             List<Date> dateList = new ArrayList();
+
             dateList.add(last1Min);
             dateList.add(last2Min);
             dateList.add(last3Min);
@@ -86,8 +91,14 @@ public class TcffcGenNumsService {
             dateList.add(next2Minlast2Day);
             dateList.add(next2Minlast3Day);
 
+            List<String> noList = new ArrayList<>();
+
+            for(Date dateItem : dateList) {
+                noList.add(TcffcPrizeConverter.genNofromTime(dateItem));
+            }
+
             TCFFCPRIZECondition condition = new TCFFCPRIZECondition();
-            condition.createCriteria().andTimeIn(dateList);
+            condition.createCriteria().andNoIn(noList);
 
             List<TCFFCPRIZE> prizeList = tcffcprizedao.selectByCondition(condition);
             prizeList.add(curPrize);
@@ -116,22 +127,62 @@ public class TcffcGenNumsService {
             tcffcprize.setTime(nextMin);
 
             TCFFCPRIZE conPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+
+            boolean isQian2Prized = false;
+            if (genPrize != null) {
+                if(LotteryUtil.judgeIsmatchBetween3(genPrize.getWan(), curPrize.getWan()) &&
+                        LotteryUtil.judgeIsmatchBetween3(genPrize.getQian(), curPrize.getQian())) {
+                    isQian2Prized = true;
+                }
+            }
             log.info(TcffcPrizeConverter.genNofromTime(nextMin) + "期理论数据数:" + dateList.size() + ",实际参与计算数据数:" + prizeList.size());
-            String result = curPrize.getNo() + "实际：" + curPrize.getPrize() + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + "     ";
+            String qian2GenStr = " zhuan(" + LotteryUtil.genPy3NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPy3NumStr(conPrize.getQian()) + ")zhuan ";
+            String result = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQian2Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qian2GenStr;
             //String outPutStr ="实际调整值:" + curPrize.getAdjustNum() + "\r\n" + "第" + curPrize.getNo() + "期在线人数为:" + curPrize.getOnlineNum() +  ",预测第" + TcffcPrizeConverter.genNofromTime(nextMin) + "期的调整值为:" + avgAdjustNum.intValue() ;
             FileUtils.writeStringToFile(file, result, true);
+            FileUtils.writeStringToFile(file2, result, false);
+            updateCurNO(nextMin);
+            updateGenPrizeResult(conPrize, curPrize);
+
             genPrize = conPrize;
         } catch (Exception e) {
             log.error("generateNextNums error", e);
         }
     }
-
-    //比较两个数相差不超过3
-    private boolean judgeIsmatchBetween3(int src, int dst) {
-
-
-        return  false;
+    public void updateCurNO(Date date) {
+        CurNOModel curNOModel = new CurNOModel();
+        curNOModel.setLotteryCode("TCFFC");
+        String nextNO = TcffcPrizeConverter.genNofromTime(date);
+        curNOModel.setNextNo(nextNO);
+        CurNOModelCondition curNOModelCondition = new CurNOModelCondition();
+        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
+        int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
+        if (cnt > 0) {
+            curNOModelDAO.updateByConditionSelective(curNOModel, curNOModelCondition);
+        } else {
+            curNOModelDAO.insert(curNOModel);
+        }
     }
+
+    public void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze) {
+        GenPrizeModel genPrizeModel = new GenPrizeModel();
+        genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
+        genPrizeModel.setNo(nextPrize.getNo());
+        genPrizeModel.setGenPrize(nextPrize.getPrize());
+
+        genPrizeModelDAO.insert(genPrizeModel);
+
+
+        GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
+        genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(curPirze.getLotteryCode()).andNoEqualTo(curPirze.getNo());
+
+        GenPrizeModel lastPrizeModel = new GenPrizeModel();
+        lastPrizeModel.setRealPrize(curPirze.getPrize());
+        genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
+
+
+    }
+
     //去除一个最大偏移值后的平均值
     private BigDecimal calAvgNum(List<Integer> items) {
         if (items.size() == 0) {
