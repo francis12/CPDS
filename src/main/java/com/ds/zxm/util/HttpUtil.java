@@ -7,6 +7,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -76,6 +77,9 @@ public class HttpUtil {
 			httpClient = new SSLClient();
 			httpGet = new HttpGet(url);
 
+			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(2000).build();//设置请求和传输超时时间
+			httpGet.setConfig(requestConfig);
+
 			HttpResponse response = httpClient.execute(httpGet);
 			if (response != null) {
 				HttpEntity resEntity = response.getEntity();
@@ -86,6 +90,7 @@ public class HttpUtil {
 			//result = getResponseString(response);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
 		}
 
 		return result;
