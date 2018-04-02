@@ -382,6 +382,26 @@ CREATE TABLE `t_tcffc_prize` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='腾讯分分开奖详情表';
+CREATE TABLE `t_cur_no` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `cur_no` varchar(50) DEFAULT NULL COMMENT '当前期',
+  `next_no` varchar(50) DEFAULT NULL COMMENT '下一期',
+  `next_sec` varchar(50) DEFAULT NULL COMMENT '开奖间隔',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='开奖期号表';
+
+
+CREATE TABLE `t_gen_prize` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lottery_code` varchar(10) NOT NULL COMMENT '代码',
+  `no` varchar(50) DEFAULT NULL COMMENT '期号',
+  `gen_prize` varchar(50) DEFAULT NULL COMMENT '预测号码',
+  `real_prize` varchar(50) DEFAULT NULL COMMENT '实际号码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8 COMMENT='预测记录表';
+
+
 -- ----------------------------
 -- Auto increment value for `t_bet`
 -- ----------------------------
