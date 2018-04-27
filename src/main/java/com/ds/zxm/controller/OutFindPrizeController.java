@@ -27,10 +27,14 @@ public class OutFindPrizeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getLatestGenPrize", method = {RequestMethod.GET})
-	public Map getLatestGenPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode) {
+	public Map getLatestGenPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode) {
 		Map<String,Object> result = new HashMap<>();
 		if (StringUtils.isEmpty(lotteryCode)) {
 			result.put("code", 201);
+			return result;
+		}
+		if (StringUtils.isEmpty(signCode) || !signCode.equals("201613gn7ew")) {
+			result.put("code", 202);
 			return result;
 		}
 		try {

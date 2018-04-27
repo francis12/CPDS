@@ -8,6 +8,9 @@ import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.model.TcffcPrizeConverter;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.HttpUtil;
+import com.ds.zxm.util.LotteryUtil;
+import org.apache.commons.httpclient.util.DateUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
@@ -180,64 +183,82 @@ public class LotteryPrizeScheduleService{
     }
 
     public void fetchTcffcPrizeFrom77Org() {
-        Date curTime = new Date();
         String formatCurTimeStr="";
         try {
+            Date curTime  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
             String curTimeStr = DateUtils.date2String(curTime, "yyyy-MM-dd HH:mm");
             formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
             while (!StringUtils.isEmpty(formatCurTimeStr)) {
-                log.info("开始抓取第:" + formatCurTimeStr);
                 try {
                     TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
-                    this.insertOnUnexist(parsedTcffcPrize);
-                    //notice出号中心
-                    tcffcGenNumsService.generateNextNums(parsedTcffcPrize);
+                    //正常获取到开奖号码
+                    if (null != parsedTcffcPrize) {
+                        log.info("第"+ formatCurTimeStr +"开奖号为：" + parsedTcffcPrize.getPrize());
+                        this.insertOnUnexist(parsedTcffcPrize);
+                        //notice出号中心
+                        tcffcGenNumsService.generateNextNums(parsedTcffcPrize);
+                    } else {
+                        log.error("第" + formatCurTimeStr + "期开奖数据获取失败!");
+                    }
                 } catch (Exception e) {
                     log.error("fetchExactTimePrize error, formatCurTimeStr:" + formatCurTimeStr, e);
+                    log.error("第" + formatCurTimeStr + "期开奖数据获取失败,跳过!");
                 }
                 Date nextMin = DateUtils.addMinutes(1, DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
                 formatCurTimeStr = DateUtils.date2String(nextMin,"yyyy-MM-dd HH:mm:ss" );
 
-                Thread.sleep(15 *1000);
+                Thread.sleep(5 *1000);
             }
         } catch (Exception e) {
             log.error("fetchTcffcPrizeFrom77Org error", e);
         }
     }
     //获取指定期
-    private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) {
+    private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) throws Exception {
+
+        Date time =DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");
+        Date now  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+        Date curTime = DateUtils.String2Date(DateUtils.date2String(now, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
+
+
+        while (curTime.compareTo(time) < 0){
+            Thread.sleep(1*1000);
+            Date nowFor  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+            curTime = DateUtils.String2Date(DateUtils.date2String(nowFor, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
+        }
+
         TCFFCPRIZE parsedTcffcPrize = null;
         boolean isGet = false;
         int retryCnt = 0;
-        while(!isGet && retryCnt < 100) {
-
+        while(!isGet && retryCnt < 30) {
             try {
-            String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
+                log.info("formatCurTimeStr:"+ formatCurTimeStr + ",retryCnt:" + retryCnt);
+                retryCnt++;
+                Thread.sleep(2000);
+                String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
 
-            JSONArray prizeArray = JSONObject.parseArray(result);
-            for (int i = 0; i < prizeArray.size(); i++) {
-                JSONObject prize = prizeArray.getJSONObject(i);
-                String onlineTime = (String) prize.get("onlinetime");
-                if (formatCurTimeStr.equals(onlineTime)) {
-                    //获取到了当前期
-                    isGet = true;
-                    TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
-                    try {
-                        tcffcprize.setTime(DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
-                        tcffcprize.setLotteryCode("TCFFC");
-                        tcffcprize.setOnlineNum(prize.getIntValue("onlinenumber"));
-                        tcffcprize.setAdjustNum(prize.getIntValue("onlinechange"));
-                        parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
-                    } catch (ParseException e) {
-                        log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr,e );
+                JSONArray prizeArray = JSONObject.parseArray(result);
+                for (int i = 0; i < prizeArray.size(); i++) {
+                    JSONObject prize = prizeArray.getJSONObject(i);
+                    String onlineTime = (String) prize.get("onlinetime");
+                    if (formatCurTimeStr.equals(onlineTime)) {
+                        //获取到了当前期
+                        isGet = true;
+                        TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+                        try {
+                            tcffcprize.setTime(time);
+                            tcffcprize.setLotteryCode("TCFFC");
+                            tcffcprize.setOnlineNum(prize.getIntValue("onlinenumber"));
+                            tcffcprize.setAdjustNum(prize.getIntValue("onlinechange"));
+                            parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                        } catch (Exception e) {
+                            log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr,e );
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-            retryCnt++;
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                log.error("fetchExactTimePrize error,", e);
             }
         }
         return parsedTcffcPrize;

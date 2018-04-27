@@ -33,39 +33,73 @@ public class TcffcGenNumsService {
 
     private TCFFCPRIZE genPrize = null;
     public void generateNextNums(TCFFCPRIZE  curPrize) {
-        File file = new File("gen.txt");
-        File file2 = new File("update.txt");
+        //前2
+        File file = new File("qian2AllFile.txt");
+        File file2 = new File("qian2File.txt");
+
+        //中3定位胆
+        File zhong3File = new File("zhong3File.txt");
+        File zhong3AllFile = new File("zhong3AllFile.txt");
+
+        //前3定位胆
+        File qian3File = new File("qian3File.txt");
+        File qian3AllFile = new File("qian3AllFile.txt");
+
+        //千位定位胆
         File qianFile = new File("qianFile.txt");
         File qianAllFile = new File("qianAllFile.txt");
 
         try {
-
-
+            boolean isQian3Prized = false;
+            boolean isZhong3Prized = false;
             boolean isQian2Prized = false;
             boolean isQianPrized = false;
             if (genPrize != null) {
-                if(LotteryUtil.judgeIsmatchBetween3(genPrize.getWan(), curPrize.getWan()) &&
-                        LotteryUtil.judgeIsmatchBetween3(genPrize.getQian(), curPrize.getQian())) {
+                if(LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getWan(), curPrize.getWan()) &&
+                        LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getQian(), curPrize.getQian())) {
                     isQian2Prized = true;
                 }
                 if ( LotteryUtil.judgeIsmatchBetween3(genPrize.getQian(), curPrize.getQian())) {
                     isQianPrized = true;
                 }
+                if ( LotteryUtil.judgeIsmatchBetween4(genPrize.getWan(), curPrize.getWan())
+                        && LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getQian(), curPrize.getQian())
+                        &&LotteryUtil.judgeIsmatchBetween4(genPrize.getBai(), curPrize.getBai())) {
+                    isQian3Prized = true;
+                }
+                if (  LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getQian(), curPrize.getQian())
+                        &&LotteryUtil.judgeIsmatchBetween4(genPrize.getBai(), curPrize.getBai())
+                        &&LotteryUtil.judgeIsmatchBetween4(genPrize.getShi(), curPrize.getShi())) {
+                    isZhong3Prized = true;
+                }
             }
             TCFFCPRIZE conPrize = this.calGenPrizeByRate(curPrize);
             //this.calGenPrizeBySort();
             Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
+            //String outPutStr ="实际调整值:" + curPrize.getAdjustNum() + "\r\n" + "第" + curPrize.getNo() + "期在线人数为:" + curPrize.getOnlineNum() +  ",预测第" + TcffcPrizeConverter.genNofromTime(nextMin) + "期的调整值为:" + avgAdjustNum.intValue() ;
 
-            String qian2GenStr = " zhuan(" + LotteryUtil.genPy3NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPy3NumStr(conPrize.getQian()) + ")zhuan ";
+            //前2  8*8
+            String qian2GenStr = " qian2(" + LotteryUtil.genPyPost4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + ")qian2 ";
             String result = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQian2Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qian2GenStr;
+            FileUtils.writeStringToFile(file, result, true);
+            FileUtils.writeStringToFile(file2, result, false);
 
             String qianGenStr = " qian(" + LotteryUtil.genPy3NumStr(conPrize.getQian()) + ")qian ";
             String qianStrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQianPrized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qianGenStr;
-            //String outPutStr ="实际调整值:" + curPrize.getAdjustNum() + "\r\n" + "第" + curPrize.getNo() + "期在线人数为:" + curPrize.getOnlineNum() +  ",预测第" + TcffcPrizeConverter.genNofromTime(nextMin) + "期的调整值为:" + avgAdjustNum.intValue() ;
-            FileUtils.writeStringToFile(file, result, true);
-            FileUtils.writeStringToFile(file2, result, false);
-            FileUtils.writeStringToFile(qianFile, qianStrResult, false);
             FileUtils.writeStringToFile(qianAllFile, qianStrResult, true);
+            FileUtils.writeStringToFile(qianFile, qianStrResult, false);
+
+            //中3 8*9*9
+            String zhong3GenStr = " zhong3(" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getShi())  + ")zhong3 ";
+            String zhong3StrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isZhong3Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + zhong3GenStr;
+            FileUtils.writeStringToFile(zhong3AllFile, zhong3StrResult, true);
+            FileUtils.writeStringToFile(zhong3File, zhong3StrResult, false);
+
+            //前3 9*8*9
+            String qian3GenStr = " qian3(" + LotteryUtil.genPy4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai())  + ")qian3 ";
+            String qian3StrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQian3Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qian3GenStr;
+            FileUtils.writeStringToFile(qian3AllFile, qian3StrResult, true);
+            FileUtils.writeStringToFile(qian3File, qian3StrResult, false);
 
 
             updateCurNO(nextMin);

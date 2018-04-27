@@ -229,6 +229,160 @@ public class LotteryUtil {
 		}
 		return  result;
 	}
+
+	//返回前3后4个数字包括自己共8个数字
+	public static  String genPyPost4NumStr(int num) {
+		String result = "";
+		switch (num) {
+			case 0: return "78901234";
+			case 1: return "89012345";
+			case 2: return "90123456";
+			case 3: return "01234567";
+			case 4: return "12345678";
+			case 5: return "23456789";
+			case 6: return "34567890";
+			case 7: return "45678901";
+			case 8: return "56789012";
+			case 9: return "67890123";
+		}
+		return  result;
+	}
+	//与genPyPost4NumStr对应
+	public static boolean judgeIsmatchBetweenPost4(int src, int dst) {
+		String dstStr = dst + "";
+		switch (src) {
+			case 0 :
+				if ("78901234".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+
+			case 1 :
+				if ("89012345".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 2 :
+				if ("90123456".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 3 :
+				if ("01234567".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 4 :
+				if ("12345678".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 5 :
+				if ("23456789".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 6 :
+				if ("34567890".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 7 :
+				if ("45678901".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 8 :
+				if ("56789012".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 9 :
+				if ("67890123".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			default: break;
+		}
+		return  false;
+	}
+
+	//返回前3后4个数字包括自己共8个数字
+	public static  String genPy4NumStr(int num) {
+		String result = "";
+		switch (num) {
+			case 0: return "678901234";
+			case 1: return "789012345";
+			case 2: return "890123456";
+			case 3: return "901234567";
+			case 4: return "012345678";
+			case 5: return "123456789";
+			case 6: return "234567890";
+			case 7: return "345678901";
+			case 8: return "456789012";
+			case 9: return "567890123";
+		}
+		return  result;
+	}
+	//与genPy4NumStr对应
+	public static boolean judgeIsmatchBetween4(int src, int dst) {
+		String dstStr = dst + "";
+		switch (src) {
+			case 0 :
+				if ("678901234".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+
+			case 1 :
+				if ("789012345".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 2 :
+				if ("890123456".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 3 :
+				if ("901234567".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 4 :
+				if ("012345678".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 5 :
+				if ("123456789".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 6 :
+				if ("234567890".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 7 :
+				if ("345678901".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 8 :
+				if ("456789012".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 9 :
+				if ("567890123".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			default: break;
+		}
+		return  false;
+	}
 	//3,0     6,5
 
 	public static void main(String[] args) {
