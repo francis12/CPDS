@@ -185,8 +185,7 @@ public class LotteryPrizeScheduleService{
     public void fetchTcffcPrizeFrom77Org() {
         String formatCurTimeStr="";
         try {
-            Date curTime  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
-            String curTimeStr = DateUtils.date2String(curTime, "yyyy-MM-dd HH:mm");
+            String curTimeStr = DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm");
             formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
             while (!StringUtils.isEmpty(formatCurTimeStr)) {
                 try {
@@ -217,8 +216,7 @@ public class LotteryPrizeScheduleService{
     private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) throws Exception {
 
         Date time =DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");
-        Date now  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
-        Date curTime = DateUtils.String2Date(DateUtils.date2String(now, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
+        Date curTime = DateUtils.String2Date(DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
 
 
         while (curTime.compareTo(time) < 0){
@@ -348,5 +346,15 @@ public class LotteryPrizeScheduleService{
             }
         }
         return doc;
+    }
+
+    private Date getCurTime() {
+        Date now  = new Date();
+        try {
+            now = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+        } catch (Exception e) {
+            log.error("get online time error!");
+        }
+        return now;
     }
 }

@@ -216,16 +216,16 @@ public class LotteryUtil {
 	public static  String genPy3NumStr(int num) {
 		String result = "";
 		switch (num) {
-			case 0: return "7890123";
-			case 1: return "8901234";
-			case 2: return "9012345";
+			case 0: return "0123789";
+			case 1: return "0123489";
+			case 2: return "0123459";
 			case 3: return "0123456";
 			case 4: return "1234567";
 			case 5: return "2345678";
 			case 6: return "3456789";
-			case 7: return "4567890";
-			case 8: return "5678901";
-			case 9: return "6789012";
+			case 7: return "0456789";
+			case 8: return "0156789";
+			case 9: return "0126789";
 		}
 		return  result;
 	}

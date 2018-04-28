@@ -79,24 +79,24 @@ public class TcffcGenNumsService {
             //String outPutStr ="实际调整值:" + curPrize.getAdjustNum() + "\r\n" + "第" + curPrize.getNo() + "期在线人数为:" + curPrize.getOnlineNum() +  ",预测第" + TcffcPrizeConverter.genNofromTime(nextMin) + "期的调整值为:" + avgAdjustNum.intValue() ;
 
             //前2  8*8
-            String qian2GenStr = " qian2(" + LotteryUtil.genPyPost4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + ")qian2 ";
+            String qian2GenStr = " zhuan(" + LotteryUtil.genPyPost4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + ")zhuan ";
             String result = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQian2Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qian2GenStr;
             FileUtils.writeStringToFile(file, result, true);
             FileUtils.writeStringToFile(file2, result, false);
 
-            String qianGenStr = " qian(" + LotteryUtil.genPy3NumStr(conPrize.getQian()) + ")qian ";
+            String qianGenStr = " zhuan(" + LotteryUtil.genPy3NumStr(conPrize.getQian()) + ")zhuan ";
             String qianStrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQianPrized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qianGenStr;
             FileUtils.writeStringToFile(qianAllFile, qianStrResult, true);
             FileUtils.writeStringToFile(qianFile, qianStrResult, false);
 
             //中3 8*9*9
-            String zhong3GenStr = " zhong3(" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getShi())  + ")zhong3 ";
+            String zhong3GenStr = " zhuan(" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getShi())  + ")zhuan ";
             String zhong3StrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isZhong3Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + zhong3GenStr;
             FileUtils.writeStringToFile(zhong3AllFile, zhong3StrResult, true);
             FileUtils.writeStringToFile(zhong3File, zhong3StrResult, false);
 
             //前3 9*8*9
-            String qian3GenStr = " qian3(" + LotteryUtil.genPy4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai())  + ")qian3 ";
+            String qian3GenStr = " zhuan(" + LotteryUtil.genPy4NumStr(conPrize.getWan()) + "*" + LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai())  + ")zhuan ";
             String qian3StrResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(isQian3Prized?"中":"挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + qian3GenStr;
             FileUtils.writeStringToFile(qian3AllFile, qian3StrResult, true);
             FileUtils.writeStringToFile(qian3File, qian3StrResult, false);

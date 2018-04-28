@@ -1,5 +1,6 @@
 package com.ds.zxm.util;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -350,19 +351,14 @@ public class DateUtils {
      * @param webUrl
      * @return
      * @author SHANHY
-     * @date   2015年11月27日
+     * @date 2015年11月27日
      */
-    public static Date getWebsiteDatetime(String webUrl){
-        try {
-            URL url = new URL(webUrl);// 取得资源对象
-            URLConnection uc = url.openConnection();// 生成连接对象
-            uc.connect();// 发出连接
-            long ld = uc.getDate();// 读取网站日期时间
-            Date date = new Date(ld);// 转换为标准时间对象
-            return date;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static Date getWebsiteDatetime(String webUrl) throws Exception {
+        URL url = new URL(webUrl);// 取得资源对象
+        URLConnection uc = url.openConnection();// 生成连接对象
+        uc.connect();// 发出连接
+        long ld = uc.getDate();// 读取网站日期时间
+        Date date = new Date(ld);// 转换为标准时间对象
+        return date;
     }
 }
