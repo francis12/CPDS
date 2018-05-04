@@ -6,6 +6,7 @@ import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.model.*;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.LotteryUtil;
+import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TcffcGenNumsService {
@@ -32,7 +30,8 @@ public class TcffcGenNumsService {
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
     private TCFFCPRIZE genPrize = null;
-    public void generateNextNums(TCFFCPRIZE  curPrize) {
+    public Map<String, Boolean> generateNextNums(TCFFCPRIZE  curPrize) {
+        Map<String, Boolean> winResult = new HashMap<>();
         //前2
         File file = new File("qian2AllFile.txt");
         File file2 = new File("qian2File.txt");
@@ -73,7 +72,19 @@ public class TcffcGenNumsService {
                     isZhong3Prized = true;
                 }
             }
+            winResult.put("isQian2Prized", isQian2Prized);
+            winResult.put("isQianPrized", isQianPrized);
+            winResult.put("isQian3Prized", isQian3Prized);
+            winResult.put("isZhong3Prized", isZhong3Prized);
             TCFFCPRIZE conPrize = this.calGenPrizeByRate(curPrize);
+
+            String adjustStr = "实际：" + curPrize.getAdjustNum() + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
+            try {
+                FileUtils.writeStringToFile(new File("adjust.txt"), adjustStr, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             //this.calGenPrizeBySort();
             Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
             //String outPutStr ="实际调整值:" + curPrize.getAdjustNum() + "\r\n" + "第" + curPrize.getNo() + "期在线人数为:" + curPrize.getOnlineNum() +  ",预测第" + TcffcPrizeConverter.genNofromTime(nextMin) + "期的调整值为:" + avgAdjustNum.intValue() ;
@@ -109,10 +120,11 @@ public class TcffcGenNumsService {
         } catch (Exception e) {
             log.error("generateNextNums error", e);
         }
+        return winResult;
     }
 
     //通过累加最近几天，最近几期的数据计算
-    private TCFFCPRIZE calGenPrize(TCFFCPRIZE curPrize) {
+    public TCFFCPRIZE calGenPrize(TCFFCPRIZE curPrize) {
         Date curTime = curPrize.getTime();
         //当天过去三分钟的开奖数据
         Date last1Min = DateUtils.addMinutes(-1, curTime);
@@ -196,7 +208,7 @@ public class TcffcGenNumsService {
     }
 
     //通过计算人数占比预测下一期
-    private TCFFCPRIZE calGenPrizeByRate(TCFFCPRIZE curPrize) {
+    public TCFFCPRIZE calGenPrizeByRate(TCFFCPRIZE curPrize) {
         Date curTime = curPrize.getTime();
         //当天过去三分钟的开奖数据
         Date last1Min = DateUtils.addMinutes(-1, curTime);
@@ -271,14 +283,6 @@ public class TcffcGenNumsService {
         tcffcprize.setTime(nextMin);
 
         TCFFCPRIZE conPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
-
-        String adjustStr = "实际：" + curPrize.getAdjustNum() + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
-        try {
-            FileUtils.writeStringToFile(new File("adjust.txt"), adjustStr, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return  conPrize;
     }
     public void updateCurNO(Date date) {
@@ -324,7 +328,7 @@ public class TcffcGenNumsService {
                     input.append(avgItem.toString()+ ",");
                 }
         );
-        log.info("过滤前输入为：" + input.toString());
+        //log.info("过滤前输入为：" + input.toString());
         if (items.size() == 0) {
             return BigDecimal.ZERO;
         } else if (items.size() == 1) {
@@ -363,8 +367,8 @@ public class TcffcGenNumsService {
                     output.append(avgItem.toString()+ ",");
                 }
         );
-        log.info("过滤后输出为：" + input.toString());
-        log.info("------------");
+        //log.info("过滤后输出为：" + input.toString());
+        //log.info("------------");
 
         BigDecimal result = maxTotal.divide(BigDecimal.valueOf(items.size()), 12, BigDecimal.ROUND_FLOOR);
         return  result;
@@ -399,5 +403,62 @@ public class TcffcGenNumsService {
                 return o1.compareTo(o2);
             }
         });
+    }
+
+    //通过计算人数占比预测下一期
+    public TCFFCPRIZE calGenPrizeByRateNum(TCFFCPRIZE curPrize, int num) {
+        Date curTime = curPrize.getTime();
+        //下一分钟即为待开奖期
+        Date nextMin = DateUtils.addMinutes(1, curTime);
+        Date next2Min = DateUtils.addMinutes(2, curTime);
+
+
+        //当天过去三分钟的开奖数据
+        List<Date> dateList = new ArrayList();
+
+        for(int i=1;i<= num;i++) {
+            dateList.add(DateUtils.addMinutes(-i, curTime));
+            dateList.add(DateUtils.addDate(-i, curTime));
+            dateList.add(DateUtils.addDate(-i, nextMin));
+            dateList.add(DateUtils.addDate(-i, next2Min));
+        }
+        dateList.add(curTime);
+        List<String> noList = new ArrayList<>();
+
+        for(Date dateItem : dateList) {
+            noList.add(TcffcPrizeConverter.genNofromTime(dateItem));
+        }
+
+        TCFFCPRIZECondition condition = new TCFFCPRIZECondition();
+        condition.createCriteria().andNoIn(noList);
+
+        List<TCFFCPRIZE> prizeList = tcffcprizedao.selectByCondition(condition);
+        prizeList.add(curPrize);
+
+        List<BigDecimal> rateList = new ArrayList<>();
+        for(TCFFCPRIZE tcffcprize : prizeList) {
+
+            BigDecimal adjustNum = BigDecimal.valueOf(tcffcprize.getAdjustNum());
+            BigDecimal onlineNum = BigDecimal.valueOf(tcffcprize.getOnlineNum());
+            BigDecimal rate = adjustNum.divide(onlineNum,12,BigDecimal.ROUND_FLOOR);
+            rateList.add(rate);
+        }
+        /*this.calAvgNum(rateList);
+        this.calAvgNum(rateList);
+        this.calAvgNum(rateList);
+        BigDecimal rate = this.calAvgNum(rateList);*/
+        BigDecimal avgRate = this.calGenPrizeBySort(rateList);
+
+        BigDecimal curOnlineNum = BigDecimal.valueOf(curPrize.getOnlineNum());
+        BigDecimal adjustNum = curOnlineNum.multiply(avgRate);
+        BigDecimal genOnlineNum = adjustNum.add(curOnlineNum);
+
+        TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+        tcffcprize.setAdjustNum(adjustNum.intValue());
+        tcffcprize.setOnlineNum(genOnlineNum.intValue());
+        tcffcprize.setTime(nextMin);
+
+        TCFFCPRIZE conPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+        return  conPrize;
     }
 }
