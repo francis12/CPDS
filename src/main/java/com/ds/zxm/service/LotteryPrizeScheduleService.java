@@ -6,10 +6,8 @@ import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.model.TcffcPrizeConverter;
-import com.ds.zxm.util.DateUtils;
-import com.ds.zxm.util.DsUtil;
-import com.ds.zxm.util.HttpUtil;
-import com.ds.zxm.util.LotteryUtil;
+import com.ds.zxm.util.*;
+import com.ds.zxm.vo.OnlineImVO;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -213,7 +211,16 @@ public class LotteryPrizeScheduleService{
             log.error("fetchTcffcPrizeFrom77Org error", e);
         }
     }
-    //获取指定期
+    private TCFFCPRIZE fetchExactTimePrize2(String formatCurTimeStr) throws Exception {
+        List<OnlineImVO> list = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", List.class);
+
+        list.stream().forEach(item -> {
+
+        });
+
+        return null;
+    }
+        //获取指定期
     private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) throws Exception {
 
         Date time =DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");

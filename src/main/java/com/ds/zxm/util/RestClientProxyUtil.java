@@ -7,6 +7,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,7 +120,8 @@ public class RestClientProxyUtil {
 
     public static void main(String[] args) {
 
-        List<OnlineImVO> list = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", List.class);
+        List<OnlineImVO> onlineImVOList = new ArrayList<>();
+        List<OnlineImVO> list = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", (Class<List<OnlineImVO>>) onlineImVOList.getClass());
         System.out.println("done");
     }
 }

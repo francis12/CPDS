@@ -1,16 +1,19 @@
 package com.ds.zxm.vo;
 
-public class OnlineImVO {
+import java.io.Serializable;
+import java.util.Date;
+
+public class OnlineImVO implements Serializable,Comparable{
 
 
-    private String onlinetime;
+    private Date onlinetime;
     private String onlinenumber;
 
-    public String getOnlinetime() {
+    public Date getOnlinetime() {
         return onlinetime;
     }
 
-    public void setOnlinetime(String onlinetime) {
+    public void setOnlinetime(Date onlinetime) {
         this.onlinetime = onlinetime;
     }
 
@@ -33,4 +36,9 @@ public class OnlineImVO {
     private String onlinechange;
 
 
+    @Override
+    public int compareTo(Object o) {
+        OnlineImVO onlineImVO = (OnlineImVO) o;
+        return this.getOnlinetime().compareTo(onlineImVO.getOnlinetime());
+    }
 }
