@@ -2,7 +2,7 @@ package com.ds.zxm.model;
 
 import java.util.Date;
 
-public class TCFFCPRIZE {
+public class TCFFCPRIZE implements Comparable{
     private Long id;
 
     private String lotteryCode;
@@ -141,5 +141,14 @@ public class TCFFCPRIZE {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof TCFFCPRIZE) {
+            TCFFCPRIZE tcffcprize = (TCFFCPRIZE) o;
+            return this.getTime().compareTo(tcffcprize.getTime());
+        }
+        return 0;
     }
 }

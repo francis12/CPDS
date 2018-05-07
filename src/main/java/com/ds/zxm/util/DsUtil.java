@@ -64,6 +64,27 @@ public class DsUtil {
         return  map;
     }
 
+    public static Map<String, String> genRequestHeaderMap2(String caipiao) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("Origin", "http://tencent-online.com");
+        map.put("Referer", "http://tencent-online.com/");
+
+
+        //Cookie:auth=29c24f4e49a159b00f7610889da713e852fc2ad1f8a4ffecc72c5570f87a54466f260dcced491b2ac3a0a426223c89d4c1dfdaca140a9e37dcf5e93998ccdea1;
+        // _ga=GA1.2.747412297.1508398730; _gid=GA1.2.1138527932.1508398730; _gat=1; caipiao=n198_90s
+        return  map;
+    }
+    public static Map<String, String> gen77DownloadFileRequestHeaderMap(String caipiao) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("Origin", "http://www.77tj.org");
+        map.put("Cookie", ".AspNetCore.Antiforgery.nlUjaxz2h3Y=CfDJ8JNGqqJAhXVAj6SHbU5yR5Q0nbEaTHu6DUaZWUq6oR9JYVEDgIQqEIC3qUpz4WQlfs-oNmZcLRDzJGj7Sgd8lBuinB_uflEi_Iqy_ukLedcENrzDnpKBDLhSDRJOGsajfFQiW96wtaBka8vEJ36518c");
+
+
+        //Cookie:auth=29c24f4e49a159b00f7610889da713e852fc2ad1f8a4ffecc72c5570f87a54466f260dcced491b2ac3a0a426223c89d4c1dfdaca140a9e37dcf5e93998ccdea1;
+        // _ga=GA1.2.747412297.1508398730; _gid=GA1.2.1138527932.1508398730; _gat=1; caipiao=n198_90s
+        return  map;
+    }
+
     public static  String auth = null;
     public  static void init (){
             auth = DsUtil.login2FetchAuth();

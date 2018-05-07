@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -76,7 +77,8 @@ public class TcffcGenNumsService {
             winResult.put("isQianPrized", isQianPrized);
             winResult.put("isQian3Prized", isQian3Prized);
             winResult.put("isZhong3Prized", isZhong3Prized);
-            TCFFCPRIZE conPrize = this.calGenPrizeByRate(curPrize);
+            //TCFFCPRIZE conPrize = this.calGenPrizeByRate(curPrize);
+            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 4);
 
             String adjustStr = "实际：" + curPrize.getAdjustNum() + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
             try {
@@ -380,14 +382,12 @@ public class TcffcGenNumsService {
             return null;
         }
         this.sortOnlineRateList(items);
-        if(items.size() > 2) {
+        //delete  half
+        for(int i=0; i< items.size()/16;i++) {
             items.remove(0);
             items.remove(items.size()-1);
         }
-        if(items.size() > 2) {
-            items.remove(0);
-            items.remove(items.size()-1);
-        }
+
         BigDecimal sum = BigDecimal.ZERO;
         for(BigDecimal item : items) {
             sum = sum.add(item);
@@ -404,8 +404,18 @@ public class TcffcGenNumsService {
             }
         });
     }
+    public static void main(String[] args) {
 
-    //通过计算人数占比预测下一期
+        BigDecimal item = new BigDecimal("2.3");
+        BigDecimal item2 = new BigDecimal("3");
+        BigDecimal item3 = new BigDecimal("2");
+
+        BigDecimal result = item.multiply(item2).divide(item3, 4,RoundingMode.FLOOR);
+        System.out.println(result);
+    }
+
+
+        //通过计算人数占比预测下一期
     public TCFFCPRIZE calGenPrizeByRateNum(TCFFCPRIZE curPrize, int num) {
         Date curTime = curPrize.getTime();
         //下一分钟即为待开奖期
@@ -429,6 +439,7 @@ public class TcffcGenNumsService {
             noList.add(TcffcPrizeConverter.genNofromTime(dateItem));
         }
 
+        Collections.sort(noList);
         TCFFCPRIZECondition condition = new TCFFCPRIZECondition();
         condition.createCriteria().andNoIn(noList);
 
