@@ -3,11 +3,13 @@ package com.ds.zxm.service;
 import com.ds.zxm.mapper.CurNOModelDAO;
 import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
+import com.ds.zxm.mapper.TecentTimeDAO;
 import com.ds.zxm.model.*;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +30,12 @@ public class TcffcGenNumsService {
     private CurNOModelDAO curNOModelDAO;
     @Resource
     private GenPrizeModelDAO genPrizeModelDAO;
+    @Resource
+    private TecentTimeDAO tecentTimeDAO;
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
     private TCFFCPRIZE genPrize = null;
+    private List<TCFFCPRIZE> genPrizeList = null;
     public Map<String, Boolean> generateNextNums(TCFFCPRIZE  curPrize) {
         Map<String, Boolean> winResult = new HashMap<>();
         //前2
@@ -49,11 +54,17 @@ public class TcffcGenNumsService {
         File qianFile = new File("qianFile.txt");
         File qianAllFile = new File("qianAllFile.txt");
 
+        //五星
+        File wuXingFile = new File("wuXingFile.txt");
+        File wuXingAllFile = new File("wuXingAllFile.txt");
+
         try {
             boolean isQian3Prized = false;
             boolean isZhong3Prized = false;
             boolean isQian2Prized = false;
             boolean isQianPrized = false;
+            boolean iaWuXingPrized = false;
+
             if (genPrize != null) {
                 if(LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getWan(), curPrize.getWan()) &&
                         LotteryUtil.judgeIsmatchBetweenPost4(genPrize.getQian(), curPrize.getQian())) {
@@ -72,11 +83,20 @@ public class TcffcGenNumsService {
                         &&LotteryUtil.judgeIsmatchBetween4(genPrize.getShi(), curPrize.getShi())) {
                     isZhong3Prized = true;
                 }
+                if (null != genPrizeList && genPrizeList.size() > 0) {
+                    for (TCFFCPRIZE item : genPrizeList) {
+                        String prize = item.getPrize();
+                        if (StringUtils.isNotEmpty(prize) && prize.equals(curPrize.getPrize())) {
+                            iaWuXingPrized = true;
+                        }
+                    }
+                }
             }
             winResult.put("isQian2Prized", isQian2Prized);
             winResult.put("isQianPrized", isQianPrized);
             winResult.put("isQian3Prized", isQian3Prized);
             winResult.put("isZhong3Prized", isZhong3Prized);
+            winResult.put("iaWuXingPrized", iaWuXingPrized);
             //TCFFCPRIZE conPrize = this.calGenPrizeByRate(curPrize);
             TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 4);
 
@@ -115,6 +135,9 @@ public class TcffcGenNumsService {
             FileUtils.writeStringToFile(qian3File, qian3StrResult, false);
 
 
+            //五星
+            genNextWuXingPrize(conPrize);
+
             updateCurNO(nextMin);
             updateGenPrizeResult(conPrize, curPrize);
 
@@ -123,6 +146,32 @@ public class TcffcGenNumsService {
             log.error("generateNextNums error", e);
         }
         return winResult;
+    }
+
+    //根据当前期生成下期五星计划
+    private void genNextWuXingPrize(TCFFCPRIZE conPrize) {
+        Date nextMin = DateUtils.addMinutes(-1, conPrize.getTime());
+
+        TecentTimeCondition tecentTimeDOCondition = new TecentTimeCondition();
+        tecentTimeDOCondition.createCriteria().andStartTimeLessThanOrEqualTo(nextMin).andEndTimeGreaterThan(nextMin);
+
+        List<TecentTime> tecentTimeDOList = tecentTimeDAO.selectByCondition(tecentTimeDOCondition);
+        TecentTime tecentTime = null;
+        if (null != tecentTimeDOList && tecentTimeDOList.size() > 0) {
+            tecentTime = tecentTimeDOList.get(0);
+        } else {
+            log.error("获取" + nextMin + "调整数据异常");
+            return;
+        }
+        int start = tecentTime.getStart();
+        int end = tecentTime.getEnd();
+        int curPostNum = conPrize.getOnlineNum() / 10000 * 10000;
+
+        int startPost = start + curPostNum;
+        int endPost = end + curPostNum;
+
+
+
     }
 
     //通过累加最近几天，最近几期的数据计算
@@ -406,12 +455,12 @@ public class TcffcGenNumsService {
     }
     public static void main(String[] args) {
 
-        BigDecimal item = new BigDecimal("2.3");
-        BigDecimal item2 = new BigDecimal("3");
-        BigDecimal item3 = new BigDecimal("2");
+        int start = 10000;
+        int end = 50000;
+        int curPostNum = 271936597 / 10000 * 10000;
 
-        BigDecimal result = item.multiply(item2).divide(item3, 4,RoundingMode.FLOOR);
-        System.out.println(result);
+        System.out.println((curPostNum + start) + "-" + (curPostNum + end));
+
     }
 
 
