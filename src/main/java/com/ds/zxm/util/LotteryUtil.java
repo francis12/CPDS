@@ -3,9 +3,7 @@ package com.ds.zxm.util;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,13 +68,13 @@ public class LotteryUtil {
      * @param layer dimValue的层数 
      * @param curList 每次笛卡尔积的结果 
      */  
-    private static void recursive (List<List<String>> dimValue, List<List<String>> result, int layer, List<String> curList) {  
+    private static void recursive (List<List<String>> dimValue, List<Set<String>> result, int layer, Set<String> curList) {
         if (layer < dimValue.size() - 1) {  
             if (dimValue.get(layer).size() == 0) {  
                 recursive(dimValue, result, layer + 1, curList);  
             } else {  
                 for (int i = 0; i < dimValue.get(layer).size(); i++) {  
-                    List<String> list = new ArrayList<String>(curList);  
+                    Set<String> list = new HashSet<String>(curList);
                     list.add(dimValue.get(layer).get(i));  
                     recursive(dimValue, result, layer + 1, list);  
                 }  
@@ -86,7 +84,7 @@ public class LotteryUtil {
                 result.add(curList);  
             } else {  
                 for (int i = 0; i < dimValue.get(layer).size(); i++) {  
-                    List<String> list = new ArrayList<String>(curList);  
+                    Set<String> list = new HashSet<>(curList);
                     list.add(dimValue.get(layer).get(i));  
                     result.add(list);  
                 }  
@@ -386,8 +384,26 @@ public class LotteryUtil {
 	//3,0     6,5
 
 	public static void main(String[] args) {
-		judgeIsmatchBetween3(3,0);
-		judgeIsmatchBetween3(6,5);
+		//judgeIsmatchBetween3(3,0);
+		//judgeIsmatchBetween3(6,5);
+		List<Set<String>> recursiveResult = new ArrayList<Set<String>>();
+		// 递归实现笛卡尔积
+		List<String> data1 = new ArrayList<String>();
+		List<String> data2 = new ArrayList<String>();
+		List<String> data3 = new ArrayList<String>();
+		for(int i=0; i <10;i++) {
+			for(int j=0; j < 10; j++) {
+				data1.add(i + "" + j);
+				data2.add(i + "" + j);
+				data3.add(i + "" + j);
+			}
+		}
+		List<List<String>> dimValue = new ArrayList<>();
+		dimValue.add(data1);
+		dimValue.add(data2);
+		dimValue.add(data3);
+		//recursive(dimValue, recursiveResult, 0, new ArrayList<String>());
+		System.out.println(recursiveResult.size());
 	}
 
 	//比较两个数相差不超过3

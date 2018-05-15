@@ -91,7 +91,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
         service.scheduleAtFixedRate(tcPrizeSchedule, 1, 1, TimeUnit.SECONDS);
-        service.execute(orgPrizeSchedule);
+        //service.execute(orgPrizeSchedule);
         logger.info("SpringBoot Start Success");
     }
 
