@@ -194,7 +194,7 @@ public class LotteryPrizeScheduleService{
                         log.info("第"+ formatCurTimeStr +"开奖号为：" + parsedTcffcPrize.getPrize());
                         this.insertOnUnexist(parsedTcffcPrize);
                         //notice出号中心
-                        tcffcGenNumsService.generateNextNums(parsedTcffcPrize);
+                        tcffcGenNumsService.noticeGenNumsService(parsedTcffcPrize);
                     } else {
                         log.error("第" + formatCurTimeStr + "期开奖数据获取失败!");
                     }

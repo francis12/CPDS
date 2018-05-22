@@ -147,7 +147,11 @@ public class TCFFCPRIZE implements Comparable{
     public int compareTo(Object o) {
         if(o instanceof TCFFCPRIZE) {
             TCFFCPRIZE tcffcprize = (TCFFCPRIZE) o;
-            return this.getTime().compareTo(tcffcprize.getTime());
+            if (this.getTime().compareTo(tcffcprize.getTime()) == 0) {
+                return this.getPrize().compareTo(tcffcprize.getPrize());
+            } else {
+                return this.getTime().compareTo(tcffcprize.getTime());
+            }
         }
         return 0;
     }

@@ -61,8 +61,8 @@ public class LotteryStrategyService {
 
     static Map<String, TradeSchedule> scheduleMap = new HashMap<>();
     static {
-        //6期倍投
-        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+        //定位胆7码6期倍投
+        /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
         TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,4);
         TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,17);
         TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,74);
@@ -73,8 +73,32 @@ public class LotteryStrategyService {
         scheduleMap.put("2", tradeSchedule2);
         scheduleMap.put("3", tradeSchedule3);
         scheduleMap.put("4", tradeSchedule4);
-        scheduleMap.put("5", tradeSchedule5);
+        scheduleMap.put("5", tradeSchedule5);*/
         /*scheduleMap.put("6", tradeSchedule6);*/
+
+        //中3 7期倍投
+        /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,3);
+        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,12);
+        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,45);
+        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,170);
+        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,641);
+        TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,2417);
+
+
+        scheduleMap.put("1", tradeSchedule1);
+        scheduleMap.put("2", tradeSchedule2);
+        scheduleMap.put("3", tradeSchedule3);
+        scheduleMap.put("4", tradeSchedule4);
+        scheduleMap.put("5", tradeSchedule5);
+        scheduleMap.put("6", tradeSchedule6);
+        scheduleMap.put("7", tradeSchedule7);*/
+        //两期测试
+        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 2,1,1);
+        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 2,1,666);
+
+        scheduleMap.put("1", tradeSchedule1);
+        scheduleMap.put("2", tradeSchedule2);
     }
 
     /*static {
@@ -167,8 +191,10 @@ public class LotteryStrategyService {
             Date endTime = DateUtils.String2Date(end, format);
             /*BigDecimal baseAmt = new BigDecimal("0.856");
             BigDecimal baseRate = new BigDecimal("1.139");*/
-            BigDecimal baseAmt = new BigDecimal("1.4");
-            BigDecimal baseRate = new BigDecimal("1.385");
+            /*BigDecimal baseAmt = new BigDecimal("0.648");
+            BigDecimal baseRate = new BigDecimal("1.497");*/
+            BigDecimal baseAmt = new BigDecimal("0.14");
+            BigDecimal baseRate = new BigDecimal("1.3857");
             BigDecimal curAmt = BigDecimal.ZERO;
             while (startTime.compareTo(endTime) <= 0) {
                 totalCheckCnt++;
@@ -202,7 +228,7 @@ public class LotteryStrategyService {
                 if(isMatch){
                     lzSb.append("中");
                     int lgCnt = zgSb.length();
-                    if(lgCnt >= 6) {
+                    if(lgCnt >= 7) {
                         log.info(startTime + "遗漏" + lgCnt);
                     }
                     betResult.setCurProfit(betResult.getCurProfit().add(curAmt.multiply(baseRate.subtract(new BigDecimal("1")))));
