@@ -33,7 +33,7 @@ public abstract class BaseGenPrize {
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
     private TCFFCPRIZE genPrize = null;
-    protected List<TCFFCPRIZE> genPrizeList = null;
+    public List<TCFFCPRIZE> genPrizeList = null;
     //千位定位胆
     File file = null;
     File allFile = null;
@@ -47,6 +47,7 @@ public abstract class BaseGenPrize {
         Map<String, Boolean> winResult = new HashMap<>();
 
         try {
+            //当前期开奖号码和预测号码
             boolean isPrized = this.isPrized(genPrize, curPrize);
             winResult.put("isPrized", isPrized);
             //预测下一期在线人数，转换成开奖号码

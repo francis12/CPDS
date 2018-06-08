@@ -29,7 +29,7 @@ public class WuxingGenPrize extends BaseGenPrize {
     @Override
     String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
         //五星根据计算的波动值前后加减25000，算出五星号码
-        List<TCFFCPRIZE> tcffcprizeList = genNextWuXingPrizeByGen(conPrize);
+        List<TCFFCPRIZE> tcffcprizeList = LotteryUtil.genNextWuXingPrizeByGen(conPrize);
         Collections.sort(tcffcprizeList);
 
         genPrizeList = tcffcprizeList;
@@ -40,31 +40,6 @@ public class WuxingGenPrize extends BaseGenPrize {
             });
         }
         return wuXingSb.toString();
-    }
-    //根据当前期生成下期五星计划
-    private List<TCFFCPRIZE> genNextWuXingPrizeByGen(TCFFCPRIZE genPrize) {
-        int startPost = genPrize.getOnlineNum()-20000;
-        int endPost = genPrize.getOnlineNum() + 20000;
-        List<TCFFCPRIZE> result = this.createPrizeNumList2(startPost, endPost, genPrize.getTime());
-        return result;
-
-    } //生成投注号码
-    public static List<TCFFCPRIZE> createPrizeNumList2(int preStart, int preEnd, Date time) {
-        List<TCFFCPRIZE> toPrizeNumList = new ArrayList<>();
-        int startSub = new BigDecimal(preStart).divide(new BigDecimal(10000), 0 , RoundingMode.HALF_UP).intValue();
-        int endSub = new BigDecimal(preEnd).divide(new BigDecimal(10000), 0 , RoundingMode.HALF_UP).intValue();
-        for(int j = startSub; j <= endSub; j++) {
-            for(int i = 0; i<9999; i++) {
-                int online = j * 10000 + i;
-                TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
-                tcffcprize.setTime(time);
-                tcffcprize.setOnlineNum(online);
-                tcffcprize.setLotteryCode("TCFFC");
-                TCFFCPRIZE convertResult = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
-                toPrizeNumList.add(convertResult);
-            }
-        }
-        return toPrizeNumList;
     }
     @Override
     boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {

@@ -191,7 +191,7 @@ public class LotteryPrizeScheduleService{
                     TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
                     //正常获取到开奖号码
                     if (null != parsedTcffcPrize) {
-                        log.info("第"+ formatCurTimeStr +"开奖号为：" + parsedTcffcPrize.getPrize());
+                        log.info("第"+ parsedTcffcPrize.getNo() + "(" + formatCurTimeStr +")开奖号为：" + parsedTcffcPrize.getPrize());
                         this.insertOnUnexist(parsedTcffcPrize);
                         //notice出号中心
                         tcffcGenNumsService.noticeGenNumsService(parsedTcffcPrize);
@@ -241,7 +241,8 @@ public class LotteryPrizeScheduleService{
                 log.info("formatCurTimeStr:"+ formatCurTimeStr + ",retryCnt:" + retryCnt);
                 retryCnt++;
                 Thread.sleep(2000);
-                String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
+                //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
+                String result = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", String.class);
 
                 JSONArray prizeArray = JSONObject.parseArray(result);
                 for (int i = 0; i < prizeArray.size(); i++) {

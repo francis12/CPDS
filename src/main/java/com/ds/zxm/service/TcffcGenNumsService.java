@@ -43,6 +43,16 @@ public class TcffcGenNumsService {
     private BaseGenPrize zhongsanGenPrize;
     @Resource(name="qianSiGenPrize")
     private BaseGenPrize qianSiGenPrize;
+    @Resource(name="houSiGenPrize")
+    private BaseGenPrize houSiGenPrize;
+    @Resource(name="zongheGenPrize")
+    private BaseGenPrize zongheGenPrize;
+    @Resource(name="housanGenPrize")
+    private BaseGenPrize housanGenPrize;
+    @Resource(name="qh4GenPrize")
+    private BaseGenPrize qh4GenPrize;
+    @Resource(name="qh4GenwuPrize")
+    private BaseGenPrize qh4GenwuPrize;
 
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
@@ -51,10 +61,14 @@ public class TcffcGenNumsService {
 
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         Map<String, Boolean> result = new HashMap<>();
-        result.putAll(qianDwdGenPrize.run(curPrize));
+        //result.putAll(qianDwdGenPrize.run(curPrize));
         //result.putAll(wuxingGenPrize.run(curPrize));
-        result.putAll(zhongsanGenPrize.run(curPrize));
-        result.putAll(qianSiGenPrize.run(curPrize));
+        //result.putAll(zhongsanGenPrize.run(curPrize));
+        //result.putAll(zongheGenPrize.run(curPrize));
+        //result.putAll(houSiGenPrize.run(curPrize));
+        //result.putAll(housanGenPrize.run(curPrize));
+        result.putAll(qh4GenPrize.run(curPrize));
+        result.putAll(qh4GenwuPrize.run(curPrize));
         return result;
     }
     public Map<String, Boolean> generateNextNums2(TCFFCPRIZE  curPrize) {

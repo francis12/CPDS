@@ -2,9 +2,13 @@ package com.ds.zxm.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.*;
 
+import com.ds.zxm.model.TCFFCPRIZE;
+import com.ds.zxm.model.TcffcPrizeConverter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -382,11 +386,87 @@ public class LotteryUtil {
 		return  false;
 	}
 	//3,0     6,5
+//返回前4后4个数字包括自己共9个数字
+	public static  String genPy4AllNumStr(int num) {
+		String result = "";
+		switch (num) {
+			case 0: return "678901234";
+			case 1: return "789012345";
+			case 2: return "890123456";
+			case 3: return "901234567";
+			case 4: return "012345678";
+			case 5: return "123456789";
+			case 6: return "234567890";
+			case 7: return "345678901";
+			case 8: return "456789012";
+			case 9: return "567890123";
+		}
+		return  result;
+	}
+	//与genPy4AllNumStr对应
+	public static boolean judgeIsmatchBetweenAll4(int src, int dst) {
+		String dstStr = dst + "";
+		switch (src) {
+			case 0 :
+				if ("678901234".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+
+			case 1 :
+				if ("789012345".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 2 :
+				if ("890123456".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 3 :
+				if ("901234567".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 4 :
+				if ("012345678".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 5 :
+				if ("123456789".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 6 :
+				if ("234567890".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 7 :
+				if ("345678901".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 8 :
+				if ("456789012".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			case 9 :
+				if ("567890123".indexOf(dstStr) >= 0) {
+					return  true;
+				}
+				break;
+			default: break;
+		}
+		return  false;
+	}
 
 	public static void main(String[] args) {
 		//judgeIsmatchBetween3(3,0);
 		//judgeIsmatchBetween3(6,5);
-		List<Set<String>> recursiveResult = new ArrayList<Set<String>>();
+		/*List<Set<String>> recursiveResult = new ArrayList<Set<String>>();
 		// 递归实现笛卡尔积
 		List<String> data1 = new ArrayList<String>();
 		List<String> data2 = new ArrayList<String>();
@@ -403,7 +483,17 @@ public class LotteryUtil {
 		dimValue.add(data2);
 		dimValue.add(data3);
 		//recursive(dimValue, recursiveResult, 0, new ArrayList<String>());
-		System.out.println(recursiveResult.size());
+		System.out.println(recursiveResult.size());*/
+
+		//genNumsFromFile(new File("d:\\testNum.txt"));
+		List<String> danList = new ArrayList<>();
+		danList.add("0");
+		danList.add("2");
+		danList.add("4");
+		danList.add("6");
+		//List<String> result = genNumfromDan(danList);
+		//System.out.println(result.size());
+
 	}
 
 	//比较两个数相差不超过3
@@ -469,5 +559,318 @@ public class LotteryUtil {
 	//a*bc玩法转成通用注数
 	public static String convertCha2Normal(String src1, String src2) {
 		return "";
+	}
+
+	//根据当前期生成下期五星计划
+	public static List<TCFFCPRIZE> genNextWuXingPrizeByGen2(TCFFCPRIZE genPrize) {
+		int startPost = genPrize.getOnlineNum()-5000;
+		int endPost = genPrize.getOnlineNum() + 5000;
+		List<TCFFCPRIZE> result = createPrizeNumList2(startPost, endPost, genPrize.getTime());
+		return result;
+
+	}
+
+	//根据当前期生成下期五星计划
+	public static List<TCFFCPRIZE> genNextWuXingPrizeByGen(TCFFCPRIZE genPrize) {
+		int startPost = genPrize.getOnlineNum()-20000;
+		int endPost = genPrize.getOnlineNum() + 20000;
+		List<TCFFCPRIZE> result = createPrizeNumList2(startPost, endPost, genPrize.getTime());
+		return result;
+
+	}
+	//生成投注号码
+	public static List<TCFFCPRIZE> createPrizeNumList2(int preStart, int preEnd, Date time) {
+		List<TCFFCPRIZE> toPrizeNumList = new ArrayList<>();
+		int startSub = new BigDecimal(preStart).divide(new BigDecimal(10000), 0 , RoundingMode.HALF_UP).intValue();
+		int endSub = new BigDecimal(preEnd).divide(new BigDecimal(10000), 0 , RoundingMode.HALF_UP).intValue();
+		for(int j = startSub; j <= endSub; j++) {
+			for(int i = 0; i<9999; i++) {
+				int online = j * 10000 + i;
+				TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+				tcffcprize.setTime(time);
+				tcffcprize.setOnlineNum(online);
+				tcffcprize.setLotteryCode("TCFFC");
+				TCFFCPRIZE convertResult = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+				toPrizeNumList.add(convertResult);
+			}
+		}
+		return toPrizeNumList;
+	}
+
+	//从文件中获取号码
+	public static void genNumsFromFile(File file) {
+		try {
+			List<String> noList = FileUtils.readLines(file);
+
+			Map<String, Integer> cntMap = new HashMap<>();
+			noList.stream().forEach( item -> {
+				String fourStr = item.substring(0,4);
+				if (cntMap.get(fourStr) != null) {
+					cntMap.put(fourStr, cntMap.get(fourStr) + 1);
+				} else {
+					cntMap.put(fourStr, 1);
+				}
+			});
+			Map<String, Integer> map = sortMapByValue(cntMap);
+			System.out.println("过滤后4星共：" + map.size());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static Map<String, Integer> sortMapByValue(Map<String, Integer> oriMap) {
+		if (oriMap == null || oriMap.isEmpty()) {
+			return null;
+		}
+		Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+		List<Map.Entry<String, Integer>> entryList = new ArrayList<Map.Entry<String, Integer>>(
+				oriMap.entrySet());
+		Collections.sort(entryList, new MapValueComparator());
+
+		Iterator<Map.Entry<String, Integer>> iter = entryList.iterator();
+		Map.Entry<String, Integer> tmpEntry = null;
+		while (iter.hasNext()) {
+			tmpEntry = iter.next();
+			sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());
+		}
+		return sortedMap;
+	}
+	static class MapValueComparator implements Comparator<Map.Entry<String, Integer>> {
+
+		@Override
+		public int compare(Map.Entry<String, Integer> me1, Map.Entry<String, Integer> me2) {
+			return me2.getValue().compareTo(me1.getValue());
+		}
+	}
+	//计算分分彩相隔期数
+	public static int calTcffcNoDistance(TCFFCPRIZE startNo, TCFFCPRIZE endNo) {
+		Long secDistance = DateUtils.calculateSeconds(endNo.getTime(), startNo.getTime());
+		int minDistance = (secDistance.intValue()/60);
+		return minDistance;
+	}
+	static  List<String> allSiXinNums = new ArrayList<>();
+	static {
+		for(int i = 0; i<10; i++) {
+			for(int j = 0; j<10; j++) {
+				for(int k = 0; k<10; k++) {
+					for(int p = 0; p<10; p++) {
+						String item = "" + i + j + k + p;
+						allSiXinNums.add(item);
+					}
+				}
+			}
+		}
+	}
+
+	//胆码组4星(出现2,3,4)
+	public static List<String> genNumfromDan(List<String> danList, boolean isToJudgeDan, boolean isToJudge0, boolean isToJudge4, boolean isToJudge3, boolean isToJudge2) {
+		List<String> result = new ArrayList<>();
+		for (String siXinItem : allSiXinNums) {
+			int matchCnt = 0;
+			//计算胆匹配的次数
+			for (String danItem : danList) {
+				char[] array =  siXinItem.toCharArray();
+				for (char item : array) {
+					if ((""+ item).equals(danItem)) {
+						matchCnt++;
+					}
+				}
+			}
+			boolean isDanCntMatch = false;
+			if (matchCnt ==2 || matchCnt == 3 || matchCnt == 4) {
+				isDanCntMatch = true;
+			}
+			//0同
+			boolean is0SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") <= 1
+					&& calCntInStrList(siXinItem, "1") <= 1
+					&& calCntInStrList(siXinItem, "2") <= 1
+					&& calCntInStrList(siXinItem, "3") <= 1
+					&& calCntInStrList(siXinItem, "4") <= 1
+					&& calCntInStrList(siXinItem, "5") <= 1
+					&& calCntInStrList(siXinItem, "6") <= 1
+					&& calCntInStrList(siXinItem, "7") <= 1
+					&& calCntInStrList(siXinItem, "8") <= 1
+					&& calCntInStrList(siXinItem, "9") <= 1
+					) {
+				is0SameMatch = true;
+			}
+			//4同
+			boolean is4SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 4
+					|| calCntInStrList(siXinItem, "1") == 4
+					|| calCntInStrList(siXinItem, "2") == 4
+					|| calCntInStrList(siXinItem, "3") == 4
+					|| calCntInStrList(siXinItem, "4") == 4
+					|| calCntInStrList(siXinItem, "5") == 4
+					|| calCntInStrList(siXinItem, "6") == 4
+					|| calCntInStrList(siXinItem, "7") == 4
+					|| calCntInStrList(siXinItem, "8") == 4
+					|| calCntInStrList(siXinItem, "9") == 4
+					) {
+				is4SameMatch = true;
+			}
+
+			//3同
+			boolean is3SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 3
+					|| calCntInStrList(siXinItem, "1") == 3
+					|| calCntInStrList(siXinItem, "2") == 3
+					|| calCntInStrList(siXinItem, "3") == 3
+					|| calCntInStrList(siXinItem, "4") == 3
+					|| calCntInStrList(siXinItem, "5") == 3
+					|| calCntInStrList(siXinItem, "6") == 3
+					|| calCntInStrList(siXinItem, "7") == 3
+					|| calCntInStrList(siXinItem, "8") == 3
+					|| calCntInStrList(siXinItem, "9") == 3
+					) {
+				is3SameMatch = true;
+			}
+
+			//2同
+			boolean is2SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 2
+					|| calCntInStrList(siXinItem, "1") == 2
+					|| calCntInStrList(siXinItem, "2") == 2
+					|| calCntInStrList(siXinItem, "3") == 2
+					|| calCntInStrList(siXinItem, "4") == 2
+					|| calCntInStrList(siXinItem, "5") == 2
+					|| calCntInStrList(siXinItem, "6") == 2
+					|| calCntInStrList(siXinItem, "7") == 2
+					|| calCntInStrList(siXinItem, "8") == 2
+					|| calCntInStrList(siXinItem, "9") == 2
+					) {
+				is2SameMatch = true;
+			}
+
+			boolean jundgeResult = true;
+			if (isToJudgeDan) {
+				jundgeResult = jundgeResult & isDanCntMatch;
+			}
+			if (isToJudge0) {
+				jundgeResult = jundgeResult & isDanCntMatch;
+			}
+			if (isToJudge4) {
+				jundgeResult = jundgeResult & isDanCntMatch;
+			}
+			if (isToJudge3) {
+				jundgeResult = jundgeResult & isDanCntMatch;
+			}
+			if (isToJudge2) {
+				jundgeResult = jundgeResult & isDanCntMatch;
+			}
+
+			if(jundgeResult) {
+				result.add(siXinItem);
+			}
+		}
+
+		Collections.sort(result);
+		return result;
+	}
+
+	//胆码组4星(出现2,3,4)
+	public static List<String> genNumfromDan5(List<String> danList, boolean isToJudgeDan, boolean isToJudge0, boolean isToJudge4, boolean isToJudge3, boolean isToJudge2) {
+		List<String> result = new ArrayList<>();
+		for (String siXinItem : allSiXinNums) {
+			int matchCnt = 0;
+			//计算胆匹配的次数
+			for (String danItem : danList) {
+				char[] array =  siXinItem.toCharArray();
+				for (char item : array) {
+					if ((""+ item).equals(danItem)) {
+						matchCnt++;
+					}
+				}
+			}
+			boolean isDanCntMatch = false;
+			if (matchCnt ==2 || matchCnt == 3 || matchCnt == 4) {
+				isDanCntMatch = true;
+			}
+			//0同
+			boolean is0SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") <= 1
+					&& calCntInStrList(siXinItem, "1") <= 1
+					&& calCntInStrList(siXinItem, "2") <= 1
+					&& calCntInStrList(siXinItem, "3") <= 1
+					&& calCntInStrList(siXinItem, "4") <= 1
+					&& calCntInStrList(siXinItem, "5") <= 1
+					&& calCntInStrList(siXinItem, "6") <= 1
+					&& calCntInStrList(siXinItem, "7") <= 1
+					&& calCntInStrList(siXinItem, "8") <= 1
+					&& calCntInStrList(siXinItem, "9") <= 1
+					) {
+				is0SameMatch = true;
+			}
+			//4同
+			boolean is4SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 4
+					|| calCntInStrList(siXinItem, "1") == 4
+					|| calCntInStrList(siXinItem, "2") == 4
+					|| calCntInStrList(siXinItem, "3") == 4
+					|| calCntInStrList(siXinItem, "4") == 4
+					|| calCntInStrList(siXinItem, "5") == 4
+					|| calCntInStrList(siXinItem, "6") == 4
+					|| calCntInStrList(siXinItem, "7") == 4
+					|| calCntInStrList(siXinItem, "8") == 4
+					|| calCntInStrList(siXinItem, "9") == 4
+					) {
+				is4SameMatch = true;
+			}
+
+			//3同
+			boolean is3SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 3
+					|| calCntInStrList(siXinItem, "1") == 3
+					|| calCntInStrList(siXinItem, "2") == 3
+					|| calCntInStrList(siXinItem, "3") == 3
+					|| calCntInStrList(siXinItem, "4") == 3
+					|| calCntInStrList(siXinItem, "5") == 3
+					|| calCntInStrList(siXinItem, "6") == 3
+					|| calCntInStrList(siXinItem, "7") == 3
+					|| calCntInStrList(siXinItem, "8") == 3
+					|| calCntInStrList(siXinItem, "9") == 3
+					) {
+				is3SameMatch = true;
+			}
+
+			//2同
+			boolean is2SameMatch = false;
+			if (calCntInStrList(siXinItem, "0") == 2
+					|| calCntInStrList(siXinItem, "1") == 2
+					|| calCntInStrList(siXinItem, "2") == 2
+					|| calCntInStrList(siXinItem, "3") == 2
+					|| calCntInStrList(siXinItem, "4") == 2
+					|| calCntInStrList(siXinItem, "5") == 2
+					|| calCntInStrList(siXinItem, "6") == 2
+					|| calCntInStrList(siXinItem, "7") == 2
+					|| calCntInStrList(siXinItem, "8") == 2
+					|| calCntInStrList(siXinItem, "9") == 2
+					) {
+				is2SameMatch = true;
+			}
+
+
+			if(isDanCntMatch && is0SameMatch) {
+				result.add(siXinItem);
+			}
+		}
+
+		Collections.sort(result);
+		return result;
+	}
+
+	public static int calCntInStrList(String list, String src) {
+		int matchCnt = 0;
+		//计算胆匹配的次数
+		char[] strArr = list.toCharArray();
+		for (char charItem : strArr) {
+			String item = "" + charItem;
+				if (src.equals(item)) {
+					matchCnt++;
+				}
+		}
+		return matchCnt;
 	}
 }

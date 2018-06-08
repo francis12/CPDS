@@ -104,13 +104,12 @@ public class RestClientProxyUtil {
      * @param url
      * @return
      */
-    public static <T> T doGet(String url,Class<T> tClass) {
+    public static <T> T doGet(String url,Class<T> tClass) throws Exception{
         try {
             return RestClientProxy.getClient().getForObject(url, tClass);
         } catch (Exception e) {
+            throw  e;
         }
-
-        return null;
     }
 
     public static RestTemplate getRestTemplateClient() {
@@ -118,7 +117,7 @@ public class RestClientProxyUtil {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         List<OnlineImVO> onlineImVOList = new ArrayList<>();
         List<OnlineImVO> list = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", (Class<List<OnlineImVO>>) onlineImVOList.getClass());

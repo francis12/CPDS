@@ -60,7 +60,7 @@ public class HttpUtil {
 
 	/**
 	 * 发送get请求
-	 * 
+	 *
 	 * @param url
 	 *            链接地址
 	 * @param charset

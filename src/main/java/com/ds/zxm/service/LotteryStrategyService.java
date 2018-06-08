@@ -8,12 +8,14 @@ import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.model.TcffcPrizeConverter;
 import com.ds.zxm.strategy.BaseStrategy;
 import com.ds.zxm.strategy.DwdQianStrategy;
+import com.ds.zxm.strategy.QianSiStrategy;
 import com.ds.zxm.strategy.SanXinHotStrategy;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.HttpUtil;
 import com.ds.zxm.util.LotteryUtil;
 import com.ds.zxm.vo.BetingDetail;
 import com.ds.zxm.vo.TradeSchedule;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
@@ -24,10 +26,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
@@ -47,7 +46,7 @@ public class LotteryStrategyService {
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
     //@Resource(name="sanXinHotStrategy")
-    @Resource(name="dwdQianStrategy")
+    @Resource(name="houSanStrategy")
     private BaseStrategy baseStrategy;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryStrategyService.class);
@@ -93,12 +92,36 @@ public class LotteryStrategyService {
         scheduleMap.put("5", tradeSchedule5);
         scheduleMap.put("6", tradeSchedule6);
         scheduleMap.put("7", tradeSchedule7);*/
-        //两期测试
-        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 2,1,1);
-        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 2,1,666);
+
+        //后4 7期倍投
+        /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,3);
+        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,12);
+        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,46);
+        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,175);
+        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,669);
+        TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,2556);*/
+
+        //后3 666注7期倍投
+        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,4);
+        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,14);
+        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,44);
+        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,139);
+        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,437);
+        TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,1371);
 
         scheduleMap.put("1", tradeSchedule1);
         scheduleMap.put("2", tradeSchedule2);
+        scheduleMap.put("3", tradeSchedule3);
+        scheduleMap.put("4", tradeSchedule4);
+        scheduleMap.put("5", tradeSchedule5);
+        scheduleMap.put("6", tradeSchedule6);
+        scheduleMap.put("7", tradeSchedule7);
+        //两期测试
+        //TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,1,1);
+
+        //scheduleMap.put("1", tradeSchedule1);
     }
 
     /*static {
@@ -193,8 +216,8 @@ public class LotteryStrategyService {
             BigDecimal baseRate = new BigDecimal("1.139");*/
             /*BigDecimal baseAmt = new BigDecimal("0.648");
             BigDecimal baseRate = new BigDecimal("1.497");*/
-            BigDecimal baseAmt = new BigDecimal("0.14");
-            BigDecimal baseRate = new BigDecimal("1.3857");
+            BigDecimal baseAmt = new BigDecimal("1.332");
+            BigDecimal baseRate = new BigDecimal("1.468");
             BigDecimal curAmt = BigDecimal.ZERO;
             while (startTime.compareTo(endTime) <= 0) {
                 totalCheckCnt++;
@@ -216,6 +239,20 @@ public class LotteryStrategyService {
                         baseAmt = BigDecimal.valueOf(lastHotResult.size()).divide(new BigDecimal("1000"), 8 ,BigDecimal.ROUND_FLOOR);
                         baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
                     }
+                    if(baseStrategy instanceof QianSiStrategy) {
+                        if(prizeList.get(0).getAdjustNum() < 50000 && prizeList.get(0).getAdjustNum() > -50000) {
+                            String[] numArr  = (String[]) calResult;
+                            baseAmt = BigDecimal.valueOf(numArr.length).divide(new BigDecimal("10000"), 8 ,BigDecimal.ROUND_FLOOR);
+                            baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
+                            FileUtils.writeStringToFile(new File("回测结果.txt"), "第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂") + "\r\n", true);
+
+                            log.info("第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂"));
+                        } else {
+                            startTime = DateUtils.addMinutes(1, startTime);
+                            totalCheckCnt--;
+                            continue;
+                        }
+                    }
 
                     curAmt = baseAmt.multiply(BigDecimal.valueOf(curSchedule.getMultiple()));
                     betResult.setBetSum(betResult.getBetSum().add(curAmt));
@@ -228,7 +265,7 @@ public class LotteryStrategyService {
                 if(isMatch){
                     lzSb.append("中");
                     int lgCnt = zgSb.length();
-                    if(lgCnt >= 7) {
+                    if(lgCnt >= 6) {
                         log.info(startTime + "遗漏" + lgCnt);
                     }
                     betResult.setCurProfit(betResult.getCurProfit().add(curAmt.multiply(baseRate.subtract(new BigDecimal("1")))));
