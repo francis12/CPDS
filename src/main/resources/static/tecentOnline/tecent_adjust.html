@@ -2,17 +2,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body style="padding:0">
-<div id="condition">
-    <select id ="type">
-        <option value="1">按时间段</option>
-        <option value="2">按时间区间</option>
-    </select>
 
-    value:<input type="text" id="value_id" name="value" value="">
-    value2:<input type="text" id="value_id2" name="value2" value="2017-11-24 04:48:00">
-    <button type="button" onclick="draw()">查询</button>
-
-</div>
 <div style="padding:10px;clear: both;">  
     <div id="psLine" style="height:660px;"></div>
 </div>  
@@ -67,7 +57,7 @@
     ],
     series : [
         {
-            name:'上证指数',
+            name:'期数',
             type:'k',
             data:[]
         }
@@ -77,13 +67,13 @@
   myChart.setOption(option);
   var ajax = function() {
       $.ajax({
-          url : 'http://localhost:8011/chart/tecentOnlineData?limit=10',
+          url : 'http://localhost:8011/chart/tecentOnlineData?limit=120',
           success: function(responseText) {
              //请求成功时处理
               //var responseText = eval('(' + responseText + ')'); 
               option.xAxis[0].data = responseText.xAxis;
               option.series[0].data = responseText.series;
-              alert(option.series);
+             //alert(option.series);
               myChart.setOption(option,true);
           },
           complete: function() {
@@ -96,9 +86,8 @@
       })
   }
   var draw = function () {
-      window.setTimeout(ajax,100);
+      window.setInterval(ajax,2000);
   }
-
   draw();
  // window.setTimeout(ajax,100);
 </script>  
