@@ -34,9 +34,12 @@ public abstract class BaseGenPrize {
 
     private TCFFCPRIZE genPrize = null;
     public List<TCFFCPRIZE> genPrizeList = null;
+    //是否投注
+    protected boolean isToTz = true;
     //千位定位胆
     File file = null;
     File allFile = null;
+    String genStr = "";
 
     public Map<String, Boolean> run(TCFFCPRIZE curPrize) {
         this.init();
@@ -51,10 +54,10 @@ public abstract class BaseGenPrize {
             boolean isPrized = this.isPrized(genPrize, curPrize);
             winResult.put("isPrized", isPrized);
             //预测下一期在线人数，转换成开奖号码
-            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 4);
+            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 2);
 
             Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
-            String genStr = " zhuan(" + this.getGenPrizeNumsStr(conPrize) + ")zhuan ";
+            String genStr = " zhuan(" + this.getGenPrizeNumsStr(conPrize, curPrize) + ")zhuan ";
             String strResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " " + (isPrized ? "中" : "挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + genStr;
             writeResult2File(strResult);
             try {
@@ -75,14 +78,17 @@ public abstract class BaseGenPrize {
         return winResult;
     }
     abstract void init();
-    abstract String getGenPrizeNumsStr(TCFFCPRIZE conPrize);
+    //conPrize:预测的下期号码，curPrize:当前期实际开出的号码
+    abstract String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize);
     //判断是否中奖
     abstract boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize);
     //记录预测和开奖结果到文件中
     protected void writeResult2File(String result) {
         try {
-            FileUtils.writeStringToFile(file, result, false);
-            FileUtils.writeStringToFile(allFile, result, true);
+            if (isToTz){
+                FileUtils.writeStringToFile(file, result, false);
+                FileUtils.writeStringToFile(allFile, result, true);
+            }
         } catch (IOException e) {
             log.error("BaseGenPrize writeResult2File error", e);
         }

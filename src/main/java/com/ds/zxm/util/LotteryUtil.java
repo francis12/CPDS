@@ -486,13 +486,26 @@ public class LotteryUtil {
 		System.out.println(recursiveResult.size());*/
 
 		//genNumsFromFile(new File("d:\\testNum.txt"));
-		List<String> danList = new ArrayList<>();
-		danList.add("0");
-		danList.add("2");
-		danList.add("4");
-		danList.add("6");
+//		List<String> danList = new ArrayList<>();
+//		danList.add("0");
+//		danList.add("2");
+//		danList.add("4");
+//		danList.add("6");
 		//List<String> result = genNumfromDan(danList);
 		//System.out.println(result.size());
+
+		Date date = null;
+		try {
+			date = DateUtils.String2Date("20180531", "yyyyMMdd");
+
+			Calendar c = Calendar.getInstance();
+			c.setTime(date);
+			c.add(Calendar.MONTH, 6);
+
+			System.out.println(DateUtils.date2String(c.getTime(),"yyyyMMdd"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -640,7 +653,7 @@ public class LotteryUtil {
 
 		@Override
 		public int compare(Map.Entry<String, Integer> me1, Map.Entry<String, Integer> me2) {
-			return me2.getValue().compareTo(me1.getValue());
+			return me1.getValue().compareTo(me2.getValue());
 		}
 	}
 	//计算分分彩相隔期数

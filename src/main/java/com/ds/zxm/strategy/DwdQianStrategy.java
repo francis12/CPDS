@@ -23,7 +23,7 @@ public class DwdQianStrategy extends BaseStrategy{
     @Override
     public boolean isWin(Object calNo, TCFFCPRIZE realNo) {
         TCFFCPRIZE tcffcprize = (TCFFCPRIZE) calNo;
-        return LotteryUtil.judgeIsmatchBetween3(tcffcprize.getQian(), realNo.getQian());
+        return LotteryUtil.judgeIsmatchBetweenPost4(tcffcprize.getQian(), realNo.getQian());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DwdQianStrategy extends BaseStrategy{
             condition2.createCriteria().andNoEqualTo(lastNo);
             List<TCFFCPRIZE> lastPrizes = tcffcprizedao.selectByCondition(condition2);
             if (null != lastPrizes && lastPrizes.size() > 0) {
-                genNoPrize = tcffcGenNumsService.calGenPrizeByRateNum(lastPrizes.get(0), 4);
+                genNoPrize = tcffcGenNumsService.calGenPrizeByRateNum(lastPrizes.get(0), 3);
                 return genNoPrize;
             }
         } catch (Exception e) {

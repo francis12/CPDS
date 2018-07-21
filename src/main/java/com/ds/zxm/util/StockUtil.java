@@ -31,16 +31,16 @@ public class StockUtil {
 			list.add("s" + i);
 		}
 		StockUtil.batchInsertorUpdateuserList(list);*/
-		String result = StockUtil.mulBt("28,42,56,70,84,112,140,182,238,308,392,504,644,840,1078,1386,1778,2296,2940,3794,4872,6272,8064,10374,13356,17178", 2);
+		String result = StockUtil.mulBt("4,6,8,10,12,16,20,26,34,44,56,72,92,120,154,198,254,328,420,542,696,896,1152,1482,1908,2454", 5);
 		System.out.println(result);
 	}
 
-	public static String mulBt(String src, int mul) {
+	public static String mulBt(String src, double mul) {
 		String[] splRst = src.split(",");
 		StringBuilder sb = new StringBuilder();
 		for(String item : splRst) {
-			int itRes = Integer.valueOf(item) * mul;
-			sb.append(itRes + ",");
+			double itRes = Integer.valueOf(item) * mul;
+			sb.append(((int) itRes) + ",");
 		}
 		return sb.toString();
 	}

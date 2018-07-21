@@ -23,6 +23,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,7 +47,7 @@ public class LotteryStrategyService {
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
     //@Resource(name="sanXinHotStrategy")
-    @Resource(name="houSanStrategy")
+    @Resource(name="dwdQianStrategy")
     private BaseStrategy baseStrategy;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryStrategyService.class);
@@ -61,19 +62,19 @@ public class LotteryStrategyService {
     static Map<String, TradeSchedule> scheduleMap = new HashMap<>();
     static {
         //定位胆7码6期倍投
-        /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
         TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,4);
         TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,17);
         TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,74);
-        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,1,321);
+        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,321);
         TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,1,1391);
 
         scheduleMap.put("1", tradeSchedule1);
         scheduleMap.put("2", tradeSchedule2);
         scheduleMap.put("3", tradeSchedule3);
         scheduleMap.put("4", tradeSchedule4);
-        scheduleMap.put("5", tradeSchedule5);*/
-        /*scheduleMap.put("6", tradeSchedule6);*/
+        scheduleMap.put("5", tradeSchedule5);
+        scheduleMap.put("6", tradeSchedule6);
 
         //中3 7期倍投
         /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
@@ -102,22 +103,40 @@ public class LotteryStrategyService {
         TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,669);
         TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,2556);*/
 
-        //后3 666注7期倍投
-        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
-        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,4);
-        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,14);
-        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,44);
-        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,139);
-        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,437);
-        TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,1371);
+//        //后3 666注7期倍投
+//        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,2,1);
+//        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,4);
+//        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 1,4,14);
+//        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,44);
+//        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 1,6,139);
+//        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,7,437);
+//        TradeSchedule tradeSchedule7 = new TradeSchedule(6, 1,1,1371);
+//
+//        scheduleMap.put("1", tradeSchedule1);
+//        scheduleMap.put("2", tradeSchedule2);
+//        scheduleMap.put("3", tradeSchedule3);
+//        scheduleMap.put("4", tradeSchedule4);
+//        scheduleMap.put("5", tradeSchedule5);
+//        scheduleMap.put("6", tradeSchedule6);
+//        scheduleMap.put("7", tradeSchedule7);
+        //定位胆中跟挂停
+//        TradeSchedule tradeSchedule1 = new TradeSchedule(1, 2,1,0);
+//        TradeSchedule tradeSchedule2 = new TradeSchedule(2, 1,3,1);
+//        TradeSchedule tradeSchedule3 = new TradeSchedule(3, 4,3,0);
+//        TradeSchedule tradeSchedule4 = new TradeSchedule(4, 1,5,4);
+//        TradeSchedule tradeSchedule5 = new TradeSchedule(5, 6,5,0);
+//        TradeSchedule tradeSchedule6 = new TradeSchedule(6, 1,1,19);
+//
+//        scheduleMap.put("1", tradeSchedule1);
+//        scheduleMap.put("2", tradeSchedule2);
+//        scheduleMap.put("3", tradeSchedule3);
+//        scheduleMap.put("4", tradeSchedule4);
+//        scheduleMap.put("5", tradeSchedule5);
+//        scheduleMap.put("6", tradeSchedule6);
 
-        scheduleMap.put("1", tradeSchedule1);
-        scheduleMap.put("2", tradeSchedule2);
-        scheduleMap.put("3", tradeSchedule3);
-        scheduleMap.put("4", tradeSchedule4);
-        scheduleMap.put("5", tradeSchedule5);
-        scheduleMap.put("6", tradeSchedule6);
-        scheduleMap.put("7", tradeSchedule7);
+        /*TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,1,1);
+        scheduleMap.put("1", tradeSchedule1);*/
+
         //两期测试
         //TradeSchedule tradeSchedule1 = new TradeSchedule(1, 1,1,1);
 
@@ -210,14 +229,15 @@ public class LotteryStrategyService {
 
             //连挂
             StringBuffer lgSb = new StringBuffer();
+            StringBuffer zgxt = new StringBuffer();
             Date startTime = DateUtils.String2Date(start, format);
             Date endTime = DateUtils.String2Date(end, format);
             /*BigDecimal baseAmt = new BigDecimal("0.856");
             BigDecimal baseRate = new BigDecimal("1.139");*/
             /*BigDecimal baseAmt = new BigDecimal("0.648");
             BigDecimal baseRate = new BigDecimal("1.497");*/
-            BigDecimal baseAmt = new BigDecimal("1.332");
-            BigDecimal baseRate = new BigDecimal("1.468");
+            BigDecimal baseAmt = new BigDecimal("1.4");
+            BigDecimal baseRate = new BigDecimal("1.397");
             BigDecimal curAmt = BigDecimal.ZERO;
             while (startTime.compareTo(endTime) <= 0) {
                 totalCheckCnt++;
@@ -234,6 +254,7 @@ public class LotteryStrategyService {
                     if (prizeList != null && prizeList.size() > 0) {
                         isMatch = baseStrategy.isWin(calResult, prizeList.get(0));
                     }
+                    zgxt.append((isMatch?"中":"挂"));
                     if(baseStrategy instanceof SanXinHotStrategy) {
                         Set<String> lastHotResult = (Set<String>) calResult;
                         baseAmt = BigDecimal.valueOf(lastHotResult.size()).divide(new BigDecimal("1000"), 8 ,BigDecimal.ROUND_FLOOR);
@@ -307,8 +328,9 @@ public class LotteryStrategyService {
                 curSchedule = scheduleMap.get(isMatch?("" + curSchedule.getWinNo()) : ("" + curSchedule.getLoseNo()));
                 startTime = DateUtils.addMinutes(1, startTime);
             }
+            log.info("中挂形态：" + zgxt.toString());
             log.info("回测结果:总验证期数：" + totalCheckCnt + ",预测准确率：" + BigDecimal.valueOf(winCheckCnt).divide(BigDecimal.valueOf(totalCheckCnt), 4, RoundingMode.FLOOR)
-                    + "总投注:" + betResult.getBetSum() + "最终盈利：" + betResult.getCurProfit() + "最大亏损：" + betResult.getMinProfit());
+                    + "总投注:" + betResult.getBetSum() + "最终盈利：" + betResult.getCurProfit() + "最大亏损：" + betResult.getMinProfit() + "最大盈利:" + betResult.getMaxProfit());
         } catch (Exception e) {
             log.error("checkLotteryStrategy", e);
         }
@@ -353,5 +375,43 @@ public class LotteryStrategyService {
             log.error("get online time error!");
         }
         return now;
+    }
+
+    /**
+     *  取最近lastcnt期后3的热号
+     * @param time  :time之前的记录
+     * @param lastCnt ： 统计最近lastcnt条记录
+     * @param numCnt ：统计的结果集数目
+     * @return
+     */
+    public List<String> queryLatestHotNums(Date time, int lastCnt, int numCnt) {
+        TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
+        Date endTime = DateUtils.addMinutes(-6, time);
+        Date startTime = DateUtils.addMinutes(-lastCnt, endTime);
+        tcffcprizeCondition.createCriteria().andTimeBetween(startTime, endTime);
+        List<TCFFCPRIZE> tcffcprizeList = tcffcprizedao.selectByCondition(tcffcprizeCondition);
+        Collections.sort(tcffcprizeList, new Comparator<TCFFCPRIZE>() {
+            @Override
+            public int compare(TCFFCPRIZE o1, TCFFCPRIZE o2) {
+                return o1.getTime().compareTo(o2.getTime());
+            }
+        });
+
+        Map<String, Integer> numCntMap = new HashMap<>();
+        tcffcprizeList.stream().forEach( item-> {
+            String hou3 = "" + item.getBai() + item.getShi() + item.getGe();
+            if(numCntMap.get(hou3) == null) {
+                numCntMap.put(hou3, 1);
+            } else {
+                numCntMap.put(hou3, numCntMap.get(hou3)+1);
+            }
+        });
+
+        Map<String, Integer> sortedMap = LotteryUtil.sortMapByValue(numCntMap);
+        List<String> list =  new ArrayList<>(sortedMap.keySet());
+        if(list != null && list.size() >=800) {
+            list = list.subList(0, 800);
+        }
+        return list;
     }
 }

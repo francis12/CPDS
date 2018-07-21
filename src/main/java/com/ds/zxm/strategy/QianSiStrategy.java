@@ -22,7 +22,7 @@ public class QianSiStrategy extends BaseStrategy{
     private QianSiGenPrize qianSiGenPrize;
     @Override
     public boolean isWin(Object calNo, TCFFCPRIZE realNo) {
-        String result = qianSiGenPrize.getGenPrizeNumsStr(realNo);
+        String result = qianSiGenPrize.getGenPrizeNumsStr(realNo, realNo);
         boolean isPrized = result.indexOf(realNo.getPrize().substring(0,4)) > 0;
         return isPrized;
 
@@ -39,7 +39,7 @@ public class QianSiStrategy extends BaseStrategy{
             List<TCFFCPRIZE> prizeList = tcffcprizedao.selectByCondition(condition);
             if (null != prizeList && prizeList.size() > 0) {
                 TCFFCPRIZE cur = prizeList.get(0);
-                String nums = qianSiGenPrize.getGenPrizeNumsStr(cur);
+                String nums = qianSiGenPrize.getGenPrizeNumsStr(cur, cur);
                 numArr = nums.split(" ");
             }
 

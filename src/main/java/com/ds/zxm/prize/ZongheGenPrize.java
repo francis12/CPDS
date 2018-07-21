@@ -16,7 +16,7 @@ public class ZongheGenPrize extends BaseGenPrize {
     }
 
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrize) {
         String result = "";
         if (conPrize != null) {
             Integer onlineNum = conPrize.getOnlineNum();
@@ -37,8 +37,8 @@ public class ZongheGenPrize extends BaseGenPrize {
 
     @Override
     boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
-        String genStr = this.getGenPrizeNumsStr(genPrize);
-        String curStr = this.getGenPrizeNumsStr(curPrize);
+        String genStr = this.getGenPrizeNumsStr(genPrize, curPrize);
+        String curStr = this.getGenPrizeNumsStr(curPrize, curPrize);
         if (genPrize !=null) {
             log.info(genPrize.getNo() + ":期，预测在线人数:" + genPrize.getOnlineNum() + "---调整值:" + genPrize.getAdjustNum() + genStr);
         }

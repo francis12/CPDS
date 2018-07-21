@@ -27,7 +27,7 @@ public class WuxingGenPrize extends BaseGenPrize {
     }
 
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrize) {
         //五星根据计算的波动值前后加减25000，算出五星号码
         List<TCFFCPRIZE> tcffcprizeList = LotteryUtil.genNextWuXingPrizeByGen(conPrize);
         Collections.sort(tcffcprizeList);

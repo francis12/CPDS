@@ -20,10 +20,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -53,16 +50,16 @@ public class LotteryPrizeScheduleService{
             String hh = s.substring(0, 2);
             String mm = s.substring(2, 4);
             String ss = s.substring(4, 6);
-            int c = 0;
-            c = Integer.parseInt(mm);
-            int d = Integer.parseInt(hh);
+            int minute = 0;
+            minute = Integer.parseInt(mm);
+            int hour = Integer.parseInt(hh);
             if (ss.equals("10")) {
                 if (Integer.parseInt(ss) > 30) {
-                    c = c + 1;
+                    minute = minute + 1;
                 }
-                int result = pcqqOnline(c, d);
+                int result = pcqqOnline(minute, hour);
                 while (result == 0) {
-                    result = pcqqOnline(c, d);
+                    result = pcqqOnline(minute, hour);
                 }
             }
         } catch (Exception e) {
@@ -71,7 +68,82 @@ public class LotteryPrizeScheduleService{
 
     }
 
-    private int pcqqOnline(int c, int d) {
+    public void startFetchPrizeDataFromQQ() {
+        String s = new SimpleDateFormat("HHmmss").format(new Date());
+        String hh = s.substring(0, 2);
+        String mm = s.substring(2, 4);
+        String ss = s.substring(4, 6);
+        int minute = 0;
+        minute = Integer.parseInt(mm);
+        int second = Integer.parseInt(ss);
+        this.fetchPrizeDataFromQQ(minute, second);
+    }
+    int preMinute = 0;
+    int preOnlineNum = 0;
+    private void fetchPrizeDataFromQQ(int minute,int second) {
+        HttpURLConnection conn = null;
+        try {
+            URL realUrl = new URL("http://mma.qq.com/cgi-bin/im/online&callback");
+            conn = (HttpURLConnection) realUrl.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setUseCaches(false);
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0");
+            int code = conn.getResponseCode();
+
+            //调用成功
+            if (code == 200) {
+                InputStream is = conn.getInputStream();
+                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = in.readLine()) != null) {
+                    buffer.append(line);
+                }
+                String result = buffer.toString();
+                result = result.substring(12);
+                result = result.substring(0, result.length() - 1);
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                Integer onlineNum = (Integer) jsonObject.get("c");
+                Integer adjsutNum = onlineNum - preOnlineNum;
+                if (adjsutNum != 0 || (adjsutNum == 0 && (minute - preMinute == 1 && second >= 55))) {
+                        //人数有变化或者时间相隔大于1分50秒
+                    TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, new Date(), adjsutNum);
+                    String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum()  + "\r\n";
+                    log.info(logInfo);
+                    FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
+                    if (!(String.valueOf(second).length() == 1)) {
+                        String warnInfo = tcffcprize.getNo() + "开奖时间异常提醒！！！(分钟:" + minute +"秒："+ second + ")" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum()  + "\r\n";
+                        FileUtils.writeStringToFile(new File("qqWarn.txt"), warnInfo, true);
+                        log.error(warnInfo);
+                    }
+                    tcffcGenNumsService.noticeGenNumsService(tcffcprize);
+                    this.insertOnUnexist(tcffcprize);
+                } else {
+                    Thread.sleep(500);
+                    return ;
+                }
+                /*if (adjsutNum == 0 && (preMinute == minute && second <= 50)) {
+                    Thread.sleep(2000);
+                    return ;
+                } else {
+                    //人数有变化或者时间相隔大于1分50秒
+                    TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, new Date(), adjsutNum);
+                    log.info(tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum());
+                    this.insertOnUnexist(tcffcprize);
+                }*/
+                preMinute = minute;
+                preOnlineNum = onlineNum;
+            }
+        } catch (Exception e) {
+            log.error("fetchPrizeDataFromQQ error", e);
+        }
+        return;
+    }
+
+    private int pcqqOnline(int minute, int hour) {
         HttpURLConnection conn = null;
         TCFFCPRIZE tcffcprize = null;
         int cha = 0;
@@ -99,17 +171,17 @@ public class LotteryPrizeScheduleService{
                 result = result.substring(12);
                 result = result.substring(0, result.length() - 1);
                 JSONObject jsonObject = JSONObject.parseObject(result);
-                Integer curr = (Integer) jsonObject.get("c");
-                int l = curr;
+                Integer onlineNum2 = (Integer) jsonObject.get("c");
+                int l = onlineNum2;
                 int a[] = new int[9];
                 int i = 0;
                 int sum = 0;
-                if (c % 2 == 0) {
+                if (minute % 2 == 0) {
                     c2 = l;
                 } else {
                     c1 = l;
                 }
-                if (c % 2 == 0) {
+                if (minute % 2 == 0) {
                     cha = c2 - c1;
                 } else {
                     cha = c1 - c2;
@@ -127,9 +199,9 @@ public class LotteryPrizeScheduleService{
                 }
                 //System.out.println(Arrays.toString(a));
                 NumberFormat nf = NumberFormat.getNumberInstance();
-                String s = nf.format(Long.parseLong(curr + ""));
+                String s = nf.format(Long.parseLong(onlineNum2 + ""));
                 String qs = new SimpleDateFormat("yyyyMMdd").format(new Date());
-                int min = d * 60 + c;
+                int min = hour * 60 + minute;
                 String qs1 = "";
                 if (min < 10) {
                     qs1 = "000" + min;
@@ -140,8 +212,8 @@ public class LotteryPrizeScheduleService{
                 } else {
                     qs1 = min + "";
                 }
-                //log.info("开奖结果:" + sum % 10 + "," + a[3] + "," + a[2] + "," + a[1] + "," + a[0]);
-                //log.info("期数:" + qs + "-" + qs1 + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + s + " " + (cha >= 0 ? "+" + cha : cha));
+                log.info("开奖结果:" + sum % 10 + "," + a[3] + "," + a[2] + "," + a[1] + "," + a[0]);
+                log.info("期数:" + qs + "-" + qs1 + " " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + s + " " + (cha >= 0 ? "+" + cha : cha));
 
                 String no = qs + "-" + qs1;
                 int wan = sum % 10;
@@ -170,7 +242,7 @@ public class LotteryPrizeScheduleService{
                 tcffcprize.setTime(new Date());
                 this.insertOnUnexist(tcffcprize);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("连接超时，重新采集......", e);
             return 0;
         }
@@ -238,7 +310,7 @@ public class LotteryPrizeScheduleService{
         int retryCnt = 0;
         while(!isGet && retryCnt < 30) {
             try {
-                log.info("formatCurTimeStr:"+ formatCurTimeStr + ",retryCnt:" + retryCnt);
+                log.debug("formatCurTimeStr:"+ formatCurTimeStr + ",retryCnt:" + retryCnt);
                 retryCnt++;
                 Thread.sleep(2000);
                 //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
@@ -349,7 +421,7 @@ public class LotteryPrizeScheduleService{
         conditon.createCriteria().andNoEqualTo(curPrize.getNo());
         int cnt = tcffcprizedao.countByCondition(conditon);
         if (cnt <= 0) {
-            log.info("数据库新增" + curPrize.getNo());
+            //log.info("数据库新增" + curPrize.getNo());
             tcffcprizedao.insert(curPrize);
         }
     }

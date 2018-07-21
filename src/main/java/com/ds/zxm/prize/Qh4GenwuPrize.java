@@ -21,7 +21,7 @@ public class Qh4GenwuPrize extends BaseGenPrize {
     }
 
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrize) {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         Date endTime = DateUtils.addMinutes(-1, conPrize.getTime());
         Date startTime = DateUtils.addMinutes(-10, endTime);
@@ -42,8 +42,8 @@ public class Qh4GenwuPrize extends BaseGenPrize {
         }
         LotteryUtil.sortMapByValue(numCntMap);
         List<String> list =  new ArrayList<>(LotteryUtil.sortMapByValue(numCntMap).keySet());
-        List<String> sortDanList = list.subList(0, 5);
-        //List<String> sortDanList = list.subList(list.size()-4, list.size());
+        //List<String> sortDanList = list.subList(0, 5);
+        List<String> sortDanList = list.subList(list.size()-5, list.size());
         StringBuilder danSb = new StringBuilder();
         sortDanList.stream().forEach(item -> {
             danSb.append(item);
@@ -69,7 +69,7 @@ public class Qh4GenwuPrize extends BaseGenPrize {
     boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
         boolean result = false;
         if (null != genPrize) {
-            String prizeNumsStr = this.getGenPrizeNumsStr(genPrize);
+            String prizeNumsStr = this.getGenPrizeNumsStr(genPrize, curPrize);
             String qian4 = curPrize.getPrize().substring(0,4);
             String hou4 = curPrize.getPrize().substring(1,5);
             if(prizeNumsStr.indexOf(qian4) >= 0 ) {

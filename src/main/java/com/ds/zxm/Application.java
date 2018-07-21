@@ -2,6 +2,7 @@ package com.ds.zxm;
 
 import com.ds.zxm.service.LotteryGenService;
 import com.ds.zxm.service.LotteryPrizeScheduleService;
+import com.ds.zxm.service.TjSSCScanService;
 import com.ds.zxm.util.DateUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
@@ -67,10 +68,11 @@ public class Application implements EmbeddedServletContainerCustomizer {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         LotteryPrizeScheduleService lotteryPrizeScheduleService = (LotteryPrizeScheduleService)context.getBean("lotteryPrizeScheduleService");
         LotteryGenService lotteryGenService = (LotteryGenService)context.getBean("lotteryGenService");
+        TjSSCScanService tjSSCScanService = (TjSSCScanService)context.getBean("tjSSCScanService");
 
         Runnable tcPrizeSchedule = new Runnable() {
             public void run() {
-                lotteryPrizeScheduleService.fetchTcffcPrize();
+                lotteryPrizeScheduleService.startFetchPrizeDataFromQQ();
             }
         };
 
@@ -86,12 +88,21 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 lotteryGenService.initCurNO();
             }
         };
+        Runnable tjsscScan = new Runnable() {
+            public void run() {
+                tjSSCScanService.scanTjsscPrizeData();
+            }
+        };
 
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        //service.scheduleAtFixedRate(tcPrizeSchedule, 1, 1, TimeUnit.SECONDS);
-        service.execute(orgPrizeSchedule);
+        service.scheduleAtFixedRate(tcPrizeSchedule, 1, 1, TimeUnit.SECONDS);
+       // service.scheduleAtFixedRate(tjsscScan,1,5,TimeUnit.SECONDS);
+        //service.execute(tjsscScan);
+
+       //service.execute(orgPrizeSchedule);
+        service.execute(tcPrizeSchedule);
         logger.info("SpringBoot Start Success");
     }
 

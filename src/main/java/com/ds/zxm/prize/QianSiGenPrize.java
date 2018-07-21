@@ -20,7 +20,7 @@ public class QianSiGenPrize extends BaseGenPrize {
     }
 
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrize) {
         StringBuilder sb = new StringBuilder();
 
         if (conPrize != null) {
@@ -43,7 +43,7 @@ public class QianSiGenPrize extends BaseGenPrize {
 
     @Override
     boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
-        String result = this.getGenPrizeNumsStr(genPrize);
+        String result = this.getGenPrizeNumsStr(genPrize, curPrize);
         boolean isPrized = result.indexOf(curPrize.getPrize().substring(0,4)) > 0;
         return isPrized;
     }

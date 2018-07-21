@@ -16,7 +16,7 @@ public class ZhongsanGenPrize extends BaseGenPrize {
     }
 
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrize) {
         return LotteryUtil.genPyPost4NumStr(conPrize.getQian()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getBai()) + "*" + LotteryUtil.genPy4NumStr(conPrize.getShi());
     }
 

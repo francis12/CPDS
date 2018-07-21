@@ -53,22 +53,26 @@ public class TcffcGenNumsService {
     private BaseGenPrize qh4GenPrize;
     @Resource(name="qh4GenwuPrize")
     private BaseGenPrize qh4GenwuPrize;
+    @Resource(name="geDwdGenPrize")
+    private BaseGenPrize geDwdGenPrize;
 
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
     private TCFFCPRIZE genPrize = null;
     private List<TCFFCPRIZE> genPrizeList = null;
+    String genStr = "";
 
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         Map<String, Boolean> result = new HashMap<>();
         //result.putAll(qianDwdGenPrize.run(curPrize));
+        result.putAll(geDwdGenPrize.run(curPrize));
         //result.putAll(wuxingGenPrize.run(curPrize));
         //result.putAll(zhongsanGenPrize.run(curPrize));
         //result.putAll(zongheGenPrize.run(curPrize));
         //result.putAll(houSiGenPrize.run(curPrize));
         //result.putAll(housanGenPrize.run(curPrize));
-        result.putAll(qh4GenPrize.run(curPrize));
-        result.putAll(qh4GenwuPrize.run(curPrize));
+        //result.putAll(qh4GenPrize.run(curPrize));
+        //result.putAll(qh4GenwuPrize.run(curPrize));
         return result;
     }
     public Map<String, Boolean> generateNextNums2(TCFFCPRIZE  curPrize) {
@@ -584,7 +588,8 @@ public class TcffcGenNumsService {
         Date curTime = curPrize.getTime();
         //下一分钟即为待开奖期
         Date nextMin = DateUtils.addMinutes(1, curTime);
-        Date next2Min = DateUtils.addMinutes(2, curTime);
+       // Date next2Min = DateUtils.addMinutes(2, curTime);
+        Date preMin = DateUtils.addMinutes(-1, curTime);
 
 
         //当天过去三分钟的开奖数据
@@ -594,7 +599,8 @@ public class TcffcGenNumsService {
             dateList.add(DateUtils.addMinutes(-i, curTime));
             dateList.add(DateUtils.addDate(-i, curTime));
             dateList.add(DateUtils.addDate(-i, nextMin));
-            dateList.add(DateUtils.addDate(-i, next2Min));
+            //dateList.add(DateUtils.addDate(-i, next2Min));
+            dateList.add(DateUtils.addDate(-i, preMin));
         }
         dateList.add(curTime);
         List<String> noList = new ArrayList<>();

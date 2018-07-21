@@ -1,0 +1,126 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body style="padding:0">
+<div id="condition">
+    <select id ="type">
+        <option value="1">按时间段</option>
+        <option value="2">按时间区间</option>
+    </select>
+
+    value:<input type="text" id="value_id" name="value" value="">
+    value2:<input type="text" id="value_id2" name="value2" value="2017-11-24 04:48:00">
+    <button type="button" onclick="draw()">查询</button>
+
+</div>
+<div style="padding:10px;clear: both;">  
+    <div id="psLine" style="height:660px;"></div>
+</div>  
+</body>  
+<script src="echarts.js"></script>  
+<script src="jquery-1.10.1.min.js"></script>  
+
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('psLine'));
+  option = {
+    title : {
+        text: '波动K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+            res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+            res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['波动K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            data : [
+                "2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30","2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30","2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30"
+            ]
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'上证指数',
+            type:'k',
+            data:[ // 开盘，收盘，最低，最高
+                [1,2,1,2],
+                [2,3,2,3],
+                [3,4,3,4],
+                [4,3,3,4],
+                [3,4,3,4],
+                [1,2,1,2],
+                [2,3,2,3],
+                [5,6,5,6],
+                [4,3,3,4],
+                [3,4,3,4],
+                [1,2,1,2],
+                [2,3,2,3],
+                [3,4,3,4],
+                [4,3,3,4],
+                [3,4,3,4]
+            ]
+        }
+    ]
+};
+  
+  myChart.setOption(option);
+  var ajax = function() {
+      var queryType = $("#type").val();
+      var value = $("#value_id").val();
+      var value2 = $("#value_id2").val();
+
+      $.ajax({
+          //url :encodeURI('http://localhost:8011/ds/tecentOnlineData?type=1&value=2017%04:%:%'),
+          //          url : 'http://localhost:8011/ds/tecentOnlineData?type=' + type + "&value=" + value + 2017-11-20 04:48:00&value2=2017-11-27 08:48:00',
+          url : 'http://localhost:8011/ds/tecentOnlineData?type=' + queryType + "&value=" + value + "&value2=" + value2,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')'); 
+              lineOption.xAxis[0].data = responseText.xAxis;
+              lineOption.series[0].data = responseText.series;
+              //alert(lineOption.series);
+              myChart.setOption(lineOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  }
+  var draw = function () {
+      window.setTimeout(ajax,100);
+  }
+ // window.setTimeout(ajax,100);
+</script>  

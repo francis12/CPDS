@@ -32,14 +32,14 @@ public class HousanGenPrize extends BaseGenPrize {
     }
 
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize) {
+    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrizes) {
         if (null == conPrize) {
             return "";
         }
         //统计最近15000期的遗漏
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
-        Date endTime = DateUtils.addMinutes(-1, conPrize.getTime());
-        Date startTime = DateUtils.addMinutes(-15001, endTime);
+        Date endTime = DateUtils.addMinutes(-6, conPrize.getTime());
+        Date startTime = DateUtils.addMinutes(-16800, endTime);
         tcffcprizeCondition.createCriteria().andTimeBetween(startTime, endTime);
         List<TCFFCPRIZE> tcffcprizeList = tcffcprizedao.selectByCondition(tcffcprizeCondition);
 
@@ -113,7 +113,7 @@ public class HousanGenPrize extends BaseGenPrize {
                 return o2.getOnlineNum().compareTo(o1.getOnlineNum());
             }
         });
-        genPrizeList = resultList.subList(0, 666);
+        genPrizeList = resultList.subList(0, 788);
         Collections.sort(genPrizeList, new Comparator<TCFFCPRIZE>() {
             @Override
             public int compare(TCFFCPRIZE o1, TCFFCPRIZE o2) {
