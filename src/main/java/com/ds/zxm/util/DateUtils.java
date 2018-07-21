@@ -361,4 +361,13 @@ public class DateUtils {
         Date date = new Date(ld);// 转换为标准时间对象
         return date;
     }
+    public static  Date getBaiduCurTime() {
+        Date now  = new Date();
+        try {
+            now = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+        } catch (Exception e) {
+            log.error("get online time error!");
+        }
+        return now;
+    }
 }

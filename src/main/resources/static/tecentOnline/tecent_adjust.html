@@ -21,7 +21,7 @@
 <script src="jquery-1.10.1.min.js"></script>  
 
 <script type="text/javascript">
-    var myChart = echarts.init(document.getElementById('psLine'));
+  var myChart = echarts.init(document.getElementById('psLine'));
   option = {
     title : {
         text: '波动K线图'
@@ -55,9 +55,7 @@
             boundaryGap : true,
             axisTick: {onGap:false},
             splitLine: {show:false},
-            data : [
-                "2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30","2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30","2013/1/24", "2013/1/25", "2013/1/28", "2013/1/29", "2013/1/30"
-            ]
+            data : []
         }
     ],
     yAxis : [
@@ -71,44 +69,22 @@
         {
             name:'上证指数',
             type:'k',
-            data:[ // 开盘，收盘，最低，最高
-                [1,2,1,2],
-                [2,3,2,3],
-                [3,4,3,4],
-                [4,3,3,4],
-                [3,4,3,4],
-                [1,2,1,2],
-                [2,3,2,3],
-                [5,6,5,6],
-                [4,3,3,4],
-                [3,4,3,4],
-                [1,2,1,2],
-                [2,3,2,3],
-                [3,4,3,4],
-                [4,3,3,4],
-                [3,4,3,4]
-            ]
+            data:[]
         }
     ]
 };
   
   myChart.setOption(option);
   var ajax = function() {
-      var queryType = $("#type").val();
-      var value = $("#value_id").val();
-      var value2 = $("#value_id2").val();
-
       $.ajax({
-          //url :encodeURI('http://localhost:8011/ds/tecentOnlineData?type=1&value=2017%04:%:%'),
-          //          url : 'http://localhost:8011/ds/tecentOnlineData?type=' + type + "&value=" + value + 2017-11-20 04:48:00&value2=2017-11-27 08:48:00',
-          url : 'http://localhost:8011/ds/tecentOnlineData?type=' + queryType + "&value=" + value + "&value2=" + value2,
+          url : 'http://localhost:8011/chart/tecentOnlineData?limit=10',
           success: function(responseText) {
              //请求成功时处理
               //var responseText = eval('(' + responseText + ')'); 
-              lineOption.xAxis[0].data = responseText.xAxis;
-              lineOption.series[0].data = responseText.series;
-              //alert(lineOption.series);
-              myChart.setOption(lineOption,true);
+              option.xAxis[0].data = responseText.xAxis;
+              option.series[0].data = responseText.series;
+              alert(option.series);
+              myChart.setOption(option,true);
           },
           complete: function() {
               //请求完成的处理
@@ -122,5 +98,7 @@
   var draw = function () {
       window.setTimeout(ajax,100);
   }
+
+  draw();
  // window.setTimeout(ajax,100);
 </script>  

@@ -21,8 +21,9 @@ public class GeDwdGenPrize extends BaseGenPrize {
         //当前个位波动，下一期预测个位波动为最近的3个数
         Integer curAdjust = curPrize.getAdjustNum()%10;
         int ge = curPrize.getGe();
+        sb.append(curAdjust);
 
-        for(int i=-3; i < 5; i++) {
+        /*for(int i=-3; i < 5; i++) {
             int adjust = curAdjust + i;
             int geItem = ge + adjust;
             if(geItem < 0) {
@@ -31,7 +32,7 @@ public class GeDwdGenPrize extends BaseGenPrize {
                 geItem = geItem %10;
             }
             sb.append(""+ geItem + (i != 4 ?"," : ""));
-        }
+        }*/
         log.info(curPrize.getNo() + "波动：" + curPrize.getAdjustNum() + ",个位：" + curPrize.getGe() + ",计算下一期个位：" + sb.toString());
         genStr = sb.toString();
         return sb.toString();
