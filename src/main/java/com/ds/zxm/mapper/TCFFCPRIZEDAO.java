@@ -13,6 +13,7 @@ public interface TCFFCPRIZEDAO {
     int deleteByPrimaryKey(Long id);
 
     int insert(TCFFCPRIZE record);
+    int insertBatch(List<TCFFCPRIZE> list);
 
     int insertSelective(TCFFCPRIZE record);
 

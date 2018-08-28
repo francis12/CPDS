@@ -1,19 +1,11 @@
 package com.ds.zxm.service;
 
-import com.ds.zxm.mapper.CurNOModelDAO;
-import com.ds.zxm.mapper.GenPrizeModelDAO;
-import com.ds.zxm.mapper.TCFFCPRIZEDAO;
-import com.ds.zxm.model.*;
 import com.ds.zxm.util.RestClientProxyUtil;
-import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service

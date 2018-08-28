@@ -374,6 +374,76 @@ public class GenPrizeModelCondition {
             return (Criteria) this;
         }
 
+        public Criteria andTypeIsNull() {
+            addCriterion("type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNotNull() {
+            addCriterion("type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeEqualTo(String value) {
+            addCriterion("type =", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotEqualTo(String value) {
+            addCriterion("type <>", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThan(String value) {
+            addCriterion("type >", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("type >=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThan(String value) {
+            addCriterion("type <", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThanOrEqualTo(String value) {
+            addCriterion("type <=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLike(String value) {
+            addCriterion("type like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotLike(String value) {
+            addCriterion("type not like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<String> values) {
+            addCriterion("type in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotIn(List<String> values) {
+            addCriterion("type not in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeBetween(String value1, String value2) {
+            addCriterion("type between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotBetween(String value1, String value2) {
+            addCriterion("type not between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
         public Criteria andRealPrizeIsNull() {
             addCriterion("real_prize is null");
             return (Criteria) this;
@@ -444,6 +514,76 @@ public class GenPrizeModelCondition {
             return (Criteria) this;
         }
 
+        public Criteria andIsPrizedIsNull() {
+            addCriterion("is_prized is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedIsNotNull() {
+            addCriterion("is_prized is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedEqualTo(String value) {
+            addCriterion("is_prized =", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedNotEqualTo(String value) {
+            addCriterion("is_prized <>", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedGreaterThan(String value) {
+            addCriterion("is_prized >", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedGreaterThanOrEqualTo(String value) {
+            addCriterion("is_prized >=", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedLessThan(String value) {
+            addCriterion("is_prized <", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedLessThanOrEqualTo(String value) {
+            addCriterion("is_prized <=", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedLike(String value) {
+            addCriterion("is_prized like", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedNotLike(String value) {
+            addCriterion("is_prized not like", value, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedIn(List<String> values) {
+            addCriterion("is_prized in", values, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedNotIn(List<String> values) {
+            addCriterion("is_prized not in", values, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedBetween(String value1, String value2) {
+            addCriterion("is_prized between", value1, value2, "isPrized");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedNotBetween(String value1, String value2) {
+            addCriterion("is_prized not between", value1, value2, "isPrized");
+            return (Criteria) this;
+        }
+
         public Criteria andLotteryCodeLikeInsensitive(String value) {
             addCriterion("upper(lottery_code) like", value.toUpperCase(), "lotteryCode");
             return (Criteria) this;
@@ -459,8 +599,18 @@ public class GenPrizeModelCondition {
             return (Criteria) this;
         }
 
+        public Criteria andTypeLikeInsensitive(String value) {
+            addCriterion("upper(type) like", value.toUpperCase(), "type");
+            return (Criteria) this;
+        }
+
         public Criteria andRealPrizeLikeInsensitive(String value) {
             addCriterion("upper(real_prize) like", value.toUpperCase(), "realPrize");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsPrizedLikeInsensitive(String value) {
+            addCriterion("upper(is_prized) like", value.toUpperCase(), "isPrized");
             return (Criteria) this;
         }
     }

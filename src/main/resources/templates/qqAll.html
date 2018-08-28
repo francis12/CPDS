@@ -1,0 +1,581 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body style="padding:0" onload="init()">
+<div id="condition">
+    最近N期，N=
+    <input type="text" id="limitValue" name="value" value="100" />
+    <input type="checkbox" id="autoUpdate" onclick="autoUpdate_OnClick()" checked="checked"  style="font-size:50px;"/>自动更新
+</div>
+<div id="queryDate">
+    日期:
+    <input type="text" id="dateText" />
+</div>
+<div id="prize" style="text-align:center;color:#F00;font-size:30px;">
+</div>
+<span id="mytime"  style="text-align:center;color:#F00;font-size:26px;margin-left:60px"></span>
+
+<div style="padding:50px;float:left;">
+    <span id="qian_canvas" style="height:300px;width:800px;float:left"></span>
+    <span id="bai_canvas" style="height:300px;width:800px;float:left"></span>
+</div>
+<div style="padding:50px;float:left;">
+    <span id="shi_canvas" style="height:300px;width:800px;float:left"></span>
+    <span id="ge_canvas" style="height:300px;width:800px;float:left"></span>
+</div>
+<div style="padding:50px;float:left;">
+    <div id="wan_canvas" style="height:300px;width:800px;float:left"></div>
+</div>
+<div style="padding:10px;">
+    <div id="geDs" style="height:300px;width:600px"></div>
+</div>
+<script src="echarts.js"></script>
+<script src="jquery-1.10.1.min.js"></script>
+<script type="text/javascript">
+
+function init() {
+                $("#wfselectionId").val("hou4");
+                var nowtime2 = new Date();
+                var year = nowtime2.getFullYear();
+                var month = nowtime2.getMonth() + 1;
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var date = nowtime2.getDate();
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                $("#dateText").val("" + year + month + date);
+            }
+function showTime(){
+    nowtime=new Date();
+    year=nowtime.getFullYear();
+    month=nowtime.getMonth()+1;
+    date=nowtime.getDate();
+    document.getElementById("mytime").innerText=year+"年"+month+"月"+date+"日 "+nowtime.toLocaleTimeString();
+}
+
+setInterval("showTime()",1000);
+
+</script>
+<script type="text/javascript">
+  var staticUrl = 'http://localhost:8011/';
+
+   function updatePrize() {
+   $.ajax({
+          url : staticUrl + "/gen/getLatestPrize?lotteryCode=TCFFC&signCode=ok",
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              console.log("responseText:" + responseText);
+              var no = responseText.no;
+              var prize = responseText.prize;
+
+              $("#prize").text("第" + no + "期  :  " + prize);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+   }
+   var prizeInterval = function () {
+      window.setInterval(updatePrize,2000);
+  }
+  prizeInterval();
+
+  var dataInterval;
+  function autoUpdate_OnClick() {
+    var isAutoUpdate = $("#autoUpdate").is(':checked');
+    console.log("isAutoUpdate:" + isAutoUpdate);
+    if(!isAutoUpdate){
+        clearInterval(dataInterval);
+    } else {
+        clearInterval(dataInterval);
+        draw();
+    }
+  }
+
+  <!--个位开始-->
+  var geChart = echarts.init(document.getElementById('ge_canvas'));
+  geOption = {
+    title : {
+        text: '个位 K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['个位 K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+
+  geChart.setOption(geOption);
+  var ge_ajax = function() {
+
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
+	console.log("url:" + url);
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              geOption.xAxis[0].data = responseText.xAxis;
+              geOption.series[0].data = responseText.series;
+             //alert(geOption.series);
+              geChart.setOption(geOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+  <!-- 个位结束 -->
+
+
+  <!--十位开始-->
+  var shiChart = echarts.init(document.getElementById('shi_canvas'));
+  shiOption = {
+    title : {
+        text: '十位 K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['十位 K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+
+  shiChart.setOption(shiOption);
+  var shi_ajax = function() {
+
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=2";
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              shiOption.xAxis[0].data = responseText.xAxis;
+              shiOption.series[0].data = responseText.series;
+             //alert(shiOption.series);
+              shiChart.setOption(shiOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+  <!-- 十位结束 -->
+
+  <!--百位开始-->
+  var baiChart = echarts.init(document.getElementById('bai_canvas'));
+  baiOption = {
+    title : {
+        text: '百位 K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['百位 K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+
+  baiChart.setOption(baiOption);
+  var bai_ajax = function() {
+
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=3";
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              baiOption.xAxis[0].data = responseText.xAxis;
+              baiOption.series[0].data = responseText.series;
+             //alert(baiOption.series);
+              baiChart.setOption(baiOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+  <!--百位结束 -->
+
+<!--千位开始-->
+  var qianChart = echarts.init(document.getElementById('qian_canvas'));
+  qianOption = {
+    title : {
+        text: '千位 K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['千位 K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+
+  qianChart.setOption(qianOption);
+  var qian_ajax = function() {
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=4";
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              qianOption.xAxis[0].data = responseText.xAxis;
+              qianOption.series[0].data = responseText.series;
+             //alert(qianOption.series);
+              qianChart.setOption(qianOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+  <!--千位结束 -->
+
+<!--wan位开始-->
+  var wanChart = echarts.init(document.getElementById('wan_canvas'));
+  wanOption = {
+    title : {
+        text: 'wan'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['wan']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+
+  wanChart.setOption(wanOption);
+  var wan_ajax = function() {
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=8";
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')');
+              wanOption.xAxis[0].data = responseText.xAxis;
+              wanOption.series[0].data = responseText.series;
+             //alert(qianOption.series);
+              wanChart.setOption(wanOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+  <!--wan位结束 -->
+  var startAll = function() {
+    ge_ajax();
+    shi_ajax();
+    bai_ajax();
+    qian_ajax();
+    wan_ajax();
+
+  }
+  var draw = function () {
+      dataInterval = window.setInterval(startAll,2000);
+  }
+  draw();
+</script>
+</body>
+</html>

@@ -47,7 +47,7 @@ public class LotteryStrategyService {
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
     //@Resource(name="sanXinHotStrategy")
-    @Resource(name="dwdQianStrategy")
+    @Resource(name="geQianStrategy")
     private BaseStrategy baseStrategy;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryStrategyService.class);
@@ -236,7 +236,7 @@ public class LotteryStrategyService {
             BigDecimal baseRate = new BigDecimal("1.139");*/
             /*BigDecimal baseAmt = new BigDecimal("0.648");
             BigDecimal baseRate = new BigDecimal("1.497");*/
-            BigDecimal baseAmt = new BigDecimal("1.4");
+            BigDecimal baseAmt = new BigDecimal("0.7");
             BigDecimal baseRate = new BigDecimal("1.397");
             BigDecimal curAmt = BigDecimal.ZERO;
             while (startTime.compareTo(endTime) <= 0) {
@@ -244,14 +244,18 @@ public class LotteryStrategyService {
                 //boolean isMatch2 = runOneNoStrategy(startTime, baseAmt, baseRate);
 
                 boolean isMatch = false;
+                String no="";
+                Object calResult = null;
+                TCFFCPRIZE curPrize = null;
                 try {
-                    Object calResult = baseStrategy.calBetNum(startTime);
-                    String no = TcffcPrizeConverter.genNofromTime(startTime);
+                    calResult = baseStrategy.calBetNum(startTime);
+                    no = TcffcPrizeConverter.genNofromTime(startTime);
                     TCFFCPRIZECondition condition = new TCFFCPRIZECondition();
                     condition.createCriteria().andNoEqualTo(no);
                     List<TCFFCPRIZE> prizeList = tcffcprizedao.selectByCondition(condition);
                     isMatch = true;
                     if (prizeList != null && prizeList.size() > 0) {
+                        curPrize = prizeList.get(0);
                         isMatch = baseStrategy.isWin(calResult, prizeList.get(0));
                     }
                     zgxt.append((isMatch?"中":"挂"));
@@ -325,6 +329,8 @@ public class LotteryStrategyService {
                 if(betResult.getMinProfit().compareTo(betResult.getCurProfit()) > 0) {
                     betResult.setMinProfit(betResult.getCurProfit());
                 }
+                log.info(String.format("第%s期开%s投注%s，(%s)当前轮次：%s,倍数：%s,总盈亏:%s", no, curPrize.getPrize(),(calResult == null? "":calResult.toString()), (isMatch?"中":"挂"),
+                        String.valueOf(curSchedule.getNo()), String.valueOf(curSchedule.getMultiple()),String.valueOf(betResult.getCurProfit()) ));
                 curSchedule = scheduleMap.get(isMatch?("" + curSchedule.getWinNo()) : ("" + curSchedule.getLoseNo()));
                 startTime = DateUtils.addMinutes(1, startTime);
             }

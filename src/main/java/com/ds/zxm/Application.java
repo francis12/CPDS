@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 @EnableAutoConfiguration
 @SpringBootApplication
+@WebAppConfiguration
 @ComponentScan
 @MapperScan("com.ds.zxm.mapper")
 public class Application implements EmbeddedServletContainerCustomizer {
@@ -70,9 +72,12 @@ public class Application implements EmbeddedServletContainerCustomizer {
         LotteryGenService lotteryGenService = (LotteryGenService)context.getBean("lotteryGenService");
         TjSSCScanService tjSSCScanService = (TjSSCScanService)context.getBean("tjSSCScanService");
 
+        //启动过程中初始化最近一个半小时数据
+        lotteryPrizeScheduleService.batchFetchTCFFCData(1,6);
+        //qq官网采集
         Runnable tcPrizeSchedule = new Runnable() {
             public void run() {
-                lotteryPrizeScheduleService.startFetchPrizeDataFromQQ();
+                lotteryPrizeScheduleService.startFetchQQprize();
             }
         };
 
@@ -97,12 +102,11 @@ public class Application implements EmbeddedServletContainerCustomizer {
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        service.scheduleAtFixedRate(tcPrizeSchedule, 1, 1, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(tcPrizeSchedule, 1, 10, TimeUnit.MILLISECONDS);
        // service.scheduleAtFixedRate(tjsscScan,1,5,TimeUnit.SECONDS);
         //service.execute(tjsscScan);
 
        //service.execute(orgPrizeSchedule);
-        service.execute(tcPrizeSchedule);
         logger.info("SpringBoot Start Success");
     }
 

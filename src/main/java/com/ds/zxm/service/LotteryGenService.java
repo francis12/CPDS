@@ -1,36 +1,16 @@
 package com.ds.zxm.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.ds.zxm.mapper.CurNOModelDAO;
+import com.ds.zxm.mapper.CurNoModelDAO;
 import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.model.*;
-import com.ds.zxm.util.DateUtils;
-import com.ds.zxm.util.HttpUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Map;
 
 @Service
 public class LotteryGenService {
@@ -38,7 +18,7 @@ public class LotteryGenService {
     @Resource
     private TCFFCPRIZEDAO tcffcprizedao;
     @Resource
-    private CurNOModelDAO curNOModelDAO;
+    private CurNoModelDAO curNOModelDAO;
     @Resource
     private GenPrizeModelDAO genPrizeModelDAO;
     @Resource
@@ -47,11 +27,11 @@ public class LotteryGenService {
     Logger log = Logger.getLogger(LotteryGenService.class);
 
     public void initCurNO() {
-        CurNOModel curNOModel = new CurNOModel();
+        CurNoModel curNOModel = new CurNoModel();
         curNOModel.setLotteryCode("TCFFC");
         String nextNO = TcffcPrizeConverter.genNofromTime(new Date());
         curNOModel.setNextNo(nextNO);
-        CurNOModelCondition curNOModelCondition = new CurNOModelCondition();
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
         curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
         int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
         if (cnt > 0) {
@@ -63,9 +43,9 @@ public class LotteryGenService {
 
     public GenPrizeModel getLatestGenPrize(String lotteryCode) {
         GenPrizeModel result = null;
-        CurNOModelCondition curNOModelCondition = new CurNOModelCondition();
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
         curNOModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode);
-        List<CurNOModel> curNOModelList = curNOModelDAO.selectByCondition(curNOModelCondition);
+        List<CurNoModel> curNOModelList = curNOModelDAO.selectByCondition(curNOModelCondition);
 
         if (null != curNOModelList && curNOModelList.size() != 0) {
             String no = curNOModelList.get(0).getNextNo();
@@ -75,6 +55,37 @@ public class LotteryGenService {
             List<GenPrizeModel> genPrizeModelList = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
             if (null != genPrizeModelList && genPrizeModelList.size() > 0) {
                 result = genPrizeModelList.get(0);
+            }
+        }
+        return result;
+    }
+    public GenPrizeModel getLatestGenPrize(Map<String, Object> map) {
+        GenPrizeModel result = null;
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
+        String lotteryCode =(String) map.get("lotteryCode");
+        String type =(String) map.get("type");
+
+        CurNoModelCondition.Criteria criteria = curNOModelCondition.createCriteria();
+        criteria.andLotteryCodeEqualTo(lotteryCode);
+        List<CurNoModel> curNOModelList = curNOModelDAO.selectByCondition(curNOModelCondition);
+
+        if (null != curNOModelList && curNOModelList.size() != 0) {
+            String no = curNOModelList.get(0).getNextNo();
+            GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
+            genPrizeModelCondition.createCriteria().andNoEqualTo(no).andTypeEqualTo(type);
+
+            List<GenPrizeModel> genPrizeModelList = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
+
+            String no2 = curNOModelList.get(0).getCurNo();
+            GenPrizeModelCondition genPrizeModelCondition2 = new GenPrizeModelCondition();
+            genPrizeModelCondition2.createCriteria().andNoEqualTo(no2).andTypeEqualTo(type);
+            List<GenPrizeModel> genPrizeModelList2 = genPrizeModelDAO.selectByCondition(genPrizeModelCondition2);
+
+            if (null != genPrizeModelList && genPrizeModelList.size() > 0) {
+                result = genPrizeModelList.get(0);
+                if (null != genPrizeModelList2 && genPrizeModelList2.size() > 0) {
+                    result.setIsPrized(genPrizeModelList2.get(0).getIsPrized());
+                }
             }
         }
         return result;

@@ -113,16 +113,35 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
-    insert into t_tcffc_prize (lottery_code, no, prize, 
-      wan, qian, bai, shi, 
-      ge, online_num, adjust_num, 
+    insert into t_tcffc_prize (lottery_code, no, prize,
+      wan, qian, bai, shi,
+      ge, online_num, adjust_num,
       alias_no, lottery_date, time
       )
-    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR}, 
-      #{wan,jdbcType=INTEGER}, #{qian,jdbcType=INTEGER}, #{bai,jdbcType=INTEGER}, #{shi,jdbcType=INTEGER}, 
-      #{ge,jdbcType=INTEGER}, #{onlineNum,jdbcType=INTEGER}, #{adjustNum,jdbcType=INTEGER}, 
+    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR},
+      #{wan,jdbcType=INTEGER}, #{qian,jdbcType=INTEGER}, #{bai,jdbcType=INTEGER}, #{shi,jdbcType=INTEGER},
+      #{ge,jdbcType=INTEGER}, #{onlineNum,jdbcType=INTEGER}, #{adjustNum,jdbcType=INTEGER},
       #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=DATE}, #{time,jdbcType=TIMESTAMP}
       )
+  </insert>
+  <insert id="insertBatch" parameterType="java.util.List" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_tcffc_prize (lottery_code, no, prize,
+    wan, qian, bai, shi,
+    ge, online_num, adjust_num,
+    alias_no, lottery_date, time
+    )
+    values
+     <foreach collection ="list" item="item" index= "index" separator =",">
+
+     (#{item.lotteryCode,jdbcType=VARCHAR}, #{item.no,jdbcType=VARCHAR}, #{item.prize,jdbcType=VARCHAR},
+    #{item.wan,jdbcType=INTEGER}, #{item.qian,jdbcType=INTEGER}, #{item.bai,jdbcType=INTEGER}, #{item.shi,jdbcType=INTEGER},
+    #{item.ge,jdbcType=INTEGER}, #{item.onlineNum,jdbcType=INTEGER}, #{item.adjustNum,jdbcType=INTEGER},
+    #{item.aliasNo,jdbcType=VARCHAR}, #{item.lotteryDate,jdbcType=DATE}, #{item.time,jdbcType=TIMESTAMP}
+    )
+     </foreach >
   </insert>
   <insert id="insertSelective" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >

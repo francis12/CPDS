@@ -1,0 +1,153 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body style="padding:0">
+<div id="condition">
+    最近N期，N=<input type="text" id="limitValue" name="value" value="100">
+    <input type="checkbox" id="autoUpdate" onclick="autoUpdate_OnClick()" checked="checked">自动更新 </input>
+
+</div>
+<div id="queryDate">
+    日期:<input type="text" id="dateText"></input>
+</div>
+<div id="position">
+    波动位置:
+    <select id="positionType" onchange="positionType_Onclick()">
+        <option value ="0">个位</option>
+        <option value ="1">开奖个位</option>
+        <option value ="2">十位</option>
+        <option value ="3">百位</option>
+        <option value ="4">千位</option>
+        <option value ="5">万位</option>
+    </select>
+</div>
+<div style="padding:10px;clear: both;">  
+    <div id="psLine" style="height:500px;"></div>
+</div>
+<div style="padding:10px;clear: both;display:none">
+    <div id="geDs" style="height:500px;"></div>
+</div>
+</body>  
+<script src="echarts.js"></script>  
+<script src="jquery-1.10.1.min.js"></script>  
+
+<script type="text/javascript">
+  var dataInterval;
+  function autoUpdate_OnClick() {
+
+    var isAutoUpdate = $("#autoUpdate").is(':checked');
+    console.log("isAutoUpdate:" + isAutoUpdate);
+    if(!isAutoUpdate){
+        clearInterval(dataInterval);
+    } else {
+        clearInterval(dataInterval);
+        draw();
+    }
+  }
+  function positionType_Onclick() {
+    clearInterval(dataInterval);
+    draw();
+  }
+
+
+  var myChart = echarts.init(document.getElementById('psLine'));
+  var staticUrl = 'http://localhost:8011/chart/tecentOnlineDataByType?';
+  option = {
+    title : {
+        text: '波动偶数K线图'
+    },
+    tooltip : {
+        trigger: 'axis',
+        formatter: function (params) {
+            var res = params[0].seriesName + ' ' + params[0].name;
+          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+            return res;
+        }
+    },
+    legend: {
+        data:['波动K线图']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            axisTick: {onGap:false},
+            splitLine: {show:false},
+            axisLabel: {
+                 interval:0,
+                 rotate:80
+             },
+            data : []
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            scale:true,
+            boundaryGap: [0.01, 0.01]
+        }
+    ],
+    series : [
+        {
+            name:'期数',
+            type:'k',
+	    itemStyle: {
+                        normal: {
+                            color: '#FF0000',
+                            color0: "#00FFFF",
+                            borderColor: '#FF0000',
+                            borderColor0: '#00FFFF',
+                        }
+                    },
+            data:[]
+        }
+    ]
+};
+  
+  myChart.setOption(option);
+  var ajax = function() {
+    var positionType = $("#positionType").val();
+    console.log("positionType:" + positionType);
+
+	var limit = $("#limitValue").val();
+	var date = $("#dateText").val();
+	url = staticUrl + "&date=" + date + "&limit=" + limit + "&type=" + positionType;
+	console.log("url:" + url);
+	$.ajax({
+          url : url,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')'); 
+              option.xAxis[0].data = responseText.xAxis;
+              option.series[0].data = responseText.series;
+             //alert(option.series);
+              myChart.setOption(option,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  };
+
+  var draw = function () {
+      dataInterval = window.setInterval(ajax,2000);
+  }
+  draw();
+
+</script>  

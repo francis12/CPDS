@@ -1,12 +1,15 @@
 package com.ds.zxm.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TcffcPrizeConverter;
 import org.apache.commons.io.FileUtils;
@@ -463,51 +466,7 @@ public class LotteryUtil {
 		return  false;
 	}
 
-	public static void main(String[] args) {
-		//judgeIsmatchBetween3(3,0);
-		//judgeIsmatchBetween3(6,5);
-		/*List<Set<String>> recursiveResult = new ArrayList<Set<String>>();
-		// 递归实现笛卡尔积
-		List<String> data1 = new ArrayList<String>();
-		List<String> data2 = new ArrayList<String>();
-		List<String> data3 = new ArrayList<String>();
-		for(int i=0; i <10;i++) {
-			for(int j=0; j < 10; j++) {
-				data1.add(i + "" + j);
-				data2.add(i + "" + j);
-				data3.add(i + "" + j);
-			}
-		}
-		List<List<String>> dimValue = new ArrayList<>();
-		dimValue.add(data1);
-		dimValue.add(data2);
-		dimValue.add(data3);
-		//recursive(dimValue, recursiveResult, 0, new ArrayList<String>());
-		System.out.println(recursiveResult.size());*/
 
-		//genNumsFromFile(new File("d:\\testNum.txt"));
-//		List<String> danList = new ArrayList<>();
-//		danList.add("0");
-//		danList.add("2");
-//		danList.add("4");
-//		danList.add("6");
-		//List<String> result = genNumfromDan(danList);
-		//System.out.println(result.size());
-
-		Date date = null;
-		try {
-			date = DateUtils.String2Date("20180531", "yyyyMMdd");
-
-			Calendar c = Calendar.getInstance();
-			c.setTime(date);
-			c.add(Calendar.MONTH, 6);
-
-			System.out.println(DateUtils.date2String(c.getTime(),"yyyyMMdd"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	//比较两个数相差不超过3
 	public static boolean judgeIsmatchBetween3(int src, int dst) {
@@ -660,6 +619,22 @@ public class LotteryUtil {
 	public static int calTcffcNoDistance(TCFFCPRIZE startNo, TCFFCPRIZE endNo) {
 		Long secDistance = DateUtils.calculateSeconds(endNo.getTime(), startNo.getTime());
 		int minDistance = (secDistance.intValue()/60);
+		return minDistance;
+	}
+	//计算分分彩相隔期数
+	public static int calTcffcNoDistanceByNo(TCFFCPRIZE startNo, TCFFCPRIZE endNo) {
+		int minDistance = 0;
+		String startNoStr = startNo.getNo().substring(9);
+		String startDateStr = startNo.getNo().substring(0,8);
+		String endNoStr = endNo.getNo().substring(9);
+		String endDateStr = endNo.getNo().substring(0,8);
+
+		if(startDateStr.equals(endDateStr)) {
+			minDistance = Integer.valueOf(endNoStr) - Integer.valueOf(startNoStr);
+		} else {
+			int dateDistance = Integer.valueOf(endDateStr) - Integer.valueOf(startDateStr);
+			minDistance = (1440*dateDistance+Integer.valueOf(endNoStr)) - Integer.valueOf(startNoStr);
+		}
 		return minDistance;
 	}
 	static  List<String> allSiXinNums = new ArrayList<>();
@@ -885,5 +860,92 @@ public class LotteryUtil {
 				}
 		}
 		return matchCnt;
+	}
+
+
+	public static void startFetchPrizeDataFromQQ() {
+		String s = new SimpleDateFormat("HHmmss").format(new Date());
+		String hh = s.substring(0, 2);
+		String mm = s.substring(2, 4);
+		String ss = s.substring(4, 6);
+		int minute = 0;
+		minute = Integer.parseInt(mm);
+		int second = Integer.parseInt(ss);
+		fetchPrizeDataFromQQ(minute, second);
+	}
+	static int preMinute = 0;
+	static int preOnlineNum = 0;
+	public static void fetchPrizeDataFromQQ(int minute,int second) {
+		HttpURLConnection conn = null;
+		try {
+			URL realUrl = new URL("http://mma.qq.com/cgi-bin/im/online&callback");
+			conn = (HttpURLConnection) realUrl.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setUseCaches(false);
+			conn.setReadTimeout(5000);
+			conn.setConnectTimeout(5000);
+			conn.setInstanceFollowRedirects(false);
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0");
+			int code = conn.getResponseCode();
+
+			//调用成功
+			if (code == 200) {
+				InputStream is = conn.getInputStream();
+				BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				StringBuffer buffer = new StringBuffer();
+				String line = "";
+				while ((line = in.readLine()) != null) {
+					buffer.append(line);
+				}
+				String result = buffer.toString();
+				result = result.substring(12);
+				result = result.substring(0, result.length() - 1);
+				JSONObject jsonObject = JSONObject.parseObject(result);
+				Integer onlineNum = (Integer) jsonObject.get("c");
+				Integer adjsutNum = onlineNum - preOnlineNum;
+				if (adjsutNum != 0 || (adjsutNum == 0 && (minute - preMinute == 1 && second >= 55))) {
+					//人数有变化或者时间相隔大于1分50秒
+					TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, new Date(), adjsutNum);
+					String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum();
+					log.info(logInfo);
+
+					//预测20180726-1046:57953 zhuan(1)zhuan
+					String genStr = "预测" + tcffcprize.getNo() + " zhuan(" + tcffcprize.getGe() + ")zhuan ";
+					int sdn = tcffcprize.getAdjustNum();
+					int ge = sdn%10;
+					int shi = sdn%100/10;
+					String prizeLh = tcffcprize.getShi() > tcffcprize.getGe()?"龙":"虎";
+					String bdLh = (shi>ge?"龙":"虎");
+
+					/*log.info("开奖龙虎为：" + prizeLh + ",十个波动龙虎为:" +  bdLh + "\r\n");
+
+					if(prizeLh.equals(bdLh)) {
+						log.info("开奖十:" + tcffcprize.getShi() + ",个：" + tcffcprize.getGe());
+					}*/
+					//FileUtils.writeStringToFile(new File("latest.txt"), genStr, false);
+					//FileUtils.writeStringToFile(new File("latest.txt"), "waiting", false);
+
+
+				} else {
+					Thread.sleep(10);
+					return ;
+				}
+				preMinute = minute;
+				preOnlineNum = onlineNum;
+			}
+		} catch (Exception e) {
+			log.error("fetchPrizeDataFromQQ error", e);
+		}
+		return;
+	}
+	public static void main(String[] args) {
+		while (true) {
+			try {
+				startFetchPrizeDataFromQQ();
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

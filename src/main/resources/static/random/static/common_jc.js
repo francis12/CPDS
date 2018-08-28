@@ -5213,8 +5213,7 @@ var KlineMaps = function() {
                     textStyle: {
                         color: '#ccc',
                         fontStyle: 'normal',
-                        fontWeight: 'normal',
-                        fontSize: 12,
+                        fontWeight: 'normal',v
                     }
                 },
                 legend: {

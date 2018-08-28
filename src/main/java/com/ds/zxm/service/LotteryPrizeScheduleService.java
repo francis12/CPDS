@@ -2,10 +2,9 @@ package com.ds.zxm.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ds.zxm.mapper.CurNoModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
-import com.ds.zxm.model.TCFFCPRIZE;
-import com.ds.zxm.model.TCFFCPRIZECondition;
-import com.ds.zxm.model.TcffcPrizeConverter;
+import com.ds.zxm.model.*;
 import com.ds.zxm.util.*;
 import com.ds.zxm.vo.OnlineImVO;
 import org.apache.commons.httpclient.util.DateUtil;
@@ -17,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,12 +31,17 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @Service
-public class LotteryPrizeScheduleService{
+public class LotteryPrizeScheduleService {
 
+    @Resource
+    private CurNoModelDAO curNOModelDAO;
     @Resource
     private TCFFCPRIZEDAO tcffcprizedao;
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
+    @Value("${tcffc.prize.type}")
+    private String type;
+
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryPrizeScheduleService.class);
 
@@ -68,6 +73,17 @@ public class LotteryPrizeScheduleService{
 
     }
 
+    public CurNoModel queryCurNoPrize(String lotteryCode) {
+        CurNoModelCondition curNoModelCondition = new CurNoModelCondition();
+        curNoModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode);
+        List<CurNoModel> curNoModelList = curNOModelDAO.selectByCondition(curNoModelCondition);
+        if (null == curNoModelList || curNoModelList.size() == 0) {
+            return new CurNoModel();
+        } else {
+            return curNoModelList.get(0);
+        }
+    }
+
     public void startFetchPrizeDataFromQQ() {
         String s = new SimpleDateFormat("HHmmss").format(new Date());
         String hh = s.substring(0, 2);
@@ -78,9 +94,11 @@ public class LotteryPrizeScheduleService{
         int second = Integer.parseInt(ss);
         this.fetchPrizeDataFromQQ(minute, second);
     }
+
     int preMinute = 0;
     int preOnlineNum = 0;
-    private void fetchPrizeDataFromQQ(int minute,int second) {
+
+    private void fetchPrizeDataFromQQ(int minute, int second) {
         HttpURLConnection conn = null;
         try {
             URL realUrl = new URL("http://mma.qq.com/cgi-bin/im/online&callback");
@@ -109,21 +127,21 @@ public class LotteryPrizeScheduleService{
                 Integer onlineNum = (Integer) jsonObject.get("c");
                 Integer adjsutNum = onlineNum - preOnlineNum;
                 if (adjsutNum != 0 || (adjsutNum == 0 && (minute - preMinute == 1 && second >= 55))) {
-                        //人数有变化或者时间相隔大于1分50秒
+                    //人数有变化或者时间相隔大于1分50秒
                     TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, new Date(), adjsutNum);
-                    String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum()  + "\r\n";
+                    String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                     log.info(logInfo);
                     FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
                     if (!(String.valueOf(second).length() == 1)) {
-                        String warnInfo = tcffcprize.getNo() + "开奖时间异常提醒！！！(分钟:" + minute +"秒："+ second + ")" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum()  + "\r\n";
+                        String warnInfo = tcffcprize.getNo() + "开奖时间异常提醒！！！(分钟:" + minute + "秒：" + second + ")" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                         FileUtils.writeStringToFile(new File("qqWarn.txt"), warnInfo, true);
                         log.error(warnInfo);
                     }
-                    tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                     this.insertOnUnexist(tcffcprize);
+                    tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                 } else {
                     Thread.sleep(500);
-                    return ;
+                    return;
                 }
                 /*if (adjsutNum == 0 && (preMinute == minute && second <= 50)) {
                     Thread.sleep(2000);
@@ -253,36 +271,46 @@ public class LotteryPrizeScheduleService{
         //new LotteryPrizeScheduleService().fetchTcffcPrizeFrom77Org();
     }
 
+    public void startFetchQQprize() {
+        if ("0".equals(type)) {
+            this.startFetchPrizeDataFromQQ();
+        } else if ("1".equals(type)) {
+            fetchTcffcPrizeFrom77Org();
+        }
+    }
+
+    String formatCurTimeStr = "";
+
     public void fetchTcffcPrizeFrom77Org() {
-        String formatCurTimeStr="";
         try {
             String curTimeStr = DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm");
             formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
-            while (!StringUtils.isEmpty(formatCurTimeStr)) {
-                try {
-                    TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
-                    //正常获取到开奖号码
-                    if (null != parsedTcffcPrize) {
-                        log.info("第"+ parsedTcffcPrize.getNo() + "(" + formatCurTimeStr +")开奖号为：" + parsedTcffcPrize.getPrize());
-                        this.insertOnUnexist(parsedTcffcPrize);
-                        //notice出号中心
-                        tcffcGenNumsService.noticeGenNumsService(parsedTcffcPrize);
-                    } else {
-                        log.error("第" + formatCurTimeStr + "期开奖数据获取失败!");
-                    }
-                } catch (Exception e) {
-                    log.error("fetchExactTimePrize error, formatCurTimeStr:" + formatCurTimeStr, e);
-                    log.error("第" + formatCurTimeStr + "期开奖数据获取失败,跳过!");
+            //while (!StringUtils.isEmpty(formatCurTimeStr)) {
+            try {
+                TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
+                //正常获取到开奖号码
+                if (null != parsedTcffcPrize) {
+                    log.info("第" + parsedTcffcPrize.getNo() + "(" + formatCurTimeStr + ")开奖号为：" + parsedTcffcPrize.getPrize());
+                    this.insertOnUnexist(parsedTcffcPrize);
+                    //notice出号中心
+                    tcffcGenNumsService.noticeGenNumsService(parsedTcffcPrize);
+                } else {
+                    log.error("第" + formatCurTimeStr + "期开奖数据获取失败!");
                 }
-                Date nextMin = DateUtils.addMinutes(1, DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
-                formatCurTimeStr = DateUtils.date2String(nextMin,"yyyy-MM-dd HH:mm:ss" );
-
-                Thread.sleep(5 *1000);
+            } catch (Exception e) {
+                log.error("fetchExactTimePrize error, formatCurTimeStr:" + formatCurTimeStr, e);
+                log.error("第" + formatCurTimeStr + "期开奖数据获取失败,跳过!");
             }
+            Date nextMin = DateUtils.addMinutes(1, DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
+            formatCurTimeStr = DateUtils.date2String(nextMin, "yyyy-MM-dd HH:mm:ss");
+
+            //Thread.sleep(5 *1000);
+            //}
         } catch (Exception e) {
             log.error("fetchTcffcPrizeFrom77Org error", e);
         }
     }
+
     private TCFFCPRIZE fetchExactTimePrize2(String formatCurTimeStr) throws Exception {
         List<OnlineImVO> list = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", List.class);
 
@@ -292,25 +320,26 @@ public class LotteryPrizeScheduleService{
 
         return null;
     }
-        //获取指定期
+
+    //获取指定期
     private TCFFCPRIZE fetchExactTimePrize(String formatCurTimeStr) throws Exception {
 
-        Date time =DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");
+        Date time = DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");
         Date curTime = DateUtils.String2Date(DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
 
 
-        while (curTime.compareTo(time) < 0){
-            Thread.sleep(1*1000);
-            Date nowFor  = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+        while (curTime.compareTo(time) < 0) {
+            Thread.sleep(1 * 1000);
+            Date nowFor = DateUtils.getWebsiteDatetime("http://www.baidu.com");
             curTime = DateUtils.String2Date(DateUtils.date2String(nowFor, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
         }
 
         TCFFCPRIZE parsedTcffcPrize = null;
         boolean isGet = false;
         int retryCnt = 0;
-        while(!isGet && retryCnt < 30) {
+        while (!isGet && retryCnt < 30) {
             try {
-                log.debug("formatCurTimeStr:"+ formatCurTimeStr + ",retryCnt:" + retryCnt);
+                log.debug("formatCurTimeStr:" + formatCurTimeStr + ",retryCnt:" + retryCnt);
                 retryCnt++;
                 Thread.sleep(2000);
                 //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
@@ -331,7 +360,7 @@ public class LotteryPrizeScheduleService{
                             tcffcprize.setAdjustNum(prize.getIntValue("onlinechange"));
                             parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
                         } catch (Exception e) {
-                            log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr,e );
+                            log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr, e);
                         }
                         break;
                     }
@@ -342,6 +371,7 @@ public class LotteryPrizeScheduleService{
         }
         return parsedTcffcPrize;
     }
+
     public void batchFetchTCFFCData(int start, int end) {
 
         int cur = start;
@@ -359,9 +389,9 @@ public class LotteryPrizeScheduleService{
     public void batchFetchTCFFCDATAFromTecentOnline(int startNo, int endNo, int pageSize) {
         List<TCFFCPRIZE> allPrizeList = new ArrayList<>();
         TCFFCPRIZE lastTcffcPrize = null;
-        for(int i = startNo; i <= endNo; i++) {
-            List<TCFFCPRIZE>  curResults = this.fetchFcffcDataFromTecentOnline(i, pageSize, lastTcffcPrize);
-            lastTcffcPrize = curResults.get(curResults.size()-1);
+        for (int i = startNo; i <= endNo; i++) {
+            List<TCFFCPRIZE> curResults = this.fetchFcffcDataFromTecentOnline(i, pageSize, lastTcffcPrize);
+            lastTcffcPrize = curResults.get(curResults.size() - 1);
             allPrizeList.addAll(curResults);
         }
         log.info("获取数据:" + allPrizeList.size());
@@ -373,17 +403,17 @@ public class LotteryPrizeScheduleService{
 
         try {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("page_no", ""+no);
-            map.put("page_size", ""+size);
+            map.put("page_no", "" + no);
+            map.put("page_size", "" + size);
             String result = HttpUtil.doPost("http://tencent-online.com/get_result_list", map, "utf-8", DsUtil.genRequestHeaderMap2(""));
             Map<String, Object> onlineResultMap = JSONObject.parseObject(result, Map.class);
             List<Map> dataArray = JSONArray.parseArray(String.valueOf(onlineResultMap.get("data")), Map.class);
 
-            if(null  != dataArray) {
+            if (null != dataArray) {
                 dataArray.stream().forEach(item -> {
                     TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
                     tcffcprize.setLotteryCode("TCFFC");
-                    String time =   String.valueOf(item.get("time"));
+                    String time = String.valueOf(item.get("time"));
                     String issue = String.valueOf(item.get("issue"));
                     String count = String.valueOf(item.get("count"));
                     try {
@@ -397,25 +427,26 @@ public class LotteryPrizeScheduleService{
             }
             Collections.sort(tcffcprizeList);
 
-            for(int i = 0; i< tcffcprizeList.size(); i++) {
+            for (int i = 0; i < tcffcprizeList.size(); i++) {
                 TCFFCPRIZE curPrize = tcffcprizeList.get(i);
-                if(i == 0 ) {
+                if (i == 0) {
                     if (lastTcffcPrize != null) {
-                        curPrize.setAdjustNum(curPrize.getOnlineNum()- lastTcffcPrize.getOnlineNum());
+                        curPrize.setAdjustNum(curPrize.getOnlineNum() - lastTcffcPrize.getOnlineNum());
                     }
                 } else {
-                    TCFFCPRIZE lastPirze = tcffcprizeList.get(i-1);
-                    int adjust = curPrize.getOnlineNum()-lastPirze.getOnlineNum();
+                    TCFFCPRIZE lastPirze = tcffcprizeList.get(i - 1);
+                    int adjust = curPrize.getOnlineNum() - lastPirze.getOnlineNum();
                     curPrize.setAdjustNum(adjust);
                 }
 
                 tcffcprizeList2.add(TcffcPrizeConverter.convert2TCFFCPrize(curPrize));
             }
         } catch (Exception e) {
-            log.error("获取第"+ no+ "页数据失败！",e );
+            log.error("获取第" + no + "页数据失败！", e);
         }
-        return  tcffcprizeList2;
+        return tcffcprizeList2;
     }
+
     private void insertOnUnexist(TCFFCPRIZE curPrize) {
         TCFFCPRIZECondition conditon = new TCFFCPRIZECondition();
         conditon.createCriteria().andNoEqualTo(curPrize.getNo());
@@ -424,6 +455,10 @@ public class LotteryPrizeScheduleService{
             //log.info("数据库新增" + curPrize.getNo());
             tcffcprizedao.insert(curPrize);
         }
+    }
+
+    private void insertBatch(List<TCFFCPRIZE> list) {
+
     }
 
     //每页15条数据
@@ -489,23 +524,38 @@ public class LotteryPrizeScheduleService{
         }
         return doc;
     }
-    public void batchFetchOnlineDataFrom77OrgLogFile(String start, String end) {
-        try {
-            Date startDate = DateUtils.String2Date(start, "yyyy-MM-dd");
-            Date endDate = DateUtils.String2Date(end, "yyyy-MM-dd");
 
-            while (startDate.compareTo(endDate) <= 0) {
+    public void batchFetchOnlineDataFrom77OrgLogFile(String start, String end) throws Exception {
+
+        Date startDate = DateUtils.String2Date(start, "yyyy-MM-dd");
+        Date endDate = DateUtils.String2Date(end, "yyyy-MM-dd");
+
+        while (startDate.compareTo(endDate) <= 0) {
+            try {
                 String curDate = DateUtils.date2String(startDate, "yyyy-MM-dd");
                 List<TCFFCPRIZE> dateResultList = this.batchFetchOnlineDataFrom77OrgLogFile(curDate);
                 log.info(curDate + "共抓取了" + dateResultList.size() + "条数据");
-                dateResultList.stream().forEach(item -> {
-                    this.insertOnUnexist(item);
-                });
-                startDate =  DateUtils.addDate(1, startDate);
+//                dateResultList.stream().forEach(item -> {
+//                    this.insertOnUnexist(item);
+//                });
+                startDate = DateUtils.addDate(1, startDate);
+                if(dateResultList != null && dateResultList.size() > 0) {
+                    TCFFCPRIZECondition conditon = new TCFFCPRIZECondition();
+                    conditon.createCriteria().andLotteryDateEqualTo(DateUtils.String2Date(curDate, "yyyy-MM-dd"));
+                    tcffcprizedao.deleteByCondition(conditon);
+                    String nextDayStr =  DateUtils.date2String(startDate, "yyyyMMdd");
+
+                    TCFFCPRIZECondition conditon2 = new TCFFCPRIZECondition();
+                    conditon2.createCriteria().andNoEqualTo(nextDayStr+ "-0000");
+                    tcffcprizedao.deleteByCondition(conditon2);
+
+                    tcffcprizedao.insertBatch(dateResultList);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
+
 
     }
 
@@ -513,8 +563,9 @@ public class LotteryPrizeScheduleService{
     static final String postTecentTimeStr = "；采集数据";
     static final String preOnlineStr = "online_resp({\"c\":";
     static final String postOnlineStr = ",\"ec\"";
+
     //从奇趣历史文件中抓取历史开奖记录
-    public List<TCFFCPRIZE> batchFetchOnlineDataFrom77OrgLogFile(String date){
+    public List<TCFFCPRIZE> batchFetchOnlineDataFrom77OrgLogFile(String date) {
         //下载开奖文件
         //解析文件
 
@@ -531,22 +582,22 @@ public class LotteryPrizeScheduleService{
         String curTime = "";
         String curOnline = "";
         int cnt = 0;
-        for(String item :itemsArray) {
+        for (String item : itemsArray) {
             try {
-                if(item.indexOf("online_resp") > 0) {
-                    String time = item.substring(item.indexOf(preTecentTimeStr) + preTecentTimeStr.length() , item.indexOf(postTecentTimeStr)-3);
-                    String onlineNum = item.substring(item.indexOf(preOnlineStr)+ preOnlineStr.length(), item.indexOf(postOnlineStr));
+                if (item.indexOf("online_resp") > 0) {
+                    String time = item.substring(item.indexOf(preTecentTimeStr) + preTecentTimeStr.length(), item.indexOf(postTecentTimeStr) - 3);
+                    String onlineNum = item.substring(item.indexOf(preOnlineStr) + preOnlineStr.length(), item.indexOf(postOnlineStr));
 
-                    if(!time.equals(curTime)) {
+                    if (!time.equals(curTime)) {
                         cnt++;
-                        if(!onlineNum.equals(curOnline)) {
+                        if (!onlineNum.equals(curOnline)) {
                             //下一期开奖数据已出
                             cnt = 0;
                             curTime = time;
                             curOnline = onlineNum;
                             TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
                             tcffcprize.setLotteryCode("TCFFC");
-                            tcffcprize.setTime(DateUtils.String2Date(time,"yyyy/MM/dd HH:mm"));
+                            tcffcprize.setTime(DateUtils.String2Date(time, "yyyy/MM/dd HH:mm"));
                             tcffcprize.setOnlineNum(Integer.valueOf(onlineNum));
                             resultList.add(tcffcprize);
                         } else {
@@ -558,7 +609,7 @@ public class LotteryPrizeScheduleService{
 
                                 TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
                                 tcffcprize.setLotteryCode("TCFFC");
-                                tcffcprize.setTime(DateUtils.String2Date(time,"yyyy/MM/dd HH:mm"));
+                                tcffcprize.setTime(DateUtils.String2Date(time, "yyyy/MM/dd HH:mm"));
                                 tcffcprize.setOnlineNum(Integer.valueOf(onlineNum));
                                 resultList.add(tcffcprize);
                             }
@@ -572,10 +623,10 @@ public class LotteryPrizeScheduleService{
         }
         Collections.sort(resultList);
 
-        for(int i = 1; i< resultList.size(); i++) {
+        for (int i = 1; i < resultList.size(); i++) {
             TCFFCPRIZE curPrize = resultList.get(i);
-            TCFFCPRIZE lastPirze = resultList.get(i-1);
-            int adjust = curPrize.getOnlineNum()-lastPirze.getOnlineNum();
+            TCFFCPRIZE lastPirze = resultList.get(i - 1);
+            int adjust = curPrize.getOnlineNum() - lastPirze.getOnlineNum();
             curPrize.setAdjustNum(adjust);
             resultList2.add(TcffcPrizeConverter.convert2TCFFCPrize(curPrize));
         }
@@ -584,7 +635,7 @@ public class LotteryPrizeScheduleService{
     }
 
     private Date getCurTime() {
-        Date now  = new Date();
+        Date now = new Date();
         try {
             now = DateUtils.getWebsiteDatetime("http://www.baidu.com");
         } catch (Exception e) {

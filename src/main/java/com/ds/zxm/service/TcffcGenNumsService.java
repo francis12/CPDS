@@ -1,16 +1,14 @@
 package com.ds.zxm.service;
 
-import com.ds.zxm.mapper.CurNOModelDAO;
+import com.ds.zxm.constants.BaseConstants;
+import com.ds.zxm.mapper.CurNoModelDAO;
 import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.mapper.TecentTimeDAO;
 import com.ds.zxm.model.*;
 import com.ds.zxm.prize.BaseGenPrize;
-import com.ds.zxm.strategy.BaseStrategy;
 import com.ds.zxm.util.DateUtils;
 import com.ds.zxm.util.LotteryUtil;
-import com.ds.zxm.util.MathsUtil;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -30,7 +27,7 @@ public class TcffcGenNumsService {
     @Resource
     private TCFFCPRIZEDAO tcffcprizedao;
     @Resource
-    private CurNOModelDAO curNOModelDAO;
+    private CurNoModelDAO curNOModelDAO;
     @Resource
     private GenPrizeModelDAO genPrizeModelDAO;
     @Resource
@@ -55,6 +52,19 @@ public class TcffcGenNumsService {
     private BaseGenPrize qh4GenwuPrize;
     @Resource(name="geDwdGenPrize")
     private BaseGenPrize geDwdGenPrize;
+    @Resource(name="geFiveDwdGenPrize")
+    private BaseGenPrize geFiveDwdGenPrize;
+    @Resource(name="geBdDwdGenPrize")
+    private BaseGenPrize geBdDwdGenPrize;
+    @Resource(name="geBdjcDwdGenPrize")
+    private BaseGenPrize geBdjcDwdGenPrize;
+    @Resource(name="geBdDxDwdGenPrize")
+    private BaseGenPrize geBdDxDwdGenPrize;
+    @Resource(name="baiBdDwdGenPrize")
+    private BaseGenPrize baiBdDwdGenPrize;
+    @Resource(name="houSiBdwBodongGenPrize")
+    private BaseGenPrize houSiBdwBodongGenPrize;
+
 
     Logger log = Logger.getLogger(TcffcGenNumsService.class);
 
@@ -63,9 +73,15 @@ public class TcffcGenNumsService {
     String genStr = "";
 
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
+        this.updateCurPrize(curPrize);
         Map<String, Boolean> result = new HashMap<>();
         //result.putAll(qianDwdGenPrize.run(curPrize));
-        result.putAll(geDwdGenPrize.run(curPrize));
+        //result.putAll(geBdDwdGenPrize.run(curPrize));
+        //result.putAll(geBdDxDwdGenPrize.run(curPrize));
+        result.putAll(geBdjcDwdGenPrize.run(curPrize));
+        result.putAll(houSiBdwBodongGenPrize.run(curPrize));
+        //result.putAll(geBdDwdGenPrize.run(curPrize));
+        //result.putAll(baiBdDwdGenPrize.run(curPrize));
         //result.putAll(wuxingGenPrize.run(curPrize));
         //result.putAll(zhongsanGenPrize.run(curPrize));
         //result.putAll(zongheGenPrize.run(curPrize));
@@ -73,7 +89,34 @@ public class TcffcGenNumsService {
         //result.putAll(housanGenPrize.run(curPrize));
         //result.putAll(qh4GenPrize.run(curPrize));
         //result.putAll(qh4GenwuPrize.run(curPrize));
+
+        StringBuffer sb = new StringBuffer();
+        int wan =((curPrize.getAdjustNum()%100000)/10000)%2==0?0:1;
+        int qian =((curPrize.getAdjustNum()%10000)/1000)%2==0?0:1;
+        int bai =((curPrize.getAdjustNum()%1000)/100)%2==0?0:1;
+        int shi =((curPrize.getAdjustNum()%100)/10)%2==0?0:1;
+        int ge =(curPrize.getAdjustNum()%10)%2==0?0:1;
+        sb.append("全波动：" +  qian + bai + shi + ge + "");
+        //log.info(sb.toString());
         return result;
+    }
+    //更新开奖数据
+    private void updateCurPrize(TCFFCPRIZE  curPrize) {
+        Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
+        CurNoModel curNOModel = new CurNoModel();
+        curNOModel.setLotteryCode("TCFFC");
+        String nextNO = TcffcPrizeConverter.genNofromTime(nextMin);
+        curNOModel.setNextNo(nextNO);
+        curNOModel.setCurNo(curPrize.getNo());
+        curNOModel.setPrize(curPrize.getPrize());
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
+        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
+        int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
+        if (cnt > 0) {
+            curNOModelDAO.updateByConditionSelective(curNOModel, curNOModelCondition);
+        } else {
+            curNOModelDAO.insert(curNOModel);
+        }
     }
     public Map<String, Boolean> generateNextNums2(TCFFCPRIZE  curPrize) {
         Map<String, Boolean> winResult = new HashMap<>();
@@ -195,7 +238,7 @@ public class TcffcGenNumsService {
             System.out.println(curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(iaWuXingTstPrized?"中":"挂"));
 
             updateCurNO(nextMin);
-            updateGenPrizeResult(conPrize, curPrize);
+            //updateGenPrizeResult(conPrize, curPrize);
 
             genPrize = conPrize;
             genPrizeList = tcffcprizeList;
@@ -456,11 +499,11 @@ public class TcffcGenNumsService {
         return  conPrize;
     }
     public void updateCurNO(Date date) {
-        CurNOModel curNOModel = new CurNOModel();
+        CurNoModel curNOModel = new CurNoModel();
         curNOModel.setLotteryCode("TCFFC");
         String nextNO = TcffcPrizeConverter.genNofromTime(date);
         curNOModel.setNextNo(nextNO);
-        CurNOModelCondition curNOModelCondition = new CurNOModelCondition();
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
         curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
         int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
         if (cnt > 0) {
@@ -475,6 +518,7 @@ public class TcffcGenNumsService {
         genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
         genPrizeModel.setNo(nextPrize.getNo());
         genPrizeModel.setGenPrize(nextPrize.getPrize());
+        genPrizeModel.setType(BaseConstants.WF_TYPE_DWD_GE_JC);
 
         genPrizeModelDAO.insert(genPrizeModel);
 

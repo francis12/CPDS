@@ -1,6 +1,7 @@
 package com.ds.zxm.prize;
 
-import com.ds.zxm.mapper.CurNOModelDAO;
+import com.ds.zxm.constants.BaseConstants;
+import com.ds.zxm.mapper.CurNoModelDAO;
 import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
 import com.ds.zxm.mapper.TecentTimeDAO;
@@ -25,7 +26,7 @@ public abstract class BaseGenPrize {
     @Resource
     protected TCFFCPRIZEDAO tcffcprizedao;
     @Resource
-    private CurNOModelDAO curNOModelDAO;
+    private CurNoModelDAO curNOModelDAO;
     @Resource
     private GenPrizeModelDAO genPrizeModelDAO;
     @Resource
@@ -40,6 +41,9 @@ public abstract class BaseGenPrize {
     File file = null;
     File allFile = null;
     String genStr = "";
+    int curCount = 0;
+
+    String wfType ="";
 
     public Map<String, Boolean> run(TCFFCPRIZE curPrize) {
         this.init();
@@ -57,7 +61,8 @@ public abstract class BaseGenPrize {
             TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 2);
 
             Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
-            String genStr = " zhuan(" + this.getGenPrizeNumsStr(conPrize, curPrize) + ")zhuan ";
+            String nextStr =this.getGenPrizeNumsStr(conPrize, curPrize);
+            String genStr = " zhuan(" +  nextStr + ")zhuan ";
             String strResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " " + (isPrized ? "中" : "挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + conPrize.getPrize() + genStr;
             writeResult2File(strResult);
             try {
@@ -69,7 +74,7 @@ public abstract class BaseGenPrize {
                 e.printStackTrace();
             }
             updateCurNO(nextMin);
-            updateGenPrizeResult(conPrize, curPrize);
+            updateGenPrizeResult(conPrize, curPrize, nextStr);
 
             genPrize = conPrize;
         } catch (Exception e) {
@@ -258,11 +263,11 @@ public abstract class BaseGenPrize {
     }
 
     public void updateCurNO(Date date) {
-        CurNOModel curNOModel = new CurNOModel();
+        CurNoModel curNOModel = new CurNoModel();
         curNOModel.setLotteryCode("TCFFC");
         String nextNO = TcffcPrizeConverter.genNofromTime(date);
         curNOModel.setNextNo(nextNO);
-        CurNOModelCondition curNOModelCondition = new CurNOModelCondition();
+        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
         curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
         int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
         if (cnt > 0) {
@@ -272,20 +277,36 @@ public abstract class BaseGenPrize {
         }
     }
 
-    public void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze) {
+    public void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze, String nextStr) {
         GenPrizeModel genPrizeModel = new GenPrizeModel();
         genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
         genPrizeModel.setNo(nextPrize.getNo());
-        genPrizeModel.setGenPrize(nextPrize.getPrize());
+        if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
+            genPrizeModel.setGenPrize(nextStr);
+
+        } else {
+            genPrizeModel.setGenPrize(nextPrize.getPrize());
+        }
+        genPrizeModel.setType(wfType);
 
         genPrizeModelDAO.insert(genPrizeModel);
 
 
         GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
-        genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(curPirze.getLotteryCode()).andNoEqualTo(curPirze.getNo());
+        genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(curPirze.getLotteryCode()).andNoEqualTo(curPirze.getNo()).andTypeEqualTo(wfType);
+
+        List<GenPrizeModel> list = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
 
         GenPrizeModel lastPrizeModel = new GenPrizeModel();
         lastPrizeModel.setRealPrize(curPirze.getPrize());
+        lastPrizeModel.setIsPrized("0");
+        if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
+            if(list!=null&& list.size()>0) {
+                GenPrizeModel genPrize = list.get(0);
+                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getGe()+"") >= 0;
+                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
+            }
+        }
         genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
 
 
