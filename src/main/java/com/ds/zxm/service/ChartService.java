@@ -185,7 +185,7 @@ public class ChartService {
         map.put("series", adjustDsList);
         return map;
     }
-        //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0) -7 波动大小-正负分开-8wan
+        //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0) -7 波动大小-正负分开-8wan  -9  qian  bd dx
     public Map<String, Object> queryTecentOnlineDanData2Option(Integer limit, String queryDateStr, int type) throws ParseException {
         if(7==type) {
             return this.queryBdDxData(limit, queryDateStr);
@@ -240,6 +240,13 @@ public class ChartService {
                         }
                     }else if (type == 8) {
                         last1Adjust = item.getWan();
+                    }else if (type == 9) {
+                        int qianAdjust = (item.getAdjustNum()%10000)/1000;
+                        if((0<=qianAdjust&&qianAdjust<=4)||(-9<=qianAdjust&&qianAdjust<=-6)) {
+                            last1Adjust=0;
+                        } else {
+                            last1Adjust=1;
+                        }
                     }
                     //0：双，1：单
                     adjustList.add(last1Adjust%2==0?0:1);
