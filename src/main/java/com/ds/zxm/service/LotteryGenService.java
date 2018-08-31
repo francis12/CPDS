@@ -1,5 +1,6 @@
 package com.ds.zxm.service;
 
+import com.ds.zxm.constants.BaseConstants;
 import com.ds.zxm.mapper.CurNoModelDAO;
 import com.ds.zxm.mapper.GenPrizeModelDAO;
 import com.ds.zxm.mapper.TCFFCPRIZEDAO;
@@ -70,6 +71,9 @@ public class LotteryGenService {
         List<CurNoModel> curNOModelList = curNOModelDAO.selectByCondition(curNOModelCondition);
 
         if (null != curNOModelList && curNOModelList.size() != 0) {
+            if(BaseConstants.WF_TYPE_DWD_GE_JC.equals(type)) {
+
+            }
             String no = curNOModelList.get(0).getNextNo();
             GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
             genPrizeModelCondition.createCriteria().andNoEqualTo(no).andTypeEqualTo(type);

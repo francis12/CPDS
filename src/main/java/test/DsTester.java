@@ -27,7 +27,14 @@ public class DsTester {
             ex.printStackTrace();
         }
     }
-    public static void main(String[] arg) {
+    static A a2 = new A();
+    public static void main(String[] args) {
+        A a1 = new A();
+
+        System.out.println(a1.i);
+        System.out.println(a2.i);
+    }
+    public static void main22(String[] arg) {
         /*int src = 22;
         int longCnt = 0;
         int huCnt = 0;

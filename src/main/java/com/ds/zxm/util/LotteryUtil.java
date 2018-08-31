@@ -948,4 +948,28 @@ public class LotteryUtil {
 			}
 		}
 	}
+	public static String getRandomNums(int srcNum, int dstNum) {
+		StringBuffer result = new StringBuffer();
+		int[] nums = new int[dstNum];
+		int lucky;
+		for (int i = 0; i < nums.length; i++) {
+			do {
+				lucky = (int)(Math.random()*srcNum) + 1;
+			} while (isExist(nums, lucky));
+			nums[i] = lucky;
+		}
+		for (int i : nums) {
+			result.append(i + " ");
+		}
+		return result.toString();
+	}
+	// 判断是否已经在数组中存在该元素
+	public static boolean isExist(int[] array, int key){
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == key) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
