@@ -11,11 +11,11 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class GeBdDxDwdGenPrize extends BaseGenPrize {
+public class QianBdDxDwdGenPrize extends BaseGenPrize {
     @Override
     void init() {
-        file = new File("geBdDxFile.txt");
-        allFile = new File("geBdDxAllFile.txt");
+        file = new File("qianBdDxFile.txt");
+        allFile = new File("qianBdDxAllFile.txt");
     }
     public static final String shuan = "0,2,4,6,8";
 
@@ -34,7 +34,7 @@ public class GeBdDxDwdGenPrize extends BaseGenPrize {
         //转波动的大小
         List<String> bdDsList = new ArrayList<>();
         for(TCFFCPRIZE item: tcffcprizeList) {
-            int adjust = item.getAdjustNum()%10;
+            int adjust = (item.getAdjustNum()%10000)/1000;
             if((0<=adjust&&adjust<=4)||(-9<=adjust&&adjust<=-6)) {
                 bdDsList.add("0");
             } else {
@@ -44,30 +44,30 @@ public class GeBdDxDwdGenPrize extends BaseGenPrize {
 
         //判断下一期波动的大小
         String nextBdDs = this.judgeNextBdDs(bdDsList);
-        Integer curDx = curPrize.getGe();
+        Integer curDx = curPrize.getQian();
 
 
         genStr = "";
         if("0".equals(nextBdDs)) {
-            for(int i=0;i<5;i++) {
-                int tmp = curDx+i;
-                if (tmp >= 10) {
-                    tmp = tmp - 10;
+                for(int i=0;i<5;i++) {
+                    int tmp = curDx+i;
+                    if (tmp >= 10) {
+                        tmp = tmp - 10;
+                    }
+                    genStr =  genStr + "" + tmp + ",";
                 }
-                genStr =  genStr + "" + tmp + ",";
-            }
         } else if("1".equals(nextBdDs)) {
-            for(int i=5;i<10;i++) {
-                int tmp = curDx+i;
-                if (tmp >= 10) {
-                    tmp = tmp - 10;
+                for(int i=5;i<10;i++) {
+                    int tmp = curDx+i;
+                    if (tmp >= 10) {
+                        tmp = tmp - 10;
+                    }
+                    genStr =  genStr + "" + tmp + ",";
                 }
-                genStr =  genStr + "" + tmp + ",";
-            }
         } else {
             genStr = nextBdDs;
         }
-        log.info("个位当前波动大小为：" + bdDsList.toString() + ",预测下期" + conPrize.getNo() + "波动：" + nextBdDs + ",本期个位大小：" +  curDx + ",预测下期个位:" + genStr);
+        log.info("qian位当前波动大小为：" + bdDsList.toString() + ",ben期" + curPrize.getNo() + "波动：" + nextBdDs + ",本期qian位大小：" +  curDx + ",预测下期qian位:" + genStr);
 
         return genStr;
     }
