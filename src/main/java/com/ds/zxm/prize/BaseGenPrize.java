@@ -284,6 +284,9 @@ public abstract class BaseGenPrize {
         if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
             genPrizeModel.setGenPrize(nextStr);
 
+        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
+            genPrizeModel.setGenPrize(nextStr);
+
         } else {
             genPrizeModel.setGenPrize(nextPrize.getPrize());
         }
@@ -304,6 +307,12 @@ public abstract class BaseGenPrize {
             if(list!=null&& list.size()>0) {
                 GenPrizeModel genPrize = list.get(0);
                 boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getGe()+"") >= 0;
+                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
+            }
+        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
+            if(list!=null&& list.size()>0) {
+                GenPrizeModel genPrize = list.get(0);
+                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getQian()+"") >= 0;
                 lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
             }
         }

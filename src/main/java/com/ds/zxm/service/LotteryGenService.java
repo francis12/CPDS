@@ -66,14 +66,16 @@ public class LotteryGenService {
         String lotteryCode =(String) map.get("lotteryCode");
         String type =(String) map.get("type");
 
+        if(!BaseConstants.WF_TYPE_DWD_GE_JC.equals(type) && !BaseConstants.WF_TYPE_DWD_QIAN_JC.equals(type)) {
+            type = BaseConstants.WF_TYPE_DWD_GE_JC;
+        }
+
         CurNoModelCondition.Criteria criteria = curNOModelCondition.createCriteria();
         criteria.andLotteryCodeEqualTo(lotteryCode);
         List<CurNoModel> curNOModelList = curNOModelDAO.selectByCondition(curNOModelCondition);
 
         if (null != curNOModelList && curNOModelList.size() != 0) {
-            if(BaseConstants.WF_TYPE_DWD_GE_JC.equals(type)) {
 
-            }
             String no = curNOModelList.get(0).getNextNo();
             GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
             genPrizeModelCondition.createCriteria().andNoEqualTo(no).andTypeEqualTo(type);

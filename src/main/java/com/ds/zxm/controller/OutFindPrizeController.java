@@ -75,7 +75,7 @@ public class OutFindPrizeController {
 		try {
 			Map<String, Object> map= new HashMap<>();
 			map.put("lotteryCode", lotteryCode);
-			map.put("type",  BaseConstants.WF_TYPE_DWD_GE_JC);
+			map.put("type",  type);
 			GenPrizeModel genPrizeModel = lotteryGenService.getLatestGenPrize(map);
 			if (null != genPrizeModel) {
 				strResult.append("[0000]");
@@ -97,9 +97,8 @@ public class OutFindPrizeController {
                     genPrizeModel.setIsPrized("...");
                 }else if(type.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)){
                     nums = "[定位胆-千]";
-                    String prize = LotteryUtil.getRandomNums(9, 7);
-                    nums = nums +"|["+ prize+"]";
-                    genPrizeModel.setIsPrized("...");
+					String prize = genPrizeModel.getGenPrize().replace(","," ");
+					nums = nums +"|["+ prize+"]";
                 }else if(type.equals(BaseConstants.WF_TYPE_DWD_WAN_JC)){
                     nums = "[定位胆-万]";
                     String prize = LotteryUtil.getRandomNums(9, 7);

@@ -1,5 +1,6 @@
 package com.ds.zxm.prize;
 
+import com.ds.zxm.constants.BaseConstants;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.util.DateUtils;
@@ -16,6 +17,7 @@ public class QianBdDxDwdGenPrize extends BaseGenPrize {
     void init() {
         file = new File("qianBdDxFile.txt");
         allFile = new File("qianBdDxAllFile.txt");
+        wfType = BaseConstants.WF_TYPE_DWD_QIAN_JC;
     }
     public static final String shuan = "0,2,4,6,8";
 
