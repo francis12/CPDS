@@ -42,8 +42,8 @@ public class Qh4GenPrize extends BaseGenPrize {
             this.countMapKey(numCntMap, shi);
             this.countMapKey(numCntMap, ge);
         }
-        LotteryUtil.sortMapByValue(numCntMap);
-        List<String> list =  new ArrayList<>(LotteryUtil.sortMapByValue(numCntMap).keySet());
+        LotteryUtil.sortMapByValue(numCntMap, "1");
+        List<String> list =  new ArrayList<>(LotteryUtil.sortMapByValue(numCntMap, "1").keySet());
         List<String> sortDanList = list.subList(0, 2);
         List<String> sortDanList2 = list.subList(list.size()-2, list.size());
         sortDanList.addAll(sortDanList2);

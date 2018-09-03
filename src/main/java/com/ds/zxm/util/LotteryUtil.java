@@ -583,7 +583,7 @@ public class LotteryUtil {
 					cntMap.put(fourStr, 1);
 				}
 			});
-			Map<String, Integer> map = sortMapByValue(cntMap);
+			Map<String, Integer> map = sortMapByValue(cntMap, "1");
 			System.out.println("过滤后4星共：" + map.size());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -591,14 +591,19 @@ public class LotteryUtil {
 
 	}
 
-	public static Map<String, Integer> sortMapByValue(Map<String, Integer> oriMap) {
+	// 1:asc, -1:desc
+	public static Map<String, Integer> sortMapByValue(Map<String, Integer> oriMap, String type) {
 		if (oriMap == null || oriMap.isEmpty()) {
 			return null;
 		}
-		Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+		Map<String, Integer> sortedMap = new LinkedHashMap<>();
 		List<Map.Entry<String, Integer>> entryList = new ArrayList<Map.Entry<String, Integer>>(
 				oriMap.entrySet());
-		Collections.sort(entryList, new MapValueComparator());
+		if("1".equals(type)) {
+			Collections.sort(entryList, new MapValueComparator());
+		} else {
+			Collections.sort(entryList, new MapValueComparator2());
+		}
 
 		Iterator<Map.Entry<String, Integer>> iter = entryList.iterator();
 		Map.Entry<String, Integer> tmpEntry = null;
@@ -613,6 +618,13 @@ public class LotteryUtil {
 		@Override
 		public int compare(Map.Entry<String, Integer> me1, Map.Entry<String, Integer> me2) {
 			return me1.getValue().compareTo(me2.getValue());
+		}
+	}
+	static class MapValueComparator2 implements Comparator<Map.Entry<String, Integer>> {
+
+		@Override
+		public int compare(Map.Entry<String, Integer> me1, Map.Entry<String, Integer> me2) {
+			return me2.getValue().compareTo(me1.getValue());
 		}
 	}
 	//计算分分彩相隔期数

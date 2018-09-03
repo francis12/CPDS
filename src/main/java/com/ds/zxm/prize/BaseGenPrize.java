@@ -10,6 +10,7 @@ import com.ds.zxm.service.TcffcGenNumsService;
 import com.ds.zxm.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-
+@Scope("prototype")
 @Service
 public abstract class BaseGenPrize {
 

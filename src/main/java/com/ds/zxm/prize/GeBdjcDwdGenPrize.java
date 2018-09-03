@@ -5,11 +5,12 @@ import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-
+@Scope("prototype")
 @Service
 public class GeBdjcDwdGenPrize extends BaseGenPrize {
 

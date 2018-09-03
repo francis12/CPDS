@@ -413,7 +413,7 @@ public class LotteryStrategyService {
             }
         });
 
-        Map<String, Integer> sortedMap = LotteryUtil.sortMapByValue(numCntMap);
+        Map<String, Integer> sortedMap = LotteryUtil.sortMapByValue(numCntMap,"1");
         List<String> list =  new ArrayList<>(sortedMap.keySet());
         if(list != null && list.size() >=800) {
             list = list.subList(0, 800);

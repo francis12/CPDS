@@ -3,13 +3,14 @@ package com.ds.zxm.prize;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.util.DateUtils;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+@Scope("prototype")
 @Service
 public class GeBdDwdGenPrize extends BaseGenPrize {
     @Override
