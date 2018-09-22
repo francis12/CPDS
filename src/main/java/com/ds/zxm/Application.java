@@ -73,7 +73,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
         TjSSCScanService tjSSCScanService = (TjSSCScanService)context.getBean("tjSSCScanService");
 
         //启动过程中初始化最近一个半小时数据
-        lotteryPrizeScheduleService.batchFetchTCFFCData(1,6);
+        lotteryPrizeScheduleService.batchFetchTCFFCData(1,2);
         //qq官网采集
         Runnable tcPrizeSchedule = new Runnable() {
             public void run() {

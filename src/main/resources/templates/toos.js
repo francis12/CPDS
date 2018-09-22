@@ -37,6 +37,10 @@ var Tools = (function () {
                         id: 'guoan',
                         url: '/mp3/guoan.mp3'
                     });
+					soundManager.createSound({
+                        id: 'toast',
+                        url: 'audio/toast.mp3'
+                    });
                 },
                 ontimeout: function () {
                     // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
@@ -58,6 +62,9 @@ var Tools = (function () {
                 },
                 guoan: function () {
                     soundManager.play('guoan');
+                },
+                toast: function () {
+                    soundManager.play('toast');
                 }
             }
         })(),

@@ -282,12 +282,15 @@ public abstract class BaseGenPrize {
         GenPrizeModel genPrizeModel = new GenPrizeModel();
         genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
         genPrizeModel.setNo(nextPrize.getNo());
+        genPrizeModel.setType(wfType);
         if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
             genPrizeModel.setGenPrize(nextStr);
 
         } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
             genPrizeModel.setGenPrize(nextStr);
 
+        } else if(wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
+            genPrizeModel.setGenPrize(nextStr);
         } else {
             genPrizeModel.setGenPrize(nextPrize.getPrize());
         }
@@ -316,10 +319,14 @@ public abstract class BaseGenPrize {
                 boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getQian()+"") >= 0;
                 lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
             }
+        }else if(wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
+            if(list!=null&& list.size()>0) {
+                GenPrizeModel genPrize = list.get(0);
+                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getPrize().substring(2)) >= 0;
+                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
+            }
         }
         genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
-
-
     }
 
     //去除一个最大偏移值后的平均值

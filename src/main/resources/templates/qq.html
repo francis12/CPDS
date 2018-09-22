@@ -17,7 +17,7 @@
 
 <div  style="text-align:center;">
     <span>
-        <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()" checked="checked"  style="font-size:50px;"/>自动播放
+        <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()" checked="checked"  style="font-size:50px;"/>声音
     </span>
     <div id="prize" style="color:#F00;font-size:30px;display:inline">
     </div>
@@ -152,6 +152,7 @@ var soundplayTime = Date.now();
                 //更新开奖期号
                 curPrizeNo = no;
                 refreshPrizeHis();
+                  ge_ajax();
                 //播放语音
                 if (isSoundSwitchOn) {
                     var toSound =new Array()
@@ -559,16 +560,16 @@ var soundplayTime = Date.now();
       })
   };
   <!--千位结束 -->
-  var startAll = function() {
-    ge_ajax();
-    //shi_ajax();
-    //bai_ajax();
-    //qian_ajax();
-  }
-  var draw = function () {
-      dataInterval = window.setInterval(startAll,2000);
-  }
-  draw();
+//  var startAll = function() {
+//    ge_ajax();
+//    //shi_ajax();
+//    //bai_ajax();
+//    //qian_ajax();
+//  }
+//  var draw = function () {
+//      dataInterval = window.setInterval(startAll,2000);
+//  }
+//  draw();
 function sleep(numberMillis) {
     var now = new Date();
     var exitTime = now.getTime() + numberMillis;

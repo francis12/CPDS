@@ -44,11 +44,12 @@ public class PrizeController {
 	@RequestMapping(value = "/getLatestPrizeMissCnt", method = {RequestMethod.GET})
 	public MissedPrizeResult getLatestPrizeMissCnt(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "limit") Integer limit,
 													   @RequestParam(required = true, value = "type") String type, @RequestParam(required = true, value = "latest1") Integer latest1
-			, @RequestParam(required = true, value = "latest2") Integer latest2) {
+			, @RequestParam(required = true, value = "latest2") Integer latest2
+			, @RequestParam(required = true, value = "coldLimit") Integer coldLimit) {
 		MissedPrizeResult  result = null;
 		try {
 			//result = prizeService.getLatestPrizeMissCnt(limit,type);
-			result = prizeService.getLatestPrizeMissCntByorder(limit,type,latest1, latest2);
+			result = prizeService.getLatestPrizeMissCntByorder(limit,type,latest1, latest2,coldLimit);
 
 		} catch (Exception e) {
 			log.error("getLatestGenPrize error",e );

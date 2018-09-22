@@ -3,6 +3,7 @@ package com.ds.zxm.controller;
 import com.ds.zxm.constants.BaseConstants;
 import com.ds.zxm.model.CurNoModel;
 import com.ds.zxm.model.GenPrizeModel;
+import com.ds.zxm.model.GenPrizeModelCondition;
 import com.ds.zxm.service.LotteryGenService;
 import com.ds.zxm.service.LotteryPrizeScheduleService;
 import com.ds.zxm.util.LotteryUtil;
@@ -30,7 +31,8 @@ public class OutFindPrizeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getLatestGenPrize", method = {RequestMethod.GET})
-	public Map getLatestGenPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode) {
+	public Map getLatestGenPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode,
+								 @RequestParam(required = true, value = "no") String no, @RequestParam(required = true, value = "type") String type) {
 		Map<String,Object> result = new HashMap<>();
 		if (StringUtils.isEmpty(lotteryCode)) {
 			result.put("code", 201);
@@ -41,6 +43,8 @@ public class OutFindPrizeController {
 			return result;
 		}
 		try {
+			GenPrizeModelCondition condition = new GenPrizeModelCondition();
+			condition.createCriteria().andLotteryCodeEqualTo(lotteryCode).andNoEqualTo(no).andTypeEqualTo(type);
 			GenPrizeModel genPrizeModel = lotteryGenService.getLatestGenPrize(lotteryCode);
 			if (null != genPrizeModel) {
 				result.put("no", genPrizeModel.getNo());
@@ -85,26 +89,56 @@ public class OutFindPrizeController {
 					nums = "[定位胆后一]";
 					String prize = genPrizeModel.getGenPrize().replace(","," ");
 					nums = nums +"|["+ prize+"]";
+				}else if(type.equals(BaseConstants.WF_TYPE_DWD_GE2_JC)){
+					nums = "[定位胆后一]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
 				}else if(type.equals(BaseConstants.WF_TYPE_DWD_SHI_JC)){
                     nums = "[定位胆-十]";
                     String prize = LotteryUtil.getRandomNums(9, 7);
                     nums = nums +"|["+ prize+"]";
                     genPrizeModel.setIsPrized("...");
-                }else if(type.equals(BaseConstants.WF_TYPE_DWD_BAI_JC)){
+                }else if(type.equals(BaseConstants.WF_TYPE_DWD_SHI2_JC)){
+					nums = "[定位胆-十]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}else if(type.equals(BaseConstants.WF_TYPE_DWD_BAI_JC)){
                     nums = "[定位胆-百]";
                     String prize = LotteryUtil.getRandomNums(9, 7);
                     nums = nums +"|["+ prize+"]";
                     genPrizeModel.setIsPrized("...");
-                }else if(type.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)){
+                }else if(type.equals(BaseConstants.WF_TYPE_DWD_BAI2_JC)){
+					nums = "[定位胆-百]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}else if(type.equals(BaseConstants.WF_TYPE_S_DWD_QIAN_JC)){
                     nums = "[定位胆-千]";
 					String prize = genPrizeModel.getGenPrize().replace(","," ");
 					nums = nums +"|["+ prize+"]";
-                }else if(type.equals(BaseConstants.WF_TYPE_DWD_WAN_JC)){
-                    nums = "[定位胆-万]";
-                    String prize = LotteryUtil.getRandomNums(9, 7);
-                    nums = nums +"|["+ prize+"]";
-                    genPrizeModel.setIsPrized("...");
-                }
+                }else if(type.equals(BaseConstants.WF_TYPE_DWD_QIAN2_JC)){
+					nums = "[定位胆-千]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}else if(type.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)){
+					nums = "[定位胆-千]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}else if(type.equals(BaseConstants.WF_TYPE_DWD_WAN_JC)){
+					nums = "[定位胆-万]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}else if(type.equals(BaseConstants.WF_TYPE_DWD_WAN2_JC)){
+					nums = "[定位胆-万]";
+					String prize = LotteryUtil.getRandomNums(9, 7);
+					nums = nums +"|["+ prize+"]";
+					genPrizeModel.setIsPrized("...");
+				}
 				result.put("msg", "[成功]");
 				result.put("no", "["+genPrizeModel.getNo()+"]");
 				result.put("code", "[0000]");

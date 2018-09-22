@@ -12,6 +12,7 @@ public class MissedPrizeList {
     private String num;
     //当前遗漏期数
     private int curMissedCnt;
+    private List<MissedPrizeModel> list;
 
     public String getNum() {
         return num;
@@ -29,7 +30,6 @@ public class MissedPrizeList {
         this.list = list;
     }
 
-    private List<MissedPrizeModel> list;
 
     public int getCurMissedCnt() {
         return curMissedCnt;

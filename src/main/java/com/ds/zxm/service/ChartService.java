@@ -185,7 +185,8 @@ public class ChartService {
         map.put("series", adjustDsList);
         return map;
     }
-        //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0) -7 波动大小-正负分开-8wan  -9  qian  bd dx
+        //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0)
+        // -7 波动大小-正负分开-8wan  -9  qian  bd dx   -11波动的波动单双
     public Map<String, Object> queryTecentOnlineDanData2Option(Integer limit, String queryDateStr, int type) throws ParseException {
         if(7==type) {
             return this.queryBdDxData(limit, queryDateStr);
@@ -214,6 +215,7 @@ public class ChartService {
 
             List<Integer> adjustList = new ArrayList<>();
 
+            int preAdjust = 0;
             StringBuffer allBdSb = new StringBuffer();
             if(null != list && list.size() > 0) {
                 for(TCFFCPRIZE item : list) {
@@ -247,9 +249,12 @@ public class ChartService {
                         } else {
                             last1Adjust=1;
                         }
+                    } else if (type == 11) {
+                        last1Adjust = (item.getAdjustNum()-preAdjust)%10;
                     }
                     //0：双，1：单
                     adjustList.add(last1Adjust%2==0?0:1);
+                    preAdjust = item.getAdjustNum();
                 }
                 //转成K线数组
                 adjustDsList = this.convert2KArray(adjustList);

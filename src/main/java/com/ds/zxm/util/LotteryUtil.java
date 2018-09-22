@@ -12,6 +12,7 @@ import java.util.*;
 import com.alibaba.fastjson.JSONObject;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TcffcPrizeConverter;
+import com.ds.zxm.service.LotteryGenService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -627,6 +628,44 @@ public class LotteryUtil {
 			return me2.getValue().compareTo(me1.getValue());
 		}
 	}
+
+
+
+	public static Map<String, Double> sortMapByDoubleValue(Map<String, Double> oriMap, String type) {
+		if (oriMap == null || oriMap.isEmpty()) {
+			return null;
+		}
+		Map<String, Double> sortedMap = new LinkedHashMap<>();
+		List<Map.Entry<String, Double>> entryList = new ArrayList<Map.Entry<String, Double>>(
+				oriMap.entrySet());
+		if("1".equals(type)) {
+			Collections.sort(entryList, new MapDoubleValueComparator());
+		} else {
+			Collections.sort(entryList, new MapDoubleValueComparator2());
+		}
+
+		Iterator<Map.Entry<String, Double>> iter = entryList.iterator();
+		Map.Entry<String, Double> tmpEntry = null;
+		while (iter.hasNext()) {
+			tmpEntry = iter.next();
+			sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());
+		}
+		return sortedMap;
+	}
+	static class MapDoubleValueComparator implements Comparator<Map.Entry<String, Double>> {
+
+		@Override
+		public int compare(Map.Entry<String, Double> me1, Map.Entry<String, Double> me2) {
+			return me1.getValue().compareTo(me2.getValue());
+		}
+	}
+	static class MapDoubleValueComparator2 implements Comparator<Map.Entry<String, Double>> {
+
+		@Override
+		public int compare(Map.Entry<String, Double> me1, Map.Entry<String, Double> me2) {
+			return me2.getValue().compareTo(me1.getValue());
+		}
+	}
 	//计算分分彩相隔期数
 	public static int calTcffcNoDistance(TCFFCPRIZE startNo, TCFFCPRIZE endNo) {
 		Long secDistance = DateUtils.calculateSeconds(endNo.getTime(), startNo.getTime());
@@ -951,14 +990,9 @@ public class LotteryUtil {
 		return;
 	}
 	public static void main(String[] args) {
-		while (true) {
-			try {
-				startFetchPrizeDataFromQQ();
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		System.out.println((int)(0.98*10));
+
+		System.out.println(LotteryUtil.getRandomNums(10,7));
 	}
 	public static String getRandomNums(int srcNum, int dstNum) {
 		StringBuffer result = new StringBuffer();
@@ -966,7 +1000,7 @@ public class LotteryUtil {
 		int lucky;
 		for (int i = 0; i < nums.length; i++) {
 			do {
-				lucky = (int)(Math.random()*srcNum) + 1;
+				lucky = (int)Math.floor(Math.random()*(srcNum+1)) ;
 			} while (isExist(nums, lucky));
 			nums[i] = lucky;
 		}
@@ -975,6 +1009,7 @@ public class LotteryUtil {
 		}
 		return result.toString();
 	}
+
 	// 判断是否已经在数组中存在该元素
 	public static boolean isExist(int[] array, int key){
 		for (int i = 0; i < array.length; i++) {

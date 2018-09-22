@@ -132,11 +132,12 @@ public class LotteryPrizeScheduleService {
                     String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                     log.info(logInfo);
                     FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
-                    if (!(String.valueOf(second).length() == 1)) {
+                    /*if (!(String.valueOf(second).length() == 1)) {
                         String warnInfo = tcffcprize.getNo() + "开奖时间异常提醒！！！(分钟:" + minute + "秒：" + second + ")" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                         FileUtils.writeStringToFile(new File("qqWarn.txt"), warnInfo, true);
                         log.error(warnInfo);
-                    }
+                    }*/
+                    //test
                     this.insertOnUnexist(tcffcprize);
                     tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                 } else {

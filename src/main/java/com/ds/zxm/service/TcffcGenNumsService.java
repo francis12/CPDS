@@ -84,10 +84,9 @@ public class TcffcGenNumsService {
         //result.putAll(qianDwdGenPrize.run(curPrize));
         //result.putAll(geBdDwdGenPrize.run(curPrize));
         //result.putAll(geBdDxDwdGenPrize.run(curPrize));
-        result.putAll(geBdjcDwdGenPrize.run(curPrize));
-        result.putAll(qianBdDxDwdGenPrize.run(curPrize));
+        //result.putAll(geBdjcDwdGenPrize.run(curPrize));
+        //result.putAll(qianBdDxDwdGenPrize.run(curPrize));
         result.putAll(housanBdGenPrize.run(curPrize));
-
         //result.putAll(houSiBdwBodongGenPrize.run(curPrize));
         //result.putAll(geBdDwdGenPrize.run(curPrize));
         //result.putAll(baiBdDwdGenPrize.run(curPrize));

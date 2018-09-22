@@ -47,7 +47,7 @@ public class LotteryStrategyService {
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
     //@Resource(name="sanXinHotStrategy")
-    @Resource(name="geQianStrategy")
+    @Resource(name="houSanBdStrategy")
     private BaseStrategy baseStrategy;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryStrategyService.class);

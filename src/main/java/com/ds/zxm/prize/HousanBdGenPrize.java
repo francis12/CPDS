@@ -1,5 +1,6 @@
 package com.ds.zxm.prize;
 
+import com.ds.zxm.constants.BaseConstants;
 import com.ds.zxm.model.TCFFCPRIZE;
 import com.ds.zxm.model.TCFFCPRIZECondition;
 import com.ds.zxm.util.DateUtils;
@@ -14,40 +15,34 @@ import java.util.*;
 @Scope("prototype")
 @Service
 public class HousanBdGenPrize extends BaseGenPrize {
-
-    public List<String> allSanXinNum = new ArrayList<>();
-
     //后3
     @Override
     void init() {
         file = new File("hou3BdFile.txt");
         allFile = new File("hou3BdAllFile.txt");
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                for (int k = 0; k < 10; k++) {
-                    allSanXinNum.add("" + i + j + k);
-                }
-            }
-        }
+        this.wfType = BaseConstants.WF_TYPE_HOU3_BD;
     }
-
+    int distance = 1440*15;
+    int amount = 700;
     @Override
     public String getGenPrizeNumsStr(TCFFCPRIZE conPrize,TCFFCPRIZE curPrizes) {
         if (null == conPrize) {
             return "";
         }
-        //统计最近15000期的遗漏
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         Date endTime = curPrizes.getTime();
-        Date startTime = DateUtils.addMinutes(-1440, endTime);
+        Date startTime = DateUtils.addMinutes(-distance, endTime);
         tcffcprizeCondition.createCriteria().andTimeBetween(startTime, endTime);
         List<TCFFCPRIZE> tcffcprizeList = tcffcprizedao.selectByCondition(tcffcprizeCondition);
 
         Map<String, List<TCFFCPRIZE>> numMissMap = new HashMap<>();
         //以开奖号码为key，将开奖期数存到map中
         tcffcprizeList.stream().forEach(item -> {
-            int h3Adjust = Math.abs(item.getAdjustNum()%1000);
+            int h3Adjust = item.getAdjustNum()%1000;
+            if(h3Adjust < 0) {
+                h3Adjust = 1000 + h3Adjust;
+            }
             String num = String.valueOf(h3Adjust);
             TCFFCPRIZE tjPrize = new TCFFCPRIZE();
             BeanUtils.copyProperties(item, tjPrize);
@@ -69,25 +64,27 @@ public class HousanBdGenPrize extends BaseGenPrize {
         for(Map.Entry<String, Integer> entry : resultMap.entrySet()) {
             TCFFCPRIZE item = new TCFFCPRIZE();
             int genH3Adjust = Integer.valueOf(entry.getKey());
-            int itemResult = 0;
-            if(curPrizes.getAdjustNum() >=0) {
-                itemResult = curPrizes.getOnlineNum() +  genH3Adjust;
-            } else {
-                itemResult = curPrizes.getOnlineNum() - genH3Adjust;
-            }
-            item.setPrize(String.valueOf(itemResult%1000));
+            int itemResult = curPrizes.getOnlineNum() +  genH3Adjust;
+            String itemResultStr = "000" + String.valueOf(itemResult%1000);
+            itemResultStr = itemResultStr.substring(itemResultStr.length()-3);
+            item.setPrize(itemResultStr);
             result.add(item);
+            if (result.size()== amount) {
+                Collections.sort(result, new Comparator<TCFFCPRIZE>() {
+                    @Override
+                    public int compare(TCFFCPRIZE o1, TCFFCPRIZE o2) {
+                        return o1.getPrize().compareTo(o2.getPrize());
+                    }
+                });
+                break;
+            }
         }
-        if(result.size()>700) {
-            genPrizeList = result.subList(0,700);
-        }else {
-            genPrizeList = result;
-        }
+        genPrizeList = result;
         StringBuilder sb = new StringBuilder();
         genPrizeList.stream().forEach(item -> {
             sb.append(item.getPrize() + " ");
         });
-        log.info("new bd:" + sb.toString());
+        //log.info("预测后3为:" + sb.toString());
         return sb.toString();
     }
 

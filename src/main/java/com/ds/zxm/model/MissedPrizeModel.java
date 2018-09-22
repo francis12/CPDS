@@ -8,19 +8,17 @@ public class MissedPrizeModel {
 
     //监控开奖数据
     private String no;
-
-    public void setPrize(Boolean prize) {
-        isPrize = prize;
-    }
-
     private String prize;
     private Boolean isPrize;
     private Integer prizeCnt;
+    private Integer missCnt;
 
     public Date getTime() {
         return time;
     }
-
+    public void setPrize(Boolean prize) {
+        isPrize = prize;
+    }
     public void setTime(Date time) {
         this.time = time;
     }
@@ -34,10 +32,6 @@ public class MissedPrizeModel {
     public void setMissCnt(Integer missCnt) {
         this.missCnt = missCnt;
     }
-
-    private Integer missCnt;
-
-
     public String getNo() {
         return no;
     }

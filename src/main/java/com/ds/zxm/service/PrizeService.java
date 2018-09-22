@@ -36,7 +36,8 @@ public class PrizeService {
     public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit)throws ParseException {
         return this.getLatestPrizeMissCnt(limit,"hou4");
     }
-    public MissedPrizeResult getLatestPrizeMissCntByorder(Integer limit, String type, Integer latest1, Integer latest2) throws ParseException {
+    //codeLimit:计算遗漏排行
+    public MissedPrizeResult getLatestPrizeMissCntByorder(Integer limit, String type, Integer latest1, Integer latest2,Integer coldLimit) throws ParseException {
         MissedPrizeResult missedPrizeResult = new MissedPrizeResult();
         List<MissedPrizeList> list = this.getLatestPrizeMissCnt(limit, type);
         Collections.sort(list, new Comparator<MissedPrizeList>() {
@@ -88,6 +89,26 @@ public class PrizeService {
         lrResultList.add(prizeLr60);
 
         missedPrizeResult.setLrList(lrResultList);
+
+        //计算遗漏排行
+        List<MissedPrizeList> coldLimitList = this.getLatestPrizeMissCnt(coldLimit, type);
+        for(MissedPrizeList missedPrizeListItem : coldLimitList ) {
+            List<MissedPrizeModel> missedList = missedPrizeListItem.getList();
+            Collections.sort(missedList, new Comparator<MissedPrizeModel>() {
+                @Override
+                public int compare(MissedPrizeModel o1, MissedPrizeModel o2) {
+                    return o2.getMissCnt().compareTo(o1.getMissCnt());
+                }
+            });
+            missedPrizeListItem.setList(missedList.subList(0,1));
+        }
+        Collections.sort(coldLimitList, new Comparator<MissedPrizeList>() {
+            @Override
+            public int compare(MissedPrizeList o1, MissedPrizeList o2) {
+                return o1.getNum().compareTo(o2.getNum());
+            }
+        });
+        missedPrizeResult.setColdList(coldLimitList);
         return missedPrizeResult;
     }
     public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit, String type) throws ParseException {
@@ -198,6 +219,15 @@ public class PrizeService {
                     ) {
                 isPrized = true;
                 if(wan == num) {prizeCnt++;}
+                if(qian == num) {prizeCnt++;}
+                if(bai == num) {prizeCnt++;}
+            }
+        }
+        else if("zhong3".equals(type)) {
+            if( shi ==num || qian == num || bai == num
+                    ) {
+                isPrized = true;
+                if(shi == num) {prizeCnt++;}
                 if(qian == num) {prizeCnt++;}
                 if(bai == num) {prizeCnt++;}
             }
