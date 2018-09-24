@@ -68,6 +68,10 @@ public class TcffcGenNumsService {
     private BaseGenPrize houSiBdwBodongGenPrize;
     @Resource(name="housanBdGenPrize")
     private BaseGenPrize housanBdGenPrize;
+    @Resource(name="wanDwdGenPrize")
+    private BaseGenPrize wanDwdGenPrize;
+    @Resource(name="wuxingBdwGenPrize")
+    private BaseGenPrize wuxingBdwGenPrize;
 
 
 
@@ -87,6 +91,8 @@ public class TcffcGenNumsService {
         //result.putAll(geBdjcDwdGenPrize.run(curPrize));
         //result.putAll(qianBdDxDwdGenPrize.run(curPrize));
         result.putAll(housanBdGenPrize.run(curPrize));
+        result.putAll(wanDwdGenPrize.run(curPrize));
+        result.putAll(wuxingBdwGenPrize.run(curPrize));
         //result.putAll(houSiBdwBodongGenPrize.run(curPrize));
         //result.putAll(geBdDwdGenPrize.run(curPrize));
         //result.putAll(baiBdDwdGenPrize.run(curPrize));

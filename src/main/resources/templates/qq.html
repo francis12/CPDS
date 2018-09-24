@@ -177,16 +177,16 @@ var soundplayTime = Date.now();
   }
   prizeInterval();
 
-  var dataInterval;
-  function autoUpdate_OnClick() {
-    var isAutoUpdate = $("#autoUpdate").is(':checked');
-    if(!isAutoUpdate){
-        clearInterval(dataInterval);
-    } else {
-        clearInterval(dataInterval);
-        draw();
-    }
-  }
+//  var dataInterval;
+//  function autoUpdate_OnClick() {
+//    var isAutoUpdate = $("#autoUpdate").is(':checked');
+//    if(!isAutoUpdate){
+//        clearInterval(dataInterval);
+//    } else {
+//        clearInterval(dataInterval);
+//        draw();
+//    }
+//  }
 
   var isSoundSwitchOn = false;
   function SoundSwitch_OnClick() {
@@ -579,7 +579,7 @@ function sleep(numberMillis) {
         return;
     }
 }
-autoUpdate_OnClick();
+//autoUpdate_OnClick();
 SoundSwitch_OnClick();
 </script>
 </body>

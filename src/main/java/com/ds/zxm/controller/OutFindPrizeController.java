@@ -63,7 +63,7 @@ public class OutFindPrizeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getScheData", method = {RequestMethod.GET})
+	@RequestMapping(value = "/getScheData2s", method = {RequestMethod.GET})
 	public Map getScheData(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode
 			, @RequestParam(required = true, value = "type") String type) {
 		Map<String,Object> result = new HashMap<>();

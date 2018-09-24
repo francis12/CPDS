@@ -14,9 +14,12 @@ public interface BaseConstants {
     String WF_TYPE_DWD_QIAN2_JC = "0008";
     String WF_TYPE_DWD_BAI2_JC = "0009";
     String WF_TYPE_DWD_SHI2_JC = "0010";
+    String WF_TYPE_DWD_WAN3_HE = "0011";
 
     String WF_TYPE_S_DWD_QIAN_JC = "1001";
 
     String WF_TYPE_HOU3_BD = "0101";
+    String WF_TYPE_WXBDW_HZ = "0201";
+
 
 }
