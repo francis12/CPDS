@@ -24,6 +24,12 @@
         <option value="hou3">
             后3不定位
         </option>
+        <option value="hou2">
+            后2不定位
+        </option>
+        <option value="qian2">
+            前2不定位
+        </option>
     </select>
     最近N期，N=
     <!--<input type="text" id="limitValue" name="value" value="60" onchange="refreshMissedData()"/>
@@ -195,7 +201,10 @@
 					} else if((wan == qian || wan == bai || qian == bai)&&(wan!=qian || wan !=bai)) {
 						spanChild.text(_this.prize+"(组3)");
 						spanChild.addClass('activezu3');						
-					}
+					}else {
+                        spanChild.text(_this.prize+"(组0)");
+                        spanChild.addClass('activezu3');
+                    }
 				
 				} else if(wfType == "zhong3") {
 					if(shi != qian && shi != bai && qian != bai) {
@@ -204,7 +213,10 @@
 					} else if((shi == qian || shi == bai || qian == bai)&&(shi!=qian || shi !=bai)) {
 						spanChild.text(_this.prize+"(组3)");
 						spanChild.addClass('activezu3');						
-					}
+					} else {
+                        spanChild.text(_this.prize+"(组0)");
+                        spanChild.addClass('activezu3');
+                    }
 				} else if(wfType == "hou3") {
 					if(shi != ge && shi != bai && ge != bai) {
 					    spanChild.addClass('active');
@@ -212,7 +224,10 @@
 					} else if((shi == ge || shi == bai || ge == bai)&&(shi!=ge || shi !=bai)) {
 						spanChild.text(_this.prize+"(组3)");
 						spanChild.addClass('activezu3');						
-					}
+					}else {
+                        spanChild.text(_this.prize+"(组0)");
+                        spanChild.addClass('activezu3');
+                    }
 				} else {
 				  spanChild.addClass('active');
 
