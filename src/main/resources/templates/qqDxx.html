@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -36,7 +36,7 @@
         <option value="1">蓝</option>
     </select>
     <span id="bd_no"></span>
-    <input type="text" id="bd_result" size="5px"></input>
+    <input type="text" id="bd_result" size="8px"></input>
 </div>
 <div id="mytime" style="color:#F00;font-size:26px;clear:both"></div>
 
@@ -156,7 +156,7 @@ function refreshPrizeHis() {
     var calBdOnClick = function() {
         $("#bd_result").val("");
         var prizeStr = $("#prize").text();
-        var geAdjust = parseInt(prizeStr.substr(prizeStr.length-4,1));
+        var geAdjust = parseInt(prizeStr.substring(prizeStr.length-1));
         var dx = $("#adjust_dx").val();
         if(dx == 0) {
             return;
@@ -205,7 +205,7 @@ var soundplayTime = Date.now();
                 var genStr = $("#bd_result").val();
 
                 if(!(genStr == ".....") && !(genStr == "")&& !(genStr == "中")&&!(genStr == "挂")) {
-                    if(genStr.indexOf(prize.substr(prize.length-4,1)) != -1 ) {
+                    if(genStr.indexOf(prize.substring(prize.length-1)) != -1 ) {
                         $("#bd_result").val("中");
                     } else {
                         $("#bd_result").val("挂");
@@ -413,7 +413,7 @@ var soundplayTime = Date.now();
 
 	var limit = $("#limitValue").val();
 	var date = $("#dateText").val();
-	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=9";
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=6";
 	$.ajax({
           url : url,
           success: function(responseText) {

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -7,7 +7,7 @@
 <body style="padding:0" onload="init()">
 <div id="condition" style="display:inline;width:30%;float:left;">
     最近N期，N=
-    <input type="text" id="limitValue" name="value" value="188" />
+    <input type="text" id="limitValue" name="value" value="100" />
     <div id="queryDate" style="float:left">
         日期:
         <input type="text" id="dateText" />
@@ -50,8 +50,8 @@
 
 <div style="">
     <div style="float:left;width:80%">
-        <div id="ge_canvasDs" style="height:360px;width:99%;display:none"></div>
-        <div id="ge_canvas" style="height:500px;width:99%;"></div>
+        <div id="ge_canvasDs" style="height:360px;width:99%"></div>
+        <div id="ge_canvas" style="height:360px;width:99%;"></div>
     </div>
     <div style="float:left;width:18%" id="content">
         <h2><span class="issue full-size">期号</span><span class="codes full-size">开奖</span><span class="adjusts full-size">波动</span></h2>
@@ -156,7 +156,7 @@ function refreshPrizeHis() {
     var calBdOnClick = function() {
         $("#bd_result").val("");
         var prizeStr = $("#prize").text();
-        var geAdjust = parseInt(prizeStr.substr(prizeStr.length-4,1));
+        var geAdjust = parseInt(prizeStr.substring(prizeStr.length-1));
         var dx = $("#adjust_dx").val();
         if(dx == 0) {
             return;
@@ -204,14 +204,14 @@ var soundplayTime = Date.now();
                 refreshPrizeHis();
                 var genStr = $("#bd_result").val();
 
-                if(!(genStr == ".....") && !(genStr == "")&& !(genStr == "中")&&!(genStr == "挂")) {
-                    if(genStr.indexOf(prize.substr(prize.length-4,1)) != -1 ) {
+                if(!(genStr == ".....") && !(genStr == "")&&!(genStr == "中")&&!(genStr == "挂")) {
+                    if(genStr.indexOf(prize.substring(prize.length-1)) != -1 ) {
                         $("#bd_result").val("中");
+                    } else if ( (genStr == "中")||(genStr == "挂")) {
+
                     } else {
                         $("#bd_result").val("挂");
                     }
-                }else if ( (genStr == "中")||(genStr == "挂")) {
-
                 } else {
                      $("#bd_result").val(".....");
                 }
@@ -262,7 +262,7 @@ var soundplayTime = Date.now();
   var geDsChart = echarts.init(document.getElementById('ge_canvasDs'));
   geDsOption = {
     title : {
-        text: '单双'
+        text: ''
     },
     tooltip : {
         trigger: 'axis',
@@ -278,7 +278,7 @@ var soundplayTime = Date.now();
     },
     toolbox: {
         show : true,
-        left:'middle',
+        left:'right',
         feature : {
             dataZoom : {show: true},
         }
@@ -395,7 +395,7 @@ var soundplayTime = Date.now();
         {
             name:'大小',
             type:'k',
-	        itemStyle: {
+	    itemStyle: {
                         normal: {
                             color: '#FF0000',
                             color0: "#00FFFF",
@@ -413,7 +413,7 @@ var soundplayTime = Date.now();
 
 	var limit = $("#limitValue").val();
 	var date = $("#dateText").val();
-	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=9";
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=6";
 	$.ajax({
           url : url,
           success: function(responseText) {
@@ -713,7 +713,7 @@ var soundplayTime = Date.now();
   <!--千位结束 -->
   var startAll = function() {
     ge_ajax();
-    //geDs_ajax();
+    geDs_ajax();
     //shi_ajax();
     //bai_ajax();
     //qian_ajax();

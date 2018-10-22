@@ -1,6 +1,4 @@
 td{border:solid #add9c0; border-width:0px 1px 1px 0px;}
-#lrtable table{border:solid #ffd9c0; border-width:2px 0px 0px 2px;}
-#lrtable td{border:solid #ffd9c0; border-width:2px 1px 1px 2px;}
 table{border:solid #add9c0; border-width:1px 0px 0px 1px;}
 span.issue {
 	width:10%;
@@ -14,12 +12,12 @@ span.issue.full-size {
 span.codes.full-size {
 	text-align:center;
 	width:20%;
-	margin-left:50px;
+	margin-left:22px;
 }
 span.adjusts.full-size {
 	text-align:center;
 	width:20%;
-	margin-left:36px;
+	margin-left:50px;
 }
 
 .history-codes {
@@ -49,9 +47,9 @@ span.adjusts.full-size {
 	height:30px
 }
 .history-codes div.history-code-item:first-child .code-number span {
-	padding:0 3px;
+	padding:0 0px;
 	border-radius:50px;
-	margin:0 33px
+	margin:0 0px
 }
 .history-codes div.history-code-item:first-child .code-number span.disabled {
 	color:#fff;
@@ -104,13 +102,17 @@ span.adjusts.full-size {
 	width:33%
 }
 .history-codes div.history-code-item>div.code-number span {
-	padding:0 2px;
-	margin:0 32px
+	padding:0 0px;
+	margin:0 0px
 
 }
 .history-codes div.history-code-item>div.code-number span.active {
 	font-weight:100;
 	color:#fc5d50
+}
+.history-codes div.history-code-item>div.code-number span.activezu3 {
+	font-weight:100;
+	color:#5d50fc
 }
 
 .history-codes div.history-code-item>div.code-adjust {

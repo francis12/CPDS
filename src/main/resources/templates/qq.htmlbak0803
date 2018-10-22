@@ -1,20 +1,20 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link type="text/css" rel="stylesheet" href="style.css" />
 </head>
-<body style="padding:0" onload="init()">
-<div id="condition" style="display:inline;width:30%;float:left;">
+<body style="padding:0">
+<div id="condition">
     最近N期，N=
-    <input type="text" id="limitValue" name="value" value="188" />
-    <div id="queryDate" style="float:left">
-        日期:
-        <input type="text" id="dateText" />
-    </div>
+    <input type="text" id="limitValue" name="value" value="100" />
     <input type="checkbox" id="autoUpdate" onclick="autoUpdate_OnClick()" checked="checked"  style="font-size:50px;"/>自动更新
 </div>
-<div  style="text-align:center;;float:left;margin:10px 0px">
+<div id="queryDate">
+    日期:
+    <input type="text" id="dateText" />
+</div>
+
+<div  style="text-align:center;">
     <span>
         <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()" checked="checked"  style="font-size:50px;"/>自动播放
     </span>
@@ -28,42 +28,23 @@
         <embed id="tts_embed_id" height="0" width="0" src="">
     </audio>
 </div>
-<div id="dx_tools" style="padding:10px 120px;float:right;">
-    <button id="cal_bd" onclick="calBdOnClick()">计算</button>
-    <select id="adjust_dx" onchange="calBdOnClick()">
-        <option value="0">- -</option>
-        <option value="-1">红</option>
-        <option value="1">蓝</option>
-    </select>
-    <span id="bd_no"></span>
-    <input type="text" id="bd_result" size="5px"></input>
-</div>
-<div id="mytime" style="color:#F00;font-size:26px;clear:both"></div>
 
-<div style="float:left;display:none">
+<span id="mytime"  style="text-align:center;color:#F00;font-size:26px;margin-left:60px"></span>
+
+<div style="padding:50px;float:left;display:none">
     <span id="qian_canvas" style="height:300px;width:800px;float:left"></span>
     <span id="bai_canvas" style="height:300px;width:800px;float:left"></span>
 </div>
-<div id="shi_canvas" style="height:500px;margin:30px;display:none"></div>
+<div id="ge_canvas" style="height:500px;margin:30px"></div>
 
-
-
-<div style="">
-    <div style="float:left;width:80%">
-        <div id="ge_canvasDs" style="height:360px;width:99%;display:none"></div>
-        <div id="ge_canvas" style="height:500px;width:99%;"></div>
-    </div>
-    <div style="float:left;width:18%" id="content">
-        <h2><span class="issue full-size">期号</span><span class="codes full-size">开奖</span><span class="adjusts full-size">波动</span></h2>
-        <div class="history-codes" id="history-codes">
-        </div>
-    </div>
+<div style="padding:50px;float:left;display:none">
+    <span id="shi_canvas" style="height:300px;width:800px;float:left;"></span>
+    <span id="ge_canvas2" style="height:300px;width:800px;float:left"></span>
 </div>
-
-<div style="padding:50px;display:none">
+<div style="padding:50px;">
     <div id="wan_canvas" style="height:300px;width:600px"></div>
 </div>
-<div style="padding:10px;display:none">
+<div style="padding:10px;">
     <div id="geDs" style="height:300px;width:600px"></div>
 </div>
 <script src="jquery-1.10.1.min.js"></script>
@@ -72,19 +53,7 @@
 <script src="toos.js"></script>
 <script src="config.js"></script>
 <script type="text/javascript">
-function init() {
-    var nowtime2=new Date();
-    var year=nowtime2.getFullYear();
-    var month=nowtime2.getMonth()+1;
-    if (month<10) {
-        month = "0" + month;
-    }
-    var date=nowtime2.getDate();
-    if(date<10){
-            date = "0" + date;
-    }
-    $("#dateText").val(""+ year + month+date);
-}
+
 function showTime(){
     nowtime=new Date();
     year=nowtime.getFullYear();
@@ -94,95 +63,6 @@ function showTime(){
 }
 
 setInterval("showTime()",1000);
-
-function refreshPrizeHis() {
-   $.ajax({
-          url : staticUrl + "/prize/getLatestPrize?lotteryCode=TCFFC&limit=18",
-          success: function(responseText) {
-             //请求成功时处理
-              //var responseText = eval('(' + responseText + ')');
-              $("#history-codes").empty();
-              $.each(responseText, function(){
-                    var divItem = creatediv(this);
-                    divItem.appendTo($("#history-codes"));
-              });
-               //更新下一期波动选择
-               //refreshBdSelects();
-          },
-          complete: function() {
-              //请求完成的处理
-          },
-          error: function() {
-              //请求出错处理
-              alert("加载失败");
-          }
-      })
-   }
-   var creatediv= function(_this){
-        var parentdiv=$('<div></div>');
-        parentdiv.addClass('history-code-item');    //添加css样式
-
-        var childdiv=$('<div></div>');
-        childdiv.addClass('code-issue full-size');
-        childdiv.text(_this.no.substring(9));
-        childdiv.appendTo(parentdiv);
-
-        var childdiv2=$('<div></div>');
-        childdiv2.addClass('code-number full-size');
-        childdiv2.appendTo(parentdiv);
-
-        var spanChild=$('<span></span>');
-        spanChild.addClass('active');
-        spanChild.text(_this.prize);
-        spanChild.appendTo(childdiv2);
-
-        var childdiv3=$('<div></div>');
-        childdiv3.addClass('code-adjust full-size');
-        childdiv3.appendTo(parentdiv);
-
-        var spanChild3=$('<span></span>');
-        spanChild3.addClass('active');
-        spanChild3.text(_this.adjustNum);
-        spanChild3.appendTo(childdiv3);
-
-        return parentdiv;
-    }
-
-    var genNextBdResult = function() {
-        var prizeStr = $("#prize").text();
-        var geAdjust = prizeStr.substring(prizeStr.length-1);
-    }
-
-    var calBdOnClick = function() {
-        $("#bd_result").val("");
-        var prizeStr = $("#prize").text();
-        var geAdjust = parseInt(prizeStr.substr(prizeStr.length-4,1));
-        var dx = $("#adjust_dx").val();
-        if(dx == 0) {
-            return;
-        }
-        var calResult = "";
-        //大
-            if(dx == 1) {
-                for(var i =5;i<10;i++) {
-                    var item = geAdjust+i;
-                    if (item >= 10) {
-                        item = item -10;
-                    }
-                    calResult = calResult + item + " ";
-                }
-            } else if(dx == -1) {
-                //小
-                for(var i =0;i<5;i++) {
-                    var item = geAdjust+i;
-                    if (item >= 10) {
-                        item = item -10;
-                    }
-                    calResult = calResult + item + " ";
-                }
-            }
-        $("#bd_result").val(calResult);
-    }
 
 </script>
 <script type="text/javascript">
@@ -194,34 +74,21 @@ var soundplayTime = Date.now();
           success: function(responseText) {
              //请求成功时处理
               //var responseText = eval('(' + responseText + ')');
+              console.log("responseText:" + responseText);
               var no = responseText.no;
               var prize = responseText.prize;
 
               $("#prize").text("第" + no + "期  :  " + prize);
+              //播放语音
               if (curPrizeNo == "" || curPrizeNo != no) {
                 //更新开奖期号
                 curPrizeNo = no;
-                refreshPrizeHis();
-                var genStr = $("#bd_result").val();
-
-                if(!(genStr == ".....") && !(genStr == "")&& !(genStr == "中")&&!(genStr == "挂")) {
-                    if(genStr.indexOf(prize.substr(prize.length-4,1)) != -1 ) {
-                        $("#bd_result").val("中");
-                    } else {
-                        $("#bd_result").val("挂");
-                    }
-                }else if ( (genStr == "中")||(genStr == "挂")) {
-
-                } else {
-                     $("#bd_result").val(".....");
-                }
-                //播放语音
                 if (isSoundSwitchOn) {
-                    var toSound =new Array()
-                    for(var i = 0; i < 5; i++) {
-                       toSound[i] = prize.charAt(i);
-                     }
-                     Tools.playNumber.play(toSound);
+                var toSound =new Array()
+                for(var i = 0; i < 5; i++) {
+                   toSound[i] = prize.charAt(i);
+                 }
+                 Tools.playNumber.play(toSound);
                 }
               }
           },
@@ -242,6 +109,7 @@ var soundplayTime = Date.now();
   var dataInterval;
   function autoUpdate_OnClick() {
     var isAutoUpdate = $("#autoUpdate").is(':checked');
+    console.log("isAutoUpdate:" + isAutoUpdate);
     if(!isAutoUpdate){
         clearInterval(dataInterval);
     } else {
@@ -255,102 +123,11 @@ var soundplayTime = Date.now();
     var isAutoUpdate = $("#soundSwitch").is(':checked');
     isSoundSwitchOn = isAutoUpdate;
   }
-
-
-
-<!--个位单双开始-->
-  var geDsChart = echarts.init(document.getElementById('ge_canvasDs'));
-  geDsOption = {
-    title : {
-        text: '单双'
-    },
-    tooltip : {
-        trigger: 'axis',
-        formatter: function (params) {
-            var res = params[0].seriesName + ' ' + params[0].name;
-          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
-           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
-            return res;
-        }
-    },
-    legend: {
-        data:['单双']
-    },
-    toolbox: {
-        show : true,
-        left:'middle',
-        feature : {
-            dataZoom : {show: true},
-        }
-    },
-    xAxis : [
-        {
-            type : 'category',
-            boundaryGap : true,
-            axisTick: {onGap:false},
-            splitLine: {show:false},
-            axisLabel: {
-                 interval:0,
-                 rotate:80
-             },
-            data : []
-        }
-    ],
-    yAxis : [
-        {
-            type : 'value',
-            scale:true,
-            boundaryGap: [0.01, 0.01]
-        }
-    ],
-    series : [
-        {
-            name:'单双',
-            type:'k',
-	    itemStyle: {
-                        normal: {
-                            color: '#FF0000',
-                            color0: "#00FFFF",
-                            borderColor: '#FF0000',
-                            borderColor0: '#00FFFF',
-                        }
-                    },
-            data:[]
-        }
-    ]
-};
-
-  geDsChart.setOption(geDsOption);
-  var geDs_ajax = function() {
-
-	var limit = $("#limitValue").val();
-	var date = $("#dateText").val();
-	var url2 = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
-	$.ajax({
-          url : url2,
-          success: function(responseText) {
-             //请求成功时处理
-              //var responseText = eval('(' + responseText + ')');
-              geDsOption.xAxis[0].data = responseText.xAxis;
-              geDsOption.series[0].data = responseText.series;
-             //alert(geDsOption.series);
-              geDsChart.setOption(geDsOption,true);
-          },
-          complete: function() {
-              //请求完成的处理
-          },
-          error: function() {
-              //请求出错处理
-              alert("加载失败");
-          }
-      })
-  };
-  <!-- 个位单双结束 -->
-<!--个位大小开始-->
+  <!--个位开始-->
   var geChart = echarts.init(document.getElementById('ge_canvas'));
   geOption = {
     title : {
-        text: ''
+        text: '个位 K线图'
     },
     tooltip : {
         trigger: 'axis',
@@ -362,13 +139,17 @@ var soundplayTime = Date.now();
         }
     },
     legend: {
-        data:['大小']
+        data:['个位 K线图']
     },
     toolbox: {
         show : true,
-        left:'right',
         feature : {
+            mark : {show: true},
             dataZoom : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
         }
     },
     xAxis : [
@@ -393,9 +174,9 @@ var soundplayTime = Date.now();
     ],
     series : [
         {
-            name:'大小',
+            name:'期数',
             type:'k',
-	        itemStyle: {
+	    itemStyle: {
                         normal: {
                             color: '#FF0000',
                             color0: "#00FFFF",
@@ -413,7 +194,8 @@ var soundplayTime = Date.now();
 
 	var limit = $("#limitValue").val();
 	var date = $("#dateText").val();
-	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=9";
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
+	console.log("url:" + url);
 	$.ajax({
           url : url,
           success: function(responseText) {
@@ -433,7 +215,9 @@ var soundplayTime = Date.now();
           }
       })
   };
-  <!-- 个位大小结束 -->
+  <!-- 个位结束 -->
+
+
   <!--十位开始-->
   var shiChart = echarts.init(document.getElementById('shi_canvas'));
   shiOption = {
@@ -713,7 +497,6 @@ var soundplayTime = Date.now();
   <!--千位结束 -->
   var startAll = function() {
     ge_ajax();
-    //geDs_ajax();
     //shi_ajax();
     //bai_ajax();
     //qian_ajax();
@@ -736,4 +519,3 @@ SoundSwitch_OnClick();
 </script>
 </body>
 </html>
-

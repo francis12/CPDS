@@ -1,0 +1,373 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+</head>
+
+<body style="padding:0" onload="init()">
+<div id="condition" style="display:inline;width:30%;float:left;">
+    <select onchange="wfOnchange()" id="wfselectionId">
+        <option value="wuxin">
+            5星不定位
+        </option>
+        <option value="hou4">
+            后4不定位
+        </option>
+        <option value="qian3">
+            前3不定位
+        </option>
+        <option value="hou3">
+            后3不定位
+        </option>
+    </select>
+    最近N期，N=
+    <!--<input type="text" id="limitValue" name="value" value="60" onchange="refreshMissedData()"/>
+    -->
+    <select onchange="refreshMissedData()" id="limitValue">
+        <option value="30">
+            30
+        </option>
+	 <option value="15">
+            15
+        </option>
+
+        <option value="60">
+            60
+        </option>
+        <option value="90">
+            90
+        </option>
+        <option value="120">
+            120
+        </option>
+        <option value="180">
+            180
+        </option>
+        <option value="1000">
+            1000
+        </option>
+        <option value="2000">
+            2000
+        </option>
+    </select>
+</div>
+<div style="text-align:center;;float:left;margin:10px 0px">
+            <span>
+                <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()"
+                       checked="checked" style="font-size:50px;" />
+                自动播放
+            </span>
+    <div id="prize" style="color:#F00;font-size:30px;display:inline">
+    </div>
+</div>
+<div id="bdtts_div_id">
+    <audio id="tts_autio_id" autoplay="autoplay">
+        <source id="tts_source_id" src="" type="audio/mpeg">
+        <embed id="tts_embed_id" height="0" width="0" src="">
+    </audio>
+</div>
+<div id="mytime" style="color:#F00;font-size:26px;clear:both">
+</div>
+<div id="lrtable" style="text-align:center">
+</div>
+<div id="coldtable" style="text-align:center">
+</div>
+<div style="">
+    <div style="float:left;width:80%">
+        <div id="table">
+        </div>
+    </div>
+    <div style="float:left;width:18%" id="content">
+        <h2>
+                    <span class="issue full-size">
+                        期号
+                    </span>
+            <span class="codes full-size">
+                        开奖
+                    </span>
+            <span class="adjusts full-size">
+                        波动
+                    </span>
+        </h2>
+        <div class="history-codes" id="history-codes">
+        </div>
+    </div>
+</div>
+<script src="jquery-1.10.1.min.js">
+</script>
+<script src="echarts.js">
+</script>
+<script src="soundmanager2.js">
+</script>
+<script src="toos.js">
+</script>
+<script src="config.js">
+</script>
+<script type="text/javascript">
+            var wfType;
+            function init() {
+                wfType = "hou4";
+                $("#wfselectionId").val("hou4");
+                var nowtime2 = new Date();
+                var year = nowtime2.getFullYear();
+                var month = nowtime2.getMonth() + 1;
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var date = nowtime2.getDate();
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                $("#dateText").val("" + year + month + date);
+            }
+            function wfOnchange() {
+                wfType = $("#wfselectionId").val();
+                refreshMissedData();
+                console.log(this);
+            }
+            function showTime() {
+                nowtime = new Date();
+                year = nowtime.getFullYear();
+                month = nowtime.getMonth() + 1;
+                date = nowtime.getDate();
+                document.getElementById("mytime").innerText = year + "年" + month + "月" + date + "日 " + nowtime.toLocaleTimeString();
+            }
+
+            setInterval("showTime()", 1000);
+
+            function refreshPrizeHis() {
+                $.ajax({
+                    url: staticUrl + "/prize/getLatestPrize?lotteryCode=TCFFC&limit=60",
+                    success: function(responseText) {
+                        //请求成功时处理
+                        //var responseText = eval('(' + responseText + ')');
+                        $("#history-codes").empty();
+                        $.each(responseText,
+                        function() {
+                            var divItem = creatediv(this);
+                            divItem.appendTo($("#history-codes"));
+                        });
+                        //更新下一期波动选择
+                        //refreshBdSelects();
+                    },
+                    complete: function() {
+                        //请求完成的处理
+                    },
+                    error: function() {
+                        //请求出错处理
+                        alert("加载失败");
+                    }
+                })
+            }
+            var creatediv = function(_this) {
+                var parentdiv = $('<div></div>');
+                parentdiv.addClass('history-code-item'); //添加css样式
+                var childdiv = $('<div></div>');
+                childdiv.addClass('code-issue full-size');
+                childdiv.text(_this.no.substring(9));
+                childdiv.appendTo(parentdiv);
+
+                var childdiv2 = $('<div></div>');
+                childdiv2.addClass('code-number full-size');
+                childdiv2.appendTo(parentdiv);
+
+                var spanChild = $('<span></span>');
+                spanChild.addClass('active');
+                spanChild.text(_this.prize);
+                spanChild.appendTo(childdiv2);
+
+                var childdiv3 = $('<div></div>');
+                childdiv3.addClass('code-adjust full-size');
+                childdiv3.appendTo(parentdiv);
+
+                var spanChild3 = $('<span></span>');
+                spanChild3.addClass('active');
+                spanChild3.text(_this.adjustNum);
+                spanChild3.appendTo(childdiv3);
+
+                return parentdiv;
+            }
+
+            function refreshMissedData() {
+                var limit = $("#limitValue").val();
+                $.ajax({
+                    url: staticUrl + "prize/getLatestPrizeMissCnt?lotteryCode=TXFFC&limit=" + limit + "&type=" + wfType + "&latest1=30&latest2=60&coldLimit=1000",
+                    success: function(response) {
+                        //请求成功时处理
+                        //var responseText = eval('('+ response +')');
+                        $("#table").empty();
+                        $("#lrtable").empty();
+                        $("#coldtable").empty();
+
+
+                        creatediv2(response);
+                        createColdTable(response);
+
+                    },
+                    complete: function() {
+                        //请求完成的处理
+                    },
+                    error: function() {
+                        //请求出错处理
+                        alert("加载失败");
+                    }
+                })
+            }
+            var creatediv2 = function(_this) {
+                var parentlrTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 32px;"></table>');
+                parentlrTable.appendTo($('#lrtable'));
+                var thlrTr = $('<tr></tr>');
+                $('<th>期数</th>').appendTo(thlrTr);
+                $('<th>第1</th>').appendTo(thlrTr);
+                $('<th>第2</th>').appendTo(thlrTr);
+                $('<th>第3</th>').appendTo(thlrTr);
+                $('<th>第4</th>').appendTo(thlrTr);
+                $('<th>第5</th>').appendTo(thlrTr);
+                $('<th>第6</th>').appendTo(thlrTr);
+                $('<th>第7</th>').appendTo(thlrTr);
+                $('<th>第8</th>').appendTo(thlrTr);
+                $('<th>第9</th>').appendTo(thlrTr);
+                thlrTr.appendTo(parentlrTable);
+                $.each(_this.lrList,
+                function() {
+                    var _detail = this;
+                    genDataTable2(_detail, parentlrTable);
+
+                });
+
+                var parentcoldTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 32px;"></table>');
+                parentcoldTable.appendTo($('#coldtable'));
+                var thcoldTr = $('<tr></tr>');
+                thcoldTr.appendTo(parentcoldTable);
+
+                var dataColdTr = $('<tr></tr>');
+                dataColdTr.appendTo(parentcoldTable);
+                $.each(_this.coldList,
+                    function() {
+                        var _detail = this;
+                        $('<th>' + _detail.num + '</th>').appendTo(thcoldTr);
+                        var tdItem = "";
+                        $.each(_detail.list, 
+                            function () {
+                                tdItem+=this.missCnt + " "
+                            }
+                        );
+                        $('<td>' + tdItem + '</td>').appendTo(dataColdTr);
+                    });
+
+                $.each(_this.list,
+                function() {
+                    var parentTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 32px;"></table>');
+                    var captionStr = '<caption style="font-size:50px;color:#FF0000">' + this.num + '(' + this.curMissedCnt + ')' + '</caption>';
+                    $(captionStr).appendTo(parentTable);
+                    parentTable.appendTo($('#table'));
+                    var thTr = $('<tr></tr>');
+                    $('<th>期号</th>').appendTo(thTr);
+                    $('<th>开奖</th>').appendTo(thTr);
+                    $('<th>几飞</th>').appendTo(thTr);
+                    $('<th>遗漏</th>').appendTo(thTr);
+                    thTr.appendTo(parentTable);
+                    var _detail = this;
+                    genDataTable(_detail.list, parentTable);
+
+                });
+
+            }
+            var genDataTable = function(this2, parentTable) {
+                $.each(this2,
+                function() {
+                    var dataTr = $('<tr></tr>');
+                    dataTr.appendTo(parentTable);
+                    $('<td>' + this.no.substring(9) + '</td>').appendTo(dataTr);
+                    $('<td>' + this.prize + '</td>').appendTo(dataTr);
+                    $('<td>' + this.prizeCnt + '</td>').appendTo(dataTr);
+                    $('<td>' + this.missCnt + '</td>').appendTo(dataTr);
+                });
+            }
+
+            var genDataTable2 = function(this2, parentTable) {
+                var dataTr = $('<tr></tr>');
+                dataTr.appendTo(parentTable);
+                $('<td>' + this2.latestNum + '</td>').appendTo(dataTr);
+
+                $.each(this2.list,
+                function() {
+                    $('<td>' + this.num + '</td>').appendTo(dataTr);
+                });
+            }
+
+            var soundplayTime = Date.now();
+            var curPrizeNo = "";
+            function updatePrize() {
+                $.ajax({
+                    url: staticUrl + "/gen/getLatestPrize?lotteryCode=TCFFC&signCode=ok",
+                    success: function(responseText) {
+                        //请求成功时处理
+                        //var responseText = eval('(' + responseText + ')');
+                        var no = responseText.no;
+                        var prize = responseText.prize;
+
+                        $("#prize").text("第" + no + "期  :  " + prize);
+                        if (curPrizeNo == "" || curPrizeNo != no) {
+                            //更新开奖期号
+                            curPrizeNo = no;
+                            refreshPrizeHis();
+                            refreshMissedData();
+
+                            //播放语音
+                            if (isSoundSwitchOn) {
+                                var toSound = new Array();
+                                for (var i = 0; i < 5; i++) {
+                                    toSound[i] = prize.charAt(i);
+                                }
+                                Tools.playNumber.play(toSound);
+                            }
+                        }
+                    },
+                    complete: function() {
+                        //请求完成的处理
+                    },
+                    error: function() {
+                        //请求出错处理
+                        alert("加载失败");
+                    }
+                })
+            }
+            var prizeInterval = function() {
+                window.setInterval(updatePrize, 2000);
+            }
+            prizeInterval();
+
+            var dataInterval;
+            function autoUpdate_OnClick() {
+                var isAutoUpdate = $("#autoUpdate").is(':checked');
+                if (!isAutoUpdate) {
+                    clearInterval(dataInterval);
+                } else {
+                    clearInterval(dataInterval);
+                    draw();
+                }
+            }
+
+            var isSoundSwitchOn = false;
+            function SoundSwitch_OnClick() {
+                var isAutoUpdate = $("#soundSwitch").is(':checked');
+                isSoundSwitchOn = isAutoUpdate;
+            }
+
+            function sleep(numberMillis) {
+                var now = new Date();
+                var exitTime = now.getTime() + numberMillis;
+                while (true) {
+                    now = new Date();
+                    if (now.getTime() > exitTime) return;
+                }
+            }
+            autoUpdate_OnClick();
+            SoundSwitch_OnClick();
+        </script>
+</body>
+
+</html>

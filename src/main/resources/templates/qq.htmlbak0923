@@ -1,22 +1,23 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link type="text/css" rel="stylesheet" href="style.css" />
 </head>
 <body style="padding:0" onload="init()">
-<div id="condition" style="display:inline;width:30%;float:left;">
+<div id="condition">
     最近N期，N=
-    <input type="text" id="limitValue" name="value" value="188" />
-    <div id="queryDate" style="float:left">
-        日期:
-        <input type="text" id="dateText" />
-    </div>
+    <input type="text" id="limitValue" name="value" value="100" />
     <input type="checkbox" id="autoUpdate" onclick="autoUpdate_OnClick()" checked="checked"  style="font-size:50px;"/>自动更新
 </div>
-<div  style="text-align:center;;float:left;margin:10px 0px">
+<div id="queryDate">
+    日期:
+    <input type="text" id="dateText" />
+</div>
+
+<div  style="text-align:center;">
     <span>
-        <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()" checked="checked"  style="font-size:50px;"/>自动播放
+        <input type="checkbox" id="soundSwitch" onclick="SoundSwitch_OnClick()" checked="checked"  style="font-size:50px;"/>声音
     </span>
     <div id="prize" style="color:#F00;font-size:30px;display:inline">
     </div>
@@ -28,16 +29,7 @@
         <embed id="tts_embed_id" height="0" width="0" src="">
     </audio>
 </div>
-<div id="dx_tools" style="padding:10px 120px;float:right;">
-    <button id="cal_bd" onclick="calBdOnClick()">计算</button>
-    <select id="adjust_dx" onchange="calBdOnClick()">
-        <option value="0">- -</option>
-        <option value="-1">红</option>
-        <option value="1">蓝</option>
-    </select>
-    <span id="bd_no"></span>
-    <input type="text" id="bd_result" size="5px"></input>
-</div>
+
 <div id="mytime" style="color:#F00;font-size:26px;clear:both"></div>
 
 <div style="float:left;display:none">
@@ -46,11 +38,8 @@
 </div>
 <div id="shi_canvas" style="height:500px;margin:30px;display:none"></div>
 
-
-
 <div style="">
     <div style="float:left;width:80%">
-        <div id="ge_canvasDs" style="height:360px;width:99%;display:none"></div>
         <div id="ge_canvas" style="height:500px;width:99%;"></div>
     </div>
     <div style="float:left;width:18%" id="content">
@@ -60,10 +49,10 @@
     </div>
 </div>
 
-<div style="padding:50px;display:none">
+<div style="padding:50px;">
     <div id="wan_canvas" style="height:300px;width:600px"></div>
 </div>
-<div style="padding:10px;display:none">
+<div style="padding:10px;">
     <div id="geDs" style="height:300px;width:600px"></div>
 </div>
 <script src="jquery-1.10.1.min.js"></script>
@@ -97,7 +86,7 @@ setInterval("showTime()",1000);
 
 function refreshPrizeHis() {
    $.ajax({
-          url : staticUrl + "/prize/getLatestPrize?lotteryCode=TCFFC&limit=18",
+          url : staticUrl + "/prize/getLatestPrize?lotteryCode=TCFFC&limit=30",
           success: function(responseText) {
              //请求成功时处理
               //var responseText = eval('(' + responseText + ')');
@@ -106,8 +95,6 @@ function refreshPrizeHis() {
                     var divItem = creatediv(this);
                     divItem.appendTo($("#history-codes"));
               });
-               //更新下一期波动选择
-               //refreshBdSelects();
           },
           complete: function() {
               //请求完成的处理
@@ -137,7 +124,7 @@ function refreshPrizeHis() {
         spanChild.appendTo(childdiv2);
 
         var childdiv3=$('<div></div>');
-        childdiv3.addClass('code-adjust full-size');
+        childdiv3.addClass('code-number full-size');
         childdiv3.appendTo(parentdiv);
 
         var spanChild3=$('<span></span>');
@@ -147,43 +134,6 @@ function refreshPrizeHis() {
 
         return parentdiv;
     }
-
-    var genNextBdResult = function() {
-        var prizeStr = $("#prize").text();
-        var geAdjust = prizeStr.substring(prizeStr.length-1);
-    }
-
-    var calBdOnClick = function() {
-        $("#bd_result").val("");
-        var prizeStr = $("#prize").text();
-        var geAdjust = parseInt(prizeStr.substr(prizeStr.length-4,1));
-        var dx = $("#adjust_dx").val();
-        if(dx == 0) {
-            return;
-        }
-        var calResult = "";
-        //大
-            if(dx == 1) {
-                for(var i =5;i<10;i++) {
-                    var item = geAdjust+i;
-                    if (item >= 10) {
-                        item = item -10;
-                    }
-                    calResult = calResult + item + " ";
-                }
-            } else if(dx == -1) {
-                //小
-                for(var i =0;i<5;i++) {
-                    var item = geAdjust+i;
-                    if (item >= 10) {
-                        item = item -10;
-                    }
-                    calResult = calResult + item + " ";
-                }
-            }
-        $("#bd_result").val(calResult);
-    }
-
 </script>
 <script type="text/javascript">
 var soundplayTime = Date.now();
@@ -202,19 +152,7 @@ var soundplayTime = Date.now();
                 //更新开奖期号
                 curPrizeNo = no;
                 refreshPrizeHis();
-                var genStr = $("#bd_result").val();
-
-                if(!(genStr == ".....") && !(genStr == "")&& !(genStr == "中")&&!(genStr == "挂")) {
-                    if(genStr.indexOf(prize.substr(prize.length-4,1)) != -1 ) {
-                        $("#bd_result").val("中");
-                    } else {
-                        $("#bd_result").val("挂");
-                    }
-                }else if ( (genStr == "中")||(genStr == "挂")) {
-
-                } else {
-                     $("#bd_result").val(".....");
-                }
+                  ge_ajax();
                 //播放语音
                 if (isSoundSwitchOn) {
                     var toSound =new Array()
@@ -255,14 +193,11 @@ var soundplayTime = Date.now();
     var isAutoUpdate = $("#soundSwitch").is(':checked');
     isSoundSwitchOn = isAutoUpdate;
   }
-
-
-
-<!--个位单双开始-->
-  var geDsChart = echarts.init(document.getElementById('ge_canvasDs'));
-  geDsOption = {
+  <!--个位开始-->
+  var geChart = echarts.init(document.getElementById('ge_canvas'));
+  geOption = {
     title : {
-        text: '单双'
+        text: ''
     },
     tooltip : {
         trigger: 'axis',
@@ -278,7 +213,7 @@ var soundplayTime = Date.now();
     },
     toolbox: {
         show : true,
-        left:'middle',
+        left:'right',
         feature : {
             dataZoom : {show: true},
         }
@@ -320,100 +255,12 @@ var soundplayTime = Date.now();
     ]
 };
 
-  geDsChart.setOption(geDsOption);
-  var geDs_ajax = function() {
-
-	var limit = $("#limitValue").val();
-	var date = $("#dateText").val();
-	var url2 = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
-	$.ajax({
-          url : url2,
-          success: function(responseText) {
-             //请求成功时处理
-              //var responseText = eval('(' + responseText + ')');
-              geDsOption.xAxis[0].data = responseText.xAxis;
-              geDsOption.series[0].data = responseText.series;
-             //alert(geDsOption.series);
-              geDsChart.setOption(geDsOption,true);
-          },
-          complete: function() {
-              //请求完成的处理
-          },
-          error: function() {
-              //请求出错处理
-              alert("加载失败");
-          }
-      })
-  };
-  <!-- 个位单双结束 -->
-<!--个位大小开始-->
-  var geChart = echarts.init(document.getElementById('ge_canvas'));
-  geOption = {
-    title : {
-        text: ''
-    },
-    tooltip : {
-        trigger: 'axis',
-        formatter: function (params) {
-            var res = params[0].seriesName + ' ' + params[0].name;
-          //  res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
-           // res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
-            return res;
-        }
-    },
-    legend: {
-        data:['大小']
-    },
-    toolbox: {
-        show : true,
-        left:'right',
-        feature : {
-            dataZoom : {show: true},
-        }
-    },
-    xAxis : [
-        {
-            type : 'category',
-            boundaryGap : true,
-            axisTick: {onGap:false},
-            splitLine: {show:false},
-            axisLabel: {
-                 interval:0,
-                 rotate:80
-             },
-            data : []
-        }
-    ],
-    yAxis : [
-        {
-            type : 'value',
-            scale:true,
-            boundaryGap: [0.01, 0.01]
-        }
-    ],
-    series : [
-        {
-            name:'大小',
-            type:'k',
-	        itemStyle: {
-                        normal: {
-                            color: '#FF0000',
-                            color0: "#00FFFF",
-                            borderColor: '#FF0000',
-                            borderColor0: '#00FFFF',
-                        }
-                    },
-            data:[]
-        }
-    ]
-};
-
   geChart.setOption(geOption);
   var ge_ajax = function() {
 
 	var limit = $("#limitValue").val();
 	var date = $("#dateText").val();
-	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=9";
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
 	$.ajax({
           url : url,
           success: function(responseText) {
@@ -433,7 +280,9 @@ var soundplayTime = Date.now();
           }
       })
   };
-  <!-- 个位大小结束 -->
+  <!-- 个位结束 -->
+
+
   <!--十位开始-->
   var shiChart = echarts.init(document.getElementById('shi_canvas'));
   shiOption = {
@@ -711,17 +560,16 @@ var soundplayTime = Date.now();
       })
   };
   <!--千位结束 -->
-  var startAll = function() {
-    ge_ajax();
-    //geDs_ajax();
-    //shi_ajax();
-    //bai_ajax();
-    //qian_ajax();
-  }
-  var draw = function () {
-      dataInterval = window.setInterval(startAll,2000);
-  }
-  draw();
+//  var startAll = function() {
+//    ge_ajax();
+//    //shi_ajax();
+//    //bai_ajax();
+//    //qian_ajax();
+//  }
+//  var draw = function () {
+//      dataInterval = window.setInterval(startAll,2000);
+//  }
+//  draw();
 function sleep(numberMillis) {
     var now = new Date();
     var exitTime = now.getTime() + numberMillis;
@@ -736,4 +584,3 @@ SoundSwitch_OnClick();
 </script>
 </body>
 </html>
-
