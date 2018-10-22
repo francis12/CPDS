@@ -138,7 +138,7 @@ public class LotteryPrizeScheduleService {
                         log.error(warnInfo);
                     }*/
                     //test
-                    //this.insertOnUnexist(tcffcprize);
+                    this.insertOnUnexist(tcffcprize);
                     tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                 } else {
                     Thread.sleep(500);

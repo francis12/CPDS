@@ -274,14 +274,25 @@ public class PrizeService {
                 if(qian == num) {prizeCnt++;}
                 if(bai == num) {prizeCnt++;}
             }
-        }
-        else if("zhong3".equals(type)) {
+        }else if("zhong3".equals(type)) {
             if( shi ==num || qian == num || bai == num
                     ) {
                 isPrized = true;
                 if(shi == num) {prizeCnt++;}
                 if(qian == num) {prizeCnt++;}
                 if(bai == num) {prizeCnt++;}
+            }
+        }else if("qian2".equals(type)) {
+            if( wan ==num || qian == num ) {
+                isPrized = true;
+                if(wan == num) {prizeCnt++;}
+                if(qian == num) {prizeCnt++;}
+            }
+        }else if("hou2".equals(type)) {
+            if( shi ==num || ge == num) {
+                isPrized = true;
+                if(shi == num) {prizeCnt++;}
+                if(ge == num) {prizeCnt++;}
             }
         }
         //中
