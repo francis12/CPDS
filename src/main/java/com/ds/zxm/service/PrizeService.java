@@ -34,16 +34,22 @@ public class PrizeService {
         return list;
     }
 
-    public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit)throws ParseException {
-        return this.getLatestPrizeMissCnt(limit,"hou4", WF_BDW);
+    public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit) throws ParseException {
+        return this.getLatestPrizeMissCnt(limit, "hou4", WF_BDW);
     }
-    static  final String WF_BDW = "bdw";
-    static  final String WF_ZHU3 = "zhu3";
-    static  final String WF_ZHU6 = "zhu6";
+
+    static final String WF_BDW = "bdw";
+    static final String WF_ZHU3 = "zhu3";
+    static final String WF_ZHU6 = "zhu6";
+
+    //后4连续二星
+
+    static int[][] lxErXin = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {0, 9}};
 
     int zhuLimit = 1000;
+
     //codeLimit:计算遗漏排行
-    public MissedPrizeResult getLatestPrizeMissCntByorder(Integer limit, String type, Integer latest1, Integer latest2,Integer coldLimit) throws ParseException {
+    public MissedPrizeResult getLatestPrizeMissCntByorder(Integer limit, String type, Integer latest1, Integer latest2, Integer coldLimit) throws ParseException {
         MissedPrizeResult missedPrizeResult = new MissedPrizeResult();
         List<MissedPrizeList> list = this.getLatestPrizeMissCnt(limit, type, WF_BDW);
         Collections.sort(list, new Comparator<MissedPrizeList>() {
@@ -93,10 +99,10 @@ public class PrizeService {
 
         List<PrizeLrModelList> lrResultList = new ArrayList<>();
         List<PrizeLrModel> prizeLr30List = new ArrayList<>();
-        for(int i=0;i<lates30List.size();i++) {
+        for (int i = 0; i < lates30List.size(); i++) {
             PrizeLrModel item = new PrizeLrModel();
             item.setNum(lates30List.get(i).getNum());
-            item.setOrder(i+1);
+            item.setOrder(i + 1);
             prizeLr30List.add(item);
         }
         PrizeLrModelList prizeLr30 = new PrizeLrModelList();
@@ -105,10 +111,10 @@ public class PrizeService {
         lrResultList.add(prizeLr30);
 
         List<PrizeLrModel> prizeLr60List = new ArrayList<>();
-        for(int i=0;i<lates60List.size();i++) {
+        for (int i = 0; i < lates60List.size(); i++) {
             PrizeLrModel item = new PrizeLrModel();
             item.setNum(lates60List.get(i).getNum());
-            item.setOrder(i+1);
+            item.setOrder(i + 1);
             prizeLr60List.add(item);
         }
         PrizeLrModelList prizeLr60 = new PrizeLrModelList();
@@ -120,13 +126,13 @@ public class PrizeService {
 
         //计算遗漏排行
         List<MissedPrizeList> coldLimitList = this.getLatestPrizeMissCnt(coldLimit, type, WF_BDW);
-        this.calColdOrderList(coldLimitList,1 );
+        this.calColdOrderList(coldLimitList, 1);
         missedPrizeResult.setColdList(coldLimitList);
         return missedPrizeResult;
     }
 
     private void calColdOrderList(List<MissedPrizeList> coldLimitList, int count) {
-        for(MissedPrizeList missedPrizeListItem : coldLimitList ) {
+        for (MissedPrizeList missedPrizeListItem : coldLimitList) {
             List<MissedPrizeModel> missedList = missedPrizeListItem.getList();
             Collections.sort(missedList, new Comparator<MissedPrizeModel>() {
                 @Override
@@ -134,7 +140,7 @@ public class PrizeService {
                     return o2.getMissCnt().compareTo(o1.getMissCnt());
                 }
             });
-            missedPrizeListItem.setList(missedList.subList(0,count));
+            missedPrizeListItem.setList(missedList.subList(0, count));
         }
         Collections.sort(coldLimitList, new Comparator<MissedPrizeList>() {
             @Override
@@ -143,7 +149,8 @@ public class PrizeService {
             }
         });
     }
-    private  List<TCFFCPRIZE> queryLatestPrizeList (Integer limit) {
+
+    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit) {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         TCFFCPRIZECondition.Criteria criteria = tcffcprizeCondition.createCriteria();
 
@@ -153,11 +160,13 @@ public class PrizeService {
         tcffcprizeCondition.setOrderByClause("time asc");
         return tcffcprizedao.selectByCondition(tcffcprizeCondition);
     }
+
     public void getZhu3Zhu6MissData(Integer limit) {
         List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
 
 
     }
+
     //tjLx:统计类型：bdw,zhu6
     public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit, String type, String tjLx) throws ParseException {
         Date date = DateUtils.getBaiduCurTime();
@@ -166,14 +175,20 @@ public class PrizeService {
         Map<String, List<MissedPrizeModel>> missedMap = new HashMap<>();
 
         String[] zhuArr = {"qian3", "zhong3", "hou3"};
-        if("bdw".equals(tjLx)) {
-            for(TCFFCPRIZE item : list) {
-                for(int i=0; i<10;i++) {
-                    genCurNoMissedModel(missedMap, item,i, type);
+        if ("bdw".equals(tjLx)) {
+            for (TCFFCPRIZE item : list) {
+                if ("hou4tou2".equals(type)) {
+                    for (int[] arrItem : lxErXin) {
+                        genCurNoMissedModel(missedMap, item, arrItem, type);
+                    }
+                } else {
+                    for (int i = 0; i < 10; i++) {
+                        genCurNoMissedModel(missedMap, item, new int[]{i}, type);
+                    }
                 }
             }
-        } else if ("zhu6".equals(tjLx) || "zhu3".equals(tjLx)){
-            for(TCFFCPRIZE item : list) {
+        } else if ("zhu6".equals(tjLx) || "zhu3".equals(tjLx)) {
+            for (TCFFCPRIZE item : list) {
                 for (String zhu : zhuArr) {
                     this.genCurNoZhu3Zhu6MissedModel(missedMap, item, tjLx, zhu);
                 }
@@ -182,7 +197,7 @@ public class PrizeService {
         //处理不定位遗漏数据
         List<MissedPrizeList> result = new ArrayList<>();
         //map转list
-        for(Map.Entry<String, List<MissedPrizeModel>> entry : missedMap.entrySet()) {
+        for (Map.Entry<String, List<MissedPrizeModel>> entry : missedMap.entrySet()) {
             MissedPrizeList missedPrizeList = new MissedPrizeList();
             String num = entry.getKey();
             List<MissedPrizeModel> missList = entry.getValue();
@@ -195,9 +210,9 @@ public class PrizeService {
             missedPrizeList.setNum(num);
             missedPrizeList.setList(missList);
             List<MissedPrizeModel> latestList = missedPrizeList.getList();
-            if(null != latestList && latestList.size()>1) {
+            if (null != latestList && latestList.size() > 1) {
                 String lastNo = latestList.get(0).getNo();
-                if(curNo.equals(lastNo)) {
+                if (curNo.equals(lastNo)) {
                     missedPrizeList.setCurMissedCnt(0);
                 } else {
                     TCFFCPRIZE start = new TCFFCPRIZE();
@@ -207,7 +222,7 @@ public class PrizeService {
                     int latestDistance = LotteryUtil.calTcffcNoDistanceByNo(start, end);
                     missedPrizeList.setCurMissedCnt(latestDistance);
                 }
-            } else{
+            } else {
                 missedPrizeList.setCurMissedCnt(0);
             }
 
@@ -224,88 +239,156 @@ public class PrizeService {
         return result;
     }
 
-    private void sortMapByMissedSize(){
+    private void sortMapByMissedSize() {
 
 
     }
-    private void genCurNoMissedModel(Map<String, List<MissedPrizeModel>> result, TCFFCPRIZE item, int num, String type) {
+
+    private void genCurNoMissedModel(Map<String, List<MissedPrizeModel>> result, TCFFCPRIZE item, int[] nums, String type) {
         List<MissedPrizeModel> missedList = null;
         int wan = item.getWan();
         int qian = item.getQian();
         int bai = item.getBai();
         int shi = item.getShi();
-        int ge = item .getGe();
+        int ge = item.getGe();
 
         boolean isPrized = false;
         int prizeCnt = 0;
-        if("wuxin".equals(type)) {
-            if(wan== num || qian == num || bai == num
-                    || shi ==num || ge == num) {
-                isPrized = true;
-                if(wan == num) {prizeCnt++;}
-                if(qian == num) {prizeCnt++;}
-                if(bai == num) {prizeCnt++;}
-                if(shi == num) {prizeCnt++;}
-                if(ge == num) {prizeCnt++;}
-            }
-        }else if("hou4".equals(type)) {
-            if(qian == num || bai == num
-                    || shi ==num || ge == num) {
-                isPrized = true;
-                if(qian == num) {prizeCnt++;}
-                if(bai == num) {prizeCnt++;}
-                if(shi == num) {prizeCnt++;}
-                if(ge == num) {prizeCnt++;}
-            }
-        } else if("hou3".equals(type)) {
-            if(bai == num
-                    || shi ==num || ge == num) {
-                isPrized = true;
-                if(bai == num) {prizeCnt++;}
-                if(shi == num) {prizeCnt++;}
-                if(ge == num) {prizeCnt++;}
+        for (int num : nums) {
+            if ("wuxin".equals(type)) {
+                if (wan == num || qian == num || bai == num
+                        || shi == num || ge == num) {
+                    isPrized = true;
+                    if (wan == num) {
+                        prizeCnt++;
+                    }
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (ge == num) {
+                        prizeCnt++;
+                    }
+                }
+
+            } else if ("hou4".equals(type)) {
+                if (qian == num || bai == num
+                        || shi == num || ge == num) {
+                    isPrized = true;
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (ge == num) {
+                        prizeCnt++;
+                    }
+                }
+            } else if ("hou3".equals(type)) {
+                if (bai == num
+                        || shi == num || ge == num) {
+                    isPrized = true;
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (ge == num) {
+                        prizeCnt++;
+                    }
+                }
+            } else if ("qian3".equals(type)) {
+                if (wan == num || qian == num || bai == num
+                ) {
+                    isPrized = true;
+                    if (wan == num) {
+                        prizeCnt++;
+                    }
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                }
+            } else if ("zhong3".equals(type)) {
+                if (shi == num || qian == num || bai == num
+                ) {
+                    isPrized = true;
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                }
+            } else if ("qian2".equals(type)) {
+                if (wan == num || qian == num) {
+                    isPrized = true;
+                    if (wan == num) {
+                        prizeCnt++;
+                    }
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                }
+            } else if ("hou2".equals(type)) {
+                if (shi == num || ge == num) {
+                    isPrized = true;
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (ge == num) {
+                        prizeCnt++;
+                    }
+                }
+            }else if ("hou4tou2".equals(type)) {
+                if (qian == num ||bai == num ||shi == num || ge == num) {
+                    isPrized = true;
+                    if (qian == num) {
+                        prizeCnt++;
+                    }
+                    if (bai == num) {
+                        prizeCnt++;
+                    }
+                    if (shi == num) {
+                        prizeCnt++;
+                    }
+                    if (ge == num) {
+                        prizeCnt++;
+                    }
+                }
             }
         }
-        else if("qian3".equals(type)) {
-            if( wan ==num || qian == num || bai == num
-                    ) {
-                isPrized = true;
-                if(wan == num) {prizeCnt++;}
-                if(qian == num) {prizeCnt++;}
-                if(bai == num) {prizeCnt++;}
-            }
-        }else if("zhong3".equals(type)) {
-            if( shi ==num || qian == num || bai == num
-                    ) {
-                isPrized = true;
-                if(shi == num) {prizeCnt++;}
-                if(qian == num) {prizeCnt++;}
-                if(bai == num) {prizeCnt++;}
-            }
-        }else if("qian2".equals(type)) {
-            if( wan ==num || qian == num ) {
-                isPrized = true;
-                if(wan == num) {prizeCnt++;}
-                if(qian == num) {prizeCnt++;}
-            }
-        }else if("hou2".equals(type)) {
-            if( shi ==num || ge == num) {
-                isPrized = true;
-                if(shi == num) {prizeCnt++;}
-                if(ge == num) {prizeCnt++;}
-            }
-        }
+
         //中
-        if(isPrized) {
+        if (isPrized) {
             MissedPrizeModel mpm = new MissedPrizeModel();
             mpm.setNo(item.getNo());
             mpm.setPrize(true);
             mpm.setPrize(item.getPrize());
             mpm.setTime(item.getTime());
             mpm.setPrizeCnt(prizeCnt);
-            if(result.get(""+ num) != null) {
-                List<MissedPrizeModel> tmpList = result.get(""+num);
-                MissedPrizeModel lastPrizedNo = tmpList.get(tmpList.size()-1);
+            String numStr = "";
+            for (int itemStr : nums) {
+                numStr = numStr + itemStr + "";
+            }
+            if (result.get(numStr) != null) {
+                List<MissedPrizeModel> tmpList = result.get(numStr);
+                MissedPrizeModel lastPrizedNo = tmpList.get(tmpList.size() - 1);
                 TCFFCPRIZE start = new TCFFCPRIZE();
                 start.setNo(lastPrizedNo.getNo());
                 start.setTime(lastPrizedNo.getTime());
@@ -314,69 +397,70 @@ public class PrizeService {
                 end.setTime(mpm.getTime());
 
                 int distantce = LotteryUtil.calTcffcNoDistanceByNo(start, end);
-                mpm.setMissCnt(distantce-1);
+                mpm.setMissCnt(distantce - 1);
                 tmpList.add(mpm);
                 missedList = tmpList;
             } else {
                 mpm.setMissCnt(0);
-                missedList= new ArrayList<>();
+                missedList = new ArrayList<>();
                 missedList.add(mpm);
             }
-            result.put(""+num, missedList);
+            result.put(numStr, missedList);
         }
     }
+
     private void genCurNoZhu3Zhu6MissedModel(Map<String, List<MissedPrizeModel>> result, TCFFCPRIZE item, String zhuType, String type) {
         List<MissedPrizeModel> missedList = null;
         int wan = item.getWan();
         int qian = item.getQian();
         int bai = item.getBai();
         int shi = item.getShi();
-        int ge = item .getGe();
+        int ge = item.getGe();
 
         boolean isPrized = false;
         int prizeCnt = 0;
-        if("qian3".equals(type)) {
-            if("zhu6".equals(zhuType)) {
-                if(wan!= qian && wan != bai && qian != bai) {
+        if ("qian3".equals(type)) {
+            if ("zhu6".equals(zhuType)) {
+                if (wan != qian && wan != bai && qian != bai) {
                     isPrized = true;
                 }
-            } else if ("zhu3".equals(zhuType)){
-                if((wan== qian || wan == bai || qian == bai) && (wan != qian || qian != bai)) {
-                    isPrized = true;
-                }
-            }
-        }else if("zhong3".equals(type)) {
-            if("zhu6".equals(zhuType)) {
-                if(shi!= qian && shi != bai && qian != bai) {
-                    isPrized = true;
-                }
-            } else if ("zhu3".equals(zhuType)){
-                if((shi== qian || shi == bai || qian == bai) && (shi != qian || bai != qian)) {
+            } else if ("zhu3".equals(zhuType)) {
+                if ((wan == qian || wan == bai || qian == bai) && (wan != qian || qian != bai)) {
                     isPrized = true;
                 }
             }
-        }else if("hou3".equals(type)) {
-            if("zhu6".equals(zhuType)) {
-                if(shi!= ge && shi != bai && ge != bai) {
+        } else if ("zhong3".equals(type)) {
+            if ("zhu6".equals(zhuType)) {
+                if (shi != qian && shi != bai && qian != bai) {
                     isPrized = true;
                 }
-            } else if ("zhu3".equals(zhuType)){
-                if((shi== ge || shi == bai || ge == bai) && (shi != ge || bai != ge)) {
+            } else if ("zhu3".equals(zhuType)) {
+                if ((shi == qian || shi == bai || qian == bai) && (shi != qian || bai != qian)) {
+                    isPrized = true;
+                }
+            }
+        } else if ("hou3".equals(type)) {
+            if ("zhu6".equals(zhuType)) {
+                if (shi != ge && shi != bai && ge != bai) {
+                    isPrized = true;
+                }
+            } else if ("zhu3".equals(zhuType)) {
+                if ((shi == ge || shi == bai || ge == bai) && (shi != ge || bai != ge)) {
                     isPrized = true;
                 }
             }
         }
         //中
-        if(isPrized) {
+        if (isPrized) {
             MissedPrizeModel mpm = new MissedPrizeModel();
             mpm.setNo(item.getNo());
             mpm.setPrize(true);
             mpm.setPrize(item.getPrize());
             mpm.setTime(item.getTime());
             mpm.setPrizeCnt(prizeCnt);
-            if(result.get(type + zhuType) != null) {
+            if (result.get(type + zhuType) != null) {
                 List<MissedPrizeModel> tmpList = result.get(type + zhuType);
-                MissedPrizeModel lastPrizedNo = tmpList.get(tmpList.size()-1);
+                MissedPrizeModel lastPrizedNo = tmpList.get(tmpList.size() - 1);
                 TCFFCPRIZE start = new TCFFCPRIZE();
                 start.setNo(lastPrizedNo.getNo());
                 start.setTime(lastPrizedNo.getTime());
@@ -385,12 +469,12 @@ public class PrizeService {
                 end.setTime(mpm.getTime());
 
                 int distantce = LotteryUtil.calTcffcNoDistanceByNo(start, end);
-                mpm.setMissCnt(distantce-1);
+                mpm.setMissCnt(distantce - 1);
                 tmpList.add(mpm);
                 missedList = tmpList;
             } else {
                 mpm.setMissCnt(0);
-                missedList= new ArrayList<>();
+                missedList = new ArrayList<>();
                 missedList.add(mpm);
             }
             result.put(type + zhuType, missedList);

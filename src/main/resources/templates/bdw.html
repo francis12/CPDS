@@ -30,6 +30,9 @@
         <option value="qian2">
             前2不定位
         </option>
+        <option value="hou4tou2">
+            后4二码
+        </option>
     </select>
     最近N期，N=
     <!--<input type="text" id="limitValue" name="value" value="60" onchange="refreshMissedData()"/>
@@ -139,7 +142,7 @@
                 wfType = $("#wfselectionId").val();
                 refreshMissedData();
 				refreshPrizeHis();
-                console.log(this);
+                //console.log(this);
             }
             function showTime() {
                 nowtime = new Date();

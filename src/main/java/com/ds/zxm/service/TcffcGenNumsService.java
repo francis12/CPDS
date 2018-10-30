@@ -90,9 +90,9 @@ public class TcffcGenNumsService {
         //result.putAll(geBdDxDwdGenPrize.run(curPrize));
         //result.putAll(geBdjcDwdGenPrize.run(curPrize));
         //result.putAll(qianBdDxDwdGenPrize.run(curPrize));
-        result.putAll(housanBdGenPrize.run(curPrize));
-        result.putAll(wanDwdGenPrize.run(curPrize));
-        result.putAll(wuxingBdwGenPrize.run(curPrize));
+//        result.putAll(housanBdGenPrize.run(curPrize));
+//        result.putAll(wanDwdGenPrize.run(curPrize));
+//        result.putAll(wuxingBdwGenPrize.run(curPrize));
         //result.putAll(houSiBdwBodongGenPrize.run(curPrize));
         //result.putAll(geBdDwdGenPrize.run(curPrize));
         //result.putAll(baiBdDwdGenPrize.run(curPrize));
@@ -104,13 +104,13 @@ public class TcffcGenNumsService {
         //result.putAll(qh4GenPrize.run(curPrize));
         //result.putAll(qh4GenwuPrize.run(curPrize));
 
-        StringBuffer sb = new StringBuffer();
-        int wan =((curPrize.getAdjustNum()%100000)/10000)%2==0?0:1;
-        int qian =((curPrize.getAdjustNum()%10000)/1000)%2==0?0:1;
-        int bai =((curPrize.getAdjustNum()%1000)/100)%2==0?0:1;
-        int shi =((curPrize.getAdjustNum()%100)/10)%2==0?0:1;
-        int ge =(curPrize.getAdjustNum()%10)%2==0?0:1;
-        sb.append("全波动：" +  qian + bai + shi + ge + "");
+//        StringBuffer sb = new StringBuffer();
+//        int wan =((curPrize.getAdjustNum()%100000)/10000)%2==0?0:1;
+//        int qian =((curPrize.getAdjustNum()%10000)/1000)%2==0?0:1;
+//        int bai =((curPrize.getAdjustNum()%1000)/100)%2==0?0:1;
+//        int shi =((curPrize.getAdjustNum()%100)/10)%2==0?0:1;
+//        int ge =(curPrize.getAdjustNum()%10)%2==0?0:1;
+//        sb.append("全波动：" +  qian + bai + shi + ge + "");
         //log.info(sb.toString());
         return result;
     }

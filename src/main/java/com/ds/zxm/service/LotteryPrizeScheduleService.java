@@ -85,22 +85,24 @@ public class LotteryPrizeScheduleService {
     }
 
     public void startFetchPrizeDataFromQQ() {
-        String s = new SimpleDateFormat("HHmmss").format(new Date());
-        String hh = s.substring(0, 2);
-        String mm = s.substring(2, 4);
-        String ss = s.substring(4, 6);
-        int minute = 0;
-        minute = Integer.parseInt(mm);
-        int second = Integer.parseInt(ss);
-        this.fetchPrizeDataFromQQ(minute, second);
+        Date  curDate = DateUtils.getBaiduCurTime();
+        this.fetchPrizeDataFromQQ(curDate);
     }
 
     int preMinute = 0;
     int preOnlineNum = 0;
 
-    private void fetchPrizeDataFromQQ(int minute, int second) {
+    private void fetchPrizeDataFromQQ(Date curDate) {
         HttpURLConnection conn = null;
         try {
+            String s = new SimpleDateFormat("HHmmss").format(curDate);
+            String hh = s.substring(0, 2);
+            String mm = s.substring(2, 4);
+            String ss = s.substring(4, 6);
+            int minute = 0;
+            minute = Integer.parseInt(mm);
+            int second = Integer.parseInt(ss);
+
             URL realUrl = new URL("http://mma.qq.com/cgi-bin/im/online&callback");
             conn = (HttpURLConnection) realUrl.openConnection();
             conn.setRequestMethod("GET");
@@ -128,7 +130,7 @@ public class LotteryPrizeScheduleService {
                 Integer adjsutNum = onlineNum - preOnlineNum;
                 if (adjsutNum != 0 || (adjsutNum == 0 && (minute - preMinute == 1 && second >= 55))) {
                     //人数有变化或者时间相隔大于1分50秒
-                    TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, new Date(), adjsutNum);
+                    TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, curDate, adjsutNum);
                     String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                     log.info(logInfo);
                     FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
