@@ -38,6 +38,10 @@ public abstract class BaseGenPrize {
     public List<TCFFCPRIZE> genPrizeList = null;
     //是否投注
     protected boolean isToTz = true;
+    //是否写入文件
+    protected boolean isWrite2File = true;
+    //是否同步预测结果到数据库
+    protected boolean isSyncGenData = false;
     //千位定位胆
     File file = null;
     File allFile = null;
@@ -59,7 +63,7 @@ public abstract class BaseGenPrize {
             boolean isPrized = this.isPrized(genPrize, curPrize);
             winResult.put("isPrized", isPrized);
             //预测下一期在线人数，转换成开奖号码
-            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 2);
+            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 3);
 
             Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
             String nextStr =this.getGenPrizeNumsStr(conPrize, curPrize);
@@ -75,8 +79,9 @@ public abstract class BaseGenPrize {
                 e.printStackTrace();
             }
             updateCurNO(nextMin);
-            updateGenPrizeResult(conPrize, curPrize, nextStr);
-
+            if(isSyncGenData) {
+                updateGenPrizeResult(conPrize, curPrize, nextStr);
+            }
             genPrize = conPrize;
         } catch (Exception e) {
             log.error("generateNextNums error", e);
@@ -91,7 +96,7 @@ public abstract class BaseGenPrize {
     //记录预测和开奖结果到文件中
     protected void writeResult2File(String result) {
         try {
-            if (isToTz){
+            if (isWrite2File){
                 FileUtils.writeStringToFile(file, result, false);
                 FileUtils.writeStringToFile(allFile, result, true);
             }
@@ -278,7 +283,7 @@ public abstract class BaseGenPrize {
         }
     }
 
-    public void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze, String nextStr) {
+    public synchronized void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze, String nextStr) {
         GenPrizeModel genPrizeModel = new GenPrizeModel();
         genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
         genPrizeModel.setNo(nextPrize.getNo());
@@ -293,6 +298,10 @@ public abstract class BaseGenPrize {
         } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN3_HE)) {
             genPrizeModel.setGenPrize(nextStr);
         } else if(wfType.equals(BaseConstants.WF_TYPE_WXBDW_HZ)) {
+            genPrizeModel.setGenPrize(nextStr);
+        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DX)) {
+            genPrizeModel.setGenPrize(nextStr);
+        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DS)) {
             genPrizeModel.setGenPrize(nextStr);
         } else {
             genPrizeModel.setGenPrize(nextPrize.getPrize());
@@ -309,42 +318,45 @@ public abstract class BaseGenPrize {
         genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(curPirze.getLotteryCode()).andNoEqualTo(curPirze.getNo()).andTypeEqualTo(wfType);
 
         List<GenPrizeModel> list = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
+        if (list != null && list.size() > 0) {
 
-        GenPrizeModel lastPrizeModel = new GenPrizeModel();
-        lastPrizeModel.setRealPrize(curPirze.getPrize());
-        lastPrizeModel.setIsPrized("0");
-        if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
-            if(list!=null&& list.size()>0) {
+            GenPrizeModel lastPrizeModel = new GenPrizeModel();
+            lastPrizeModel.setRealPrize(curPirze.getPrize());
+            if (wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
                 GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getGe()+"") >= 0;
-                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
+                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getGe() + "") >= 0;
+                lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+
+            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getQian() + "") >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+            } else if (wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getPrize().substring(2)) >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN3_HE)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+            } else if (wfType.equals(BaseConstants.WF_TYPE_WXBDW_HZ)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = curPirze.getPrize().indexOf(genPrize.getGenPrize()) >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DX)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+                    log.info(curPirze.getNo() + wfType+"将被更新为:" + isPrize);
+            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DS)) {
+                    GenPrizeModel genPrize = list.get(0);
+                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
+                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
+                log.info(curPirze.getNo() + wfType+"将被更新为:" + isPrize);
             }
-        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
-            if(list!=null&& list.size()>0) {
-                GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getQian()+"") >= 0;
-                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
-            }
-        }else if(wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
-            if(list!=null&& list.size()>0) {
-                GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getPrize().substring(2)) >= 0;
-                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
-            }
-        }else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN3_HE)) {
-            if(list!=null&& list.size()>0) {
-                GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan()+"") >= 0;
-                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
-            }
-        }else if(wfType.equals(BaseConstants.WF_TYPE_WXBDW_HZ)) {
-            if(list!=null&& list.size()>0) {
-                GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = curPirze.getPrize().indexOf(genPrize.getGenPrize())>= 0;
-                lastPrizeModel.setIsPrized(isPrize?"已中奖":"未中奖");
-            }
+            genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
+
         }
-        genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
     }
 
     //去除一个最大偏移值后的平均值

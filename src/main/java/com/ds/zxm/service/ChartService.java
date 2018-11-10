@@ -186,7 +186,7 @@ public class ChartService {
         return map;
     }
         //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0)
-        // -7 波动大小-正负分开-8wan  -9  qian  bd dx   -11波动的波动单双  - 12 开奖个位大小
+        // -7 波动大小-正负分开-8wan  -9  qian  bd dx   -11波动的波动单双  - 12 开奖个位大小 -13 万位单双  14 万位大小
     public Map<String, Object> queryTecentOnlineDanData2Option(Integer limit, String queryDateStr, int type) throws ParseException {
         if(7==type) {
             return this.queryBdDxData(limit, queryDateStr);
@@ -254,6 +254,15 @@ public class ChartService {
                     } else if (type == 12) {
                         int ge = item.getGe();
                         if(ge >= 5) {
+                            last1Adjust = 0;
+                        } else {
+                            last1Adjust = 1;
+                        }
+                    }else if (type == 13) {
+                        last1Adjust = item.getWan();
+                    } else if (type == 14) {
+                        int wan = item.getWan();
+                        if(wan >= 5) {
                             last1Adjust = 0;
                         } else {
                             last1Adjust = 1;

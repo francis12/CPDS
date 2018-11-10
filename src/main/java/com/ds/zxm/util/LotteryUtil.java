@@ -545,12 +545,31 @@ public class LotteryUtil {
 
 	//根据当前期生成下期五星计划
 	public static List<TCFFCPRIZE> genNextWuXingPrizeByGen(TCFFCPRIZE genPrize) {
-		int startPost = genPrize.getOnlineNum()-20000;
-		int endPost = genPrize.getOnlineNum() + 20000;
+		int startPost = genPrize.getOnlineNum() - 10000;
+		int endPost = genPrize.getOnlineNum() + 10000;
 		List<TCFFCPRIZE> result = createPrizeNumList2(startPost, endPost, genPrize.getTime());
 		return result;
 
 	}
+
+	public static List<TCFFCPRIZE> genNextWuXingPrizeByGen(TCFFCPRIZE genPrize, int size) {
+		int startPost = genPrize.getOnlineNum() - size/2;
+		int endPost = genPrize.getOnlineNum() + size/2;
+
+		List<TCFFCPRIZE> result = new ArrayList<>();
+		for(int i = startPost; i<= endPost;i++) {
+			TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+			tcffcprize.setTime(genPrize.getTime());
+			tcffcprize.setOnlineNum(i);
+			tcffcprize.setLotteryCode("TCFFC");
+			TCFFCPRIZE convertResult = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+			result.add(convertResult);
+		}
+		return result;
+
+	}
+
+
 	//生成投注号码
 	public static List<TCFFCPRIZE> createPrizeNumList2(int preStart, int preEnd, Date time) {
 		List<TCFFCPRIZE> toPrizeNumList = new ArrayList<>();

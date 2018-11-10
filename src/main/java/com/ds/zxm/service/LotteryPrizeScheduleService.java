@@ -131,7 +131,7 @@ public class LotteryPrizeScheduleService {
                 if (adjsutNum != 0 || (adjsutNum == 0 && (minute - preMinute == 1 && second >= 55))) {
                     //人数有变化或者时间相隔大于1分50秒
                     TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, curDate, adjsutNum);
-                    String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
+                    String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum();
                     log.info(logInfo);
                     FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
                     /*if (!(String.valueOf(second).length() == 1)) {
@@ -140,7 +140,7 @@ public class LotteryPrizeScheduleService {
                         log.error(warnInfo);
                     }*/
                     //test
-                    this.insertOnUnexist(tcffcprize);
+                    //this.insertOnUnexist(tcffcprize);
                     tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                 } else {
                     Thread.sleep(500);

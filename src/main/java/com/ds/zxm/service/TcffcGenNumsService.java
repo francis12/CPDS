@@ -12,6 +12,7 @@ import com.ds.zxm.util.LotteryUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.*;
 
 @Service
+@Scope("prototype")
 public class TcffcGenNumsService {
 
     @Resource
@@ -72,6 +74,10 @@ public class TcffcGenNumsService {
     private BaseGenPrize wanDwdGenPrize;
     @Resource(name="wuxingBdwGenPrize")
     private BaseGenPrize wuxingBdwGenPrize;
+    @Resource(name = "wanDwdGenPrize3")
+    protected BaseGenPrize wanDwdGenPrize3;
+    @Resource(name="wanDwdGenPrize2")
+    private BaseGenPrize wanDwdGenPrize2;
 
 
 
@@ -85,6 +91,9 @@ public class TcffcGenNumsService {
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         this.updateCurPrize(curPrize);
         Map<String, Boolean> result = new HashMap<>();
+        result.putAll(wuxingGenPrize.run(curPrize));
+        result.putAll(wanDwdGenPrize2.run(curPrize));
+        result.putAll(wanDwdGenPrize3.run(curPrize));
         //result.putAll(qianDwdGenPrize.run(curPrize));
         //result.putAll(geBdDwdGenPrize.run(curPrize));
         //result.putAll(geBdDxDwdGenPrize.run(curPrize));

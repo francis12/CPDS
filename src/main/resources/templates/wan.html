@@ -2,18 +2,18 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>腾讯分分彩万位</title>
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <title>腾讯分分彩个位</title>
 </head>
 <body style="padding:0" onload="init()">
 <div id="condition">
     最近N期，N=
-    <input type="text" id="limitValue" onchange="refreshK()" name="value" value="100" />
+    <input type="text" id="limitValue" name="value" onchange="refreshK()" value="100" />
     <input type="checkbox" id="autoUpdate" onclick="autoUpdate_OnClick()" checked="checked"  style="font-size:50px;"/>自动更新
 </div>
 <div id="queryDate">
     日期:
-    <input type="text" id="dateText" onchange="refreshK()"/>
+    <input type="text" id="dateText" onchange="refreshK()" />
 </div>
 
 <div  style="text-align:center;">
@@ -139,11 +139,11 @@ function refreshPrizeHis() {
 </script>
 <script type="text/javascript">
 var soundplayTime = Date.now();
-  var curPrizeNo = "";
 function refreshK() {
     ge_ajax();
     ge_dx_ajax();
 }
+  var curPrizeNo = "";
    function updatePrize() {
    $.ajax({
           url : staticUrl + "/gen/getLatestPrize?lotteryCode=TCFFC&signCode=ok",
@@ -267,7 +267,7 @@ function refreshK() {
 
 	var limit = $("#limitValue").val();
 	var date = $("#dateText").val();
-	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=0";
+	url = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=13";
 	$.ajax({
           url : url,
           success: function(responseText) {
@@ -357,7 +357,7 @@ var ge_dx_ajax = function() {
 
     var limit = $("#limitValue").val();
     var date = $("#dateText").val();
-    var  url2 = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=12";
+    var  url2 = staticUrl + "chart/tecentOnlineDataByType?" + "&date=" + date + "&limit=" + limit + "&type=14";
     $.ajax({
         url : url2,
         success: function(responseText) {
