@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ds.zxm</groupId>
-    <artifactId>SSC</artifactId>
+    <groupId>com.ssc</groupId>
+    <artifactId>txffc</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <parent>
@@ -162,7 +162,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ds.zxm.Application</mainClass>
+                    <mainClass>com.ssc.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>

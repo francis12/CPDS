@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ds.zxm.mapper.GenPrizeModelDAO" >
-  <resultMap id="BaseResultMap" type="com.ds.zxm.model.GenPrizeModel" >
+<mapper namespace="com.ssc.mapper.GenPrizeModelDAO" >
+  <resultMap id="BaseResultMap" type="com.ssc.model.GenPrizeModel" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="no" property="no" jdbcType="VARCHAR" />
@@ -71,7 +71,7 @@
   <sql id="Base_Column_List" >
     id, lottery_code, no, gen_prize, type, real_prize, is_prized
   </sql>
-  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.GenPrizeModelCondition" >
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.GenPrizeModelCondition" >
     select
     <if test="distinct" >
       distinct
@@ -95,13 +95,13 @@
     delete from t_gen_prize
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.GenPrizeModelCondition" >
+  <delete id="deleteByCondition" parameterType="com.ssc.model.GenPrizeModelCondition" >
     delete from t_gen_prize
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ds.zxm.model.GenPrizeModel" >
+  <insert id="insert" parameterType="com.ssc.model.GenPrizeModel" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -112,7 +112,7 @@
       #{type,jdbcType=VARCHAR}, #{realPrize,jdbcType=VARCHAR}, #{isPrized,jdbcType=CHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.ds.zxm.model.GenPrizeModel" >
+  <insert id="insertSelective" parameterType="com.ssc.model.GenPrizeModel" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -158,7 +158,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByCondition" parameterType="com.ds.zxm.model.GenPrizeModelCondition" resultType="java.lang.Integer" >
+  <select id="countByCondition" parameterType="com.ssc.model.GenPrizeModelCondition" resultType="java.lang.Integer" >
     select count(*) from t_gen_prize
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -206,7 +206,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.GenPrizeModel" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssc.model.GenPrizeModel" >
     update t_gen_prize
     <set >
       <if test="lotteryCode != null" >
@@ -230,7 +230,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.GenPrizeModel" >
+  <update id="updateByPrimaryKey" parameterType="com.ssc.model.GenPrizeModel" >
     update t_gen_prize
     set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       no = #{no,jdbcType=VARCHAR},

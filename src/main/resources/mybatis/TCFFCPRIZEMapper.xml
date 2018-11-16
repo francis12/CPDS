@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ds.zxm.mapper.TCFFCPRIZEDAO" >
-  <resultMap id="BaseResultMap" type="com.ds.zxm.model.TCFFCPRIZE" >
+<mapper namespace="com.ssc.mapper.TCFFCPRIZEDAO" >
+  <resultMap id="BaseResultMap" type="com.ssc.model.TCFFCPRIZE" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="no" property="no" jdbcType="VARCHAR" />
@@ -79,7 +79,7 @@
     id, lottery_code, no, prize, wan, qian, bai, shi, ge, online_num, adjust_num, alias_no, 
     lottery_date, time
   </sql>
-  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" >
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.TCFFCPRIZECondition" >
     select
     <if test="distinct" >
       distinct
@@ -103,13 +103,13 @@
     delete from t_tcffc_prize
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" >
+  <delete id="deleteByCondition" parameterType="com.ssc.model.TCFFCPRIZECondition" >
     delete from t_tcffc_prize
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+  <insert id="insert" parameterType="com.ssc.model.TCFFCPRIZE" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -143,7 +143,7 @@
     )
      </foreach >
   </insert>
-  <insert id="insertSelective" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+  <insert id="insertSelective" parameterType="com.ssc.model.TCFFCPRIZE" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -231,7 +231,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByCondition" parameterType="com.ds.zxm.model.TCFFCPRIZECondition" resultType="java.lang.Integer" >
+  <select id="countByCondition" parameterType="com.ssc.model.TCFFCPRIZECondition" resultType="java.lang.Integer" >
     select count(*) from t_tcffc_prize
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -307,7 +307,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssc.model.TCFFCPRIZE" >
     update t_tcffc_prize
     <set >
       <if test="lotteryCode != null" >
@@ -352,7 +352,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.TCFFCPRIZE" >
+  <update id="updateByPrimaryKey" parameterType="com.ssc.model.TCFFCPRIZE" >
     update t_tcffc_prize
     set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       no = #{no,jdbcType=VARCHAR},

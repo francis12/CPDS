@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ds.zxm.mapper.TecentTimeDAO" >
-  <resultMap id="BaseResultMap" type="com.ds.zxm.model.TecentTime" >
+<mapper namespace="com.ssc.mapper.TecentTimeDAO" >
+  <resultMap id="BaseResultMap" type="com.ssc.model.TecentTime" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
@@ -69,7 +69,7 @@
   <sql id="Base_Column_List" >
     id, start_time, end_time, start, end
   </sql>
-  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.TecentTimeCondition" >
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.TecentTimeCondition" >
     select
     <if test="distinct" >
       distinct
@@ -93,13 +93,13 @@
     delete from t_tecent_time
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.TecentTimeCondition" >
+  <delete id="deleteByCondition" parameterType="com.ssc.model.TecentTimeCondition" >
     delete from t_tecent_time
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ds.zxm.model.TecentTime" >
+  <insert id="insert" parameterType="com.ssc.model.TecentTime" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -108,7 +108,7 @@
     values (#{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{start,jdbcType=INTEGER}, 
       #{end,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.ds.zxm.model.TecentTime" >
+  <insert id="insertSelective" parameterType="com.ssc.model.TecentTime" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -142,7 +142,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByCondition" parameterType="com.ds.zxm.model.TecentTimeCondition" resultType="java.lang.Integer" >
+  <select id="countByCondition" parameterType="com.ssc.model.TecentTimeCondition" resultType="java.lang.Integer" >
     select count(*) from t_tecent_time
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -182,7 +182,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.TecentTime" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssc.model.TecentTime" >
     update t_tecent_time
     <set >
       <if test="startTime != null" >
@@ -200,7 +200,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.TecentTime" >
+  <update id="updateByPrimaryKey" parameterType="com.ssc.model.TecentTime" >
     update t_tecent_time
     set start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},

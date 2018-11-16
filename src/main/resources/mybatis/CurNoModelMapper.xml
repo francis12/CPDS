@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ds.zxm.mapper.CurNoModelDAO" >
-  <resultMap id="BaseResultMap" type="com.ds.zxm.model.CurNoModel" >
+<mapper namespace="com.ssc.mapper.CurNoModelDAO" >
+  <resultMap id="BaseResultMap" type="com.ssc.model.CurNoModel" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="cur_no" property="curNo" jdbcType="VARCHAR" />
@@ -70,7 +70,7 @@
   <sql id="Base_Column_List" >
     id, lottery_code, cur_no, next_no, next_sec, prize
   </sql>
-  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ds.zxm.model.CurNoModelCondition" >
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.CurNoModelCondition" >
     select
     <if test="distinct" >
       distinct
@@ -94,13 +94,13 @@
     delete from t_cur_no
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByCondition" parameterType="com.ds.zxm.model.CurNoModelCondition" >
+  <delete id="deleteByCondition" parameterType="com.ssc.model.CurNoModelCondition" >
     delete from t_cur_no
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ds.zxm.model.CurNoModel" >
+  <insert id="insert" parameterType="com.ssc.model.CurNoModel" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -109,7 +109,7 @@
     values (#{lotteryCode,jdbcType=VARCHAR}, #{curNo,jdbcType=VARCHAR}, #{nextNo,jdbcType=VARCHAR}, 
       #{nextSec,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.ds.zxm.model.CurNoModel" >
+  <insert id="insertSelective" parameterType="com.ssc.model.CurNoModel" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
@@ -149,7 +149,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByCondition" parameterType="com.ds.zxm.model.CurNoModelCondition" resultType="java.lang.Integer" >
+  <select id="countByCondition" parameterType="com.ssc.model.CurNoModelCondition" resultType="java.lang.Integer" >
     select count(*) from t_cur_no
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -193,7 +193,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ds.zxm.model.CurNoModel" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssc.model.CurNoModel" >
     update t_cur_no
     <set >
       <if test="lotteryCode != null" >
@@ -214,7 +214,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ds.zxm.model.CurNoModel" >
+  <update id="updateByPrimaryKey" parameterType="com.ssc.model.CurNoModel" >
     update t_cur_no
     set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       cur_no = #{curNo,jdbcType=VARCHAR},
