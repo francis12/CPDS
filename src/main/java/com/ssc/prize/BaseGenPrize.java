@@ -74,7 +74,7 @@ public abstract class BaseGenPrize {
             try {
                 if (this.getClass() == WuxingGenPrize.class) {
                     String adjustStr = "实际：" + curPrize.getAdjustNum()  +(isPrized?"中":"挂") + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
-                    FileUtils.writeStringToFile(new File("adjust.txt"), adjustStr, true);
+                    FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "adjust.txt"), adjustStr, true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.ssc.service;
 
+import com.ssc.constants.BaseConstants;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
@@ -253,7 +254,7 @@ public class LotteryStrategyService {
                             String[] numArr  = (String[]) calResult;
                             baseAmt = BigDecimal.valueOf(numArr.length).divide(new BigDecimal("10000"), 8 ,BigDecimal.ROUND_FLOOR);
                             baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
-                            FileUtils.writeStringToFile(new File("回测结果.txt"), "第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂") + "\r\n", true);
+                            FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "回测结果.txt"), "第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂") + "\r\n", true);
 
                             log.info("第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂"));
                         } else {

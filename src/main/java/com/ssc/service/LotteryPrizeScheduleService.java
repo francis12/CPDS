@@ -2,6 +2,7 @@ package com.ssc.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ssc.constants.BaseConstants;
 import com.ssc.mapper.CurNoModelDAO;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.model.*;
@@ -136,7 +137,7 @@ public class LotteryPrizeScheduleService {
                     TCFFCPRIZE tcffcprize = TcffcPrizeConverter.convert2TCFFCPrizeFromOnlineNum(onlineNum, curDate, adjsutNum);
                     String logInfo = tcffcprize.getNo() + "开奖号码:" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum();
                     log.info(logInfo);
-                    FileUtils.writeStringToFile(new File("qqData.txt"), logInfo, true);
+                    FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "qqData.txt"), logInfo, true);
                     /*if (!(String.valueOf(second).length() == 1)) {
                         String warnInfo = tcffcprize.getNo() + "开奖时间异常提醒！！！(分钟:" + minute + "秒：" + second + ")" + tcffcprize.getPrize() + ",在线人数:" + tcffcprize.getOnlineNum() + ",波动数:" + tcffcprize.getAdjustNum() + "\r\n";
                         FileUtils.writeStringToFile(new File("qqWarn.txt"), warnInfo, true);

@@ -89,6 +89,9 @@ public class TcffcGenNumsService {
     private List<TCFFCPRIZE> genPrizeList = null;
     String genStr = "";
 
+    public void checkStrategy(List<BaseGenPrize> list) {
+
+    }
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         this.updateCurPrize(curPrize);
         Map<String, Boolean> result = new HashMap<>();
@@ -144,25 +147,26 @@ public class TcffcGenNumsService {
     }
     public Map<String, Boolean> generateNextNums2(TCFFCPRIZE  curPrize) {
         Map<String, Boolean> winResult = new HashMap<>();
-        //前2
-        File file = new File("qian2AllFile.txt");
-        File file2 = new File("qian2File.txt");
+        String prePath = BaseConstants.OUTPUT_PATH + File.separator ;
+                //前2
+        File file = new File(prePath+ "qian2AllFile.txt");
+        File file2 = new File(prePath+ "qian2File.txt");
 
         //中3定位胆
-        File zhong3File = new File("zhong3File.txt");
-        File zhong3AllFile = new File("zhong3AllFile.txt");
+        File zhong3File = new File(prePath+ "zhong3File.txt");
+        File zhong3AllFile = new File(prePath+ "zhong3AllFile.txt");
 
         //前3定位胆
-        File qian3File = new File("qian3File.txt");
-        File qian3AllFile = new File("qian3AllFile.txt");
+        File qian3File = new File(prePath+ "qian3File.txt");
+        File qian3AllFile = new File(prePath+ "qian3AllFile.txt");
 
         //千位定位胆
-        File qianFile = new File("qianFile.txt");
-        File qianAllFile = new File("qianAllFile.txt");
+        File qianFile = new File(prePath+ "qianFile.txt");
+        File qianAllFile = new File(prePath+ "qianAllFile.txt");
 
         //五星
-        File wuXingFile = new File("wuXingFile.txt");
-        File wuXingAllFile = new File("wuXingAllFile.txt");
+        File wuXingFile = new File(prePath+ "wuXingFile.txt");
+        File wuXingAllFile = new File(prePath+ "wuXingAllFile.txt");
 
         try {
             boolean isQian3Prized = false;
@@ -213,7 +217,7 @@ public class TcffcGenNumsService {
 
             String adjustStr = "实际：" + curPrize.getAdjustNum()  +(iaWuXingTstPrized?"中":"挂") + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
             try {
-                FileUtils.writeStringToFile(new File("adjust.txt"), adjustStr, true);
+                FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "adjust.txt"), adjustStr, true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
