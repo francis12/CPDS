@@ -1,4 +1,4 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.constants.BaseConstants;
 import com.ssc.model.TCFFCPRIZE;
@@ -18,18 +18,12 @@ public class HousanBdGenPrize extends BaseGenPrize {
     //后3
     @Override
     void init() {
-        file = new File("hou3BdFile.txt");
-        allFile = new File("hou3BdAllFile.txt");
-
         this.wfType = BaseConstants.WF_TYPE_HOU3_BD;
     }
     int distance = 1440*15;
     int amount = 700;
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrizes) {
-        if (null == conPrize) {
-            return "";
-        }
+    public String getGenPrizeNumsStr(TCFFCPRIZE curPrizes) {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         Date endTime = curPrizes.getTime();
         Date startTime = DateUtils.addMinutes(-distance, endTime);
@@ -89,7 +83,7 @@ public class HousanBdGenPrize extends BaseGenPrize {
     }
 
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized(TCFFCPRIZE curPrize) {
         boolean result = false;
         String hou3Bd = curPrize.getPrize().substring(2,5);
         if (null != genPrizeList && genPrizeList.size() > 0) {

@@ -333,72 +333,72 @@ public class TCFFCPRIZECondition  {
         }
 
         public Criteria andPrizeIsNull() {
-            addCriterion("prize is null");
+            addCriterion("prizeschedule is null");
             return (Criteria) this;
         }
 
         public Criteria andPrizeIsNotNull() {
-            addCriterion("prize is not null");
+            addCriterion("prizeschedule is not null");
             return (Criteria) this;
         }
 
         public Criteria andPrizeEqualTo(String value) {
-            addCriterion("prize =", value, "prize");
+            addCriterion("prizeschedule =", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotEqualTo(String value) {
-            addCriterion("prize <>", value, "prize");
+            addCriterion("prizeschedule <>", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeGreaterThan(String value) {
-            addCriterion("prize >", value, "prize");
+            addCriterion("prizeschedule >", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeGreaterThanOrEqualTo(String value) {
-            addCriterion("prize >=", value, "prize");
+            addCriterion("prizeschedule >=", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLessThan(String value) {
-            addCriterion("prize <", value, "prize");
+            addCriterion("prizeschedule <", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLessThanOrEqualTo(String value) {
-            addCriterion("prize <=", value, "prize");
+            addCriterion("prizeschedule <=", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLike(String value) {
-            addCriterion("prize like", value, "prize");
+            addCriterion("prizeschedule like", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotLike(String value) {
-            addCriterion("prize not like", value, "prize");
+            addCriterion("prizeschedule not like", value, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeIn(List<String> values) {
-            addCriterion("prize in", values, "prize");
+            addCriterion("prizeschedule in", values, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotIn(List<String> values) {
-            addCriterion("prize not in", values, "prize");
+            addCriterion("prizeschedule not in", values, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeBetween(String value1, String value2) {
-            addCriterion("prize between", value1, value2, "prize");
+            addCriterion("prizeschedule between", value1, value2, "prizeschedule");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotBetween(String value1, String value2) {
-            addCriterion("prize not between", value1, value2, "prize");
+            addCriterion("prizeschedule not between", value1, value2, "prizeschedule");
             return (Criteria) this;
         }
 
@@ -1023,7 +1023,7 @@ public class TCFFCPRIZECondition  {
         }
 
         public Criteria andPrizeLikeInsensitive(String value) {
-            addCriterion("upper(prize) like", value.toUpperCase(), "prize");
+            addCriterion("upper(prizeschedule) like", value.toUpperCase(), "prizeschedule");
             return (Criteria) this;
         }
 

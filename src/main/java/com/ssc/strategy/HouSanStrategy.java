@@ -1,7 +1,7 @@
 package com.ssc.strategy;
 
 import com.ssc.model.TCFFCPRIZE;
-import com.ssc.prize.HousanGenPrize;
+import com.ssc.prizeschedule.HousanGenPrize;
 import com.ssc.service.LotteryStrategyService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -33,8 +33,8 @@ public class HouSanStrategy extends BaseStrategy{
         String hou3Prize = realNo.getPrize().substring(2, 5);
         if (null != genPrizeList && genPrizeList.size() > 0) {
             for (TCFFCPRIZE tcffcprize : genPrizeList) {
-                String prize = tcffcprize.getPrize();
-                if (StringUtils.isNotEmpty(prize) && prize.equals(hou3Prize)) {
+                String prizeschedule = tcffcprize.getPrize();
+                if (StringUtils.isNotEmpty(prizeschedule) && prizeschedule.equals(hou3Prize)) {
                     result = true;
                     break;
                 }

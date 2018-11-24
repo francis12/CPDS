@@ -1,6 +1,6 @@
 package com.ssc.controller;
 
-import com.ssc.service.LotteryPrizeScheduleService;
+import com.ssc.prize.service.LotteryPrizeScheduleService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,20 +24,6 @@ public class FetchPrizeData {
 		String result = "";
 		try {
 			prizeService.batchFetchTCFFCData(start, end);
-		} catch (Exception e) {
-			log.error("initdata error");
-		}
-		return result;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/batchFetchTCFFCDATAFromTecentOnline", method = {RequestMethod.GET})
-	public String batchFetchTCFFCDATAFromTecentOnline(@RequestParam(required = true, value = "start") int start,
-								 @RequestParam(required = true, value = "end") int end,
-								 @RequestParam(required = true, value = "size") int size) {
-		String result = "";
-		try {
-			prizeService.batchFetchTCFFCDATAFromTecentOnline(start, end, size);
 		} catch (Exception e) {
 			log.error("initdata error");
 		}

@@ -1,4 +1,4 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.util.LotteryUtil;
@@ -17,9 +17,9 @@ public class WuxingGenPrize extends BaseGenPrize {
     }
 
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize) {
+    String getGenPrizeNumsStr(TCFFCPRIZE curPrize) {
         //五星根据计算的波动值前后加减25000，算出五星号码
-        log.info(conPrize.getNo() + "预测波动:" + conPrize.getAdjustNum());
+       /* log.info(conPrize.getNo() + "预测波动:" + conPrize.getAdjustNum());
         List<TCFFCPRIZE> tcffcprizeList = LotteryUtil.genNextWuXingPrizeByGen(conPrize, 30000);
         Collections.sort(tcffcprizeList);
 
@@ -42,7 +42,8 @@ public class WuxingGenPrize extends BaseGenPrize {
             });
         }
         LotteryUtil.sortMapByValue(qian4Map, "-1");
-        return wuXingSb.toString();
+        return wuXingSb.toString();*/
+       return null;
     }
     private void setMapValuePlus(String key, Map<String, Integer> map) {
         if(null == map.get(key)) {
@@ -52,8 +53,9 @@ public class WuxingGenPrize extends BaseGenPrize {
         }
     }
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
-        boolean result = false;if (null != genPrizeList && genPrizeList.size() > 0) {
+    boolean isPrized( TCFFCPRIZE curPrize) {
+        boolean result = false;
+        if (null != genPrizeList && genPrizeList.size() > 0) {
             result = genPrizeList.contains(curPrize.getPrize());
             for(TCFFCPRIZE item : genPrizeList) {
                 if(item.getPrize().equals(curPrize.getPrize())) {

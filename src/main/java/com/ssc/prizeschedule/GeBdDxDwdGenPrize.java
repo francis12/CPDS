@@ -1,30 +1,30 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
+import com.ssc.Application;
 import com.ssc.constants.BaseConstants;
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
 import com.ssc.util.DateUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+@Scope("prototype")
 @Service
-public class QianBdDxDwdGenPrize extends BaseGenPrize {
+public class GeBdDxDwdGenPrize extends BaseGenPrize {
     @Override
     void init() {
-        file = new File("qianBdDxFile.txt");
-        allFile = new File("qianBdDxAllFile.txt");
-        wfType = BaseConstants.WF_TYPE_DWD_QIAN_JC;
+        this.wfType = BaseConstants.WF_TYPE_DWD_GE_DX;
+        this.isSyncGenData =true;
     }
-    public static final String shuan = "0,2,4,6,8";
-
-    public static final String dan = "1,3,5,7,9";
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize) {
+    String getGenPrizeNumsStr( TCFFCPRIZE curPrize) {
 
+        String result = "";
         StringBuffer sb = new StringBuffer();
         //取最近10期开奖数据
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
@@ -36,7 +36,7 @@ public class QianBdDxDwdGenPrize extends BaseGenPrize {
         //转波动的大小
         List<String> bdDsList = new ArrayList<>();
         for(TCFFCPRIZE item: tcffcprizeList) {
-            int adjust = (item.getAdjustNum()%10000)/1000;
+            int adjust = item.getAdjustNum()%10;
             if((0<=adjust&&adjust<=4)||(-9<=adjust&&adjust<=-6)) {
                 bdDsList.add("0");
             } else {
@@ -46,32 +46,30 @@ public class QianBdDxDwdGenPrize extends BaseGenPrize {
 
         //判断下一期波动的大小
         String nextBdDs = this.judgeNextBdDs(bdDsList);
-        Integer curDx = curPrize.getQian();
+        Integer curDx = curPrize.getGe();
 
 
-        genStr = "";
         if("0".equals(nextBdDs)) {
-                for(int i=0;i<5;i++) {
-                    int tmp = curDx+i;
-                    if (tmp >= 10) {
-                        tmp = tmp - 10;
-                    }
-                    genStr =  genStr + "" + tmp + ",";
+            for(int i=0;i<5;i++) {
+                int tmp = curDx+i;
+                if (tmp >= 10) {
+                    tmp = tmp - 10;
                 }
+                result =  result + "" + tmp + ",";
+            }
         } else if("1".equals(nextBdDs)) {
-                for(int i=5;i<10;i++) {
-                    int tmp = curDx+i;
-                    if (tmp >= 10) {
-                        tmp = tmp - 10;
-                    }
-                    genStr =  genStr + "" + tmp + ",";
+            for(int i=5;i<10;i++) {
+                int tmp = curDx+i;
+                if (tmp >= 10) {
+                    tmp = tmp - 10;
                 }
+                result =  result + "" + tmp + ",";
+            }
         } else {
-            genStr = nextBdDs;
+            result = nextBdDs;
         }
-        log.info("qian位当前波动大小为：" + bdDsList.toString() + ",ben期" + curPrize.getNo() + "波动：" + nextBdDs + ",本期qian位大小：" +  curDx + ",预测下期qian位:" + genStr);
-
-        return genStr;
+        Application.cache.put(cacheKey, result);
+        return result;
     }
 
     private String judgeNextBdDs(List<String> bdList){
@@ -139,7 +137,7 @@ public class QianBdDxDwdGenPrize extends BaseGenPrize {
             //剩余情况取最近5期出现最多的
             List<String> subBdList = null;
             if(bdList.size() >=5) {
-                 subBdList = bdList.subList(bdList.size()-5,bdList.size());
+                subBdList = bdList.subList(bdList.size()-5,bdList.size());
             } else {
                 subBdList = bdList;
             }
@@ -161,12 +159,12 @@ public class QianBdDxDwdGenPrize extends BaseGenPrize {
     }
 
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized( TCFFCPRIZE curPrize) {
         boolean result = false;
-        if (null != genPrize) {
-            if(genStr.indexOf("" + curPrize.getGe()) >= 0) {
-                result = true;
-            }
+        String prize = (String)Application.cache.get(cacheKey);
+
+        if(StringUtils.isNotEmpty(prize) && prize.indexOf("" + curPrize.getGe()) >= 0) {
+            result = true;
         }
         return result;
     }

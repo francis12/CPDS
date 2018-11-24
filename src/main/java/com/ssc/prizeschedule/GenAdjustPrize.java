@@ -1,14 +1,15 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.constants.BaseConstants;
 import com.ssc.mapper.CurNoModelDAO;
 import com.ssc.mapper.GenPrizeModelDAO;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.mapper.TecentTimeDAO;
-import com.ssc.model.*;
+import com.ssc.model.TCFFCPRIZE;
+import com.ssc.model.TCFFCPRIZECondition;
+import com.ssc.model.TcffcPrizeConverter;
 import com.ssc.service.TcffcGenNumsService;
 import com.ssc.util.DateUtils;
-import com.ssc.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -20,9 +21,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+
 @Scope("prototype")
 @Service
-public abstract class BaseGenPrize {
+public class GenAdjustPrize {
 
 
     @Resource
@@ -51,50 +53,10 @@ public abstract class BaseGenPrize {
 
     String wfType ="";
 
-    public Map<String, Boolean> run(TCFFCPRIZE curPrize) {
-        this.init();
-        Map<String, Boolean> genResult = this.generateNextNums(curPrize);
-        return genResult;
-    }
-    public Map<String, Boolean> generateNextNums(TCFFCPRIZE curPrize) {
-        Map<String, Boolean> winResult = new HashMap<>();
 
-        try {
-            //当前期开奖号码和预测号码
-            boolean isPrized = this.isPrized(genPrize, curPrize);
-            winResult.put("isPrized", isPrized);
-            //预测下一期在线人数，转换成开奖号码
-            TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 3);
-
-            Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
-            String nextStr =this.getGenPrizeNumsStr(conPrize, curPrize);
-            //String genStr = " zhuan(" +  nextStr + ")zhuan ";
-            String strResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " " + (isPrized ? "中" : "挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + nextStr;
-            writeResult2File(strResult);
-            try {
-                if (this.getClass() == WuxingGenPrize.class) {
-                    String adjustStr = "实际：" + curPrize.getAdjustNum()  +(isPrized?"中":"挂") + "\r\n预测" + conPrize.getNo() + " : "  + conPrize.getAdjustNum();
-                    FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "adjust.txt"), adjustStr, true);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            updateCurNO(nextMin);
-            if(isSyncGenData) {
-                updateGenPrizeResult(conPrize, curPrize, nextStr);
-            }
-            genPrize = conPrize;
-        } catch (Exception e) {
-            log.error("generateNextNums error", e);
-        }
-        return winResult;
+    public void generateNextNums(TCFFCPRIZE curPrize) {
+        TCFFCPRIZE conPrize = this.calGenPrizeByRateNum(curPrize, 3);
     }
-    abstract void init();
-    //conPrize:预测的下期号码，curPrize:当前期实际开出的号码
-    abstract String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize);
-    //判断是否中奖
-    abstract boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize);
-    //记录预测和开奖结果到文件中
     protected void writeResult2File(String result) {
         try {
             if (isWrite2File){
@@ -267,97 +229,6 @@ public abstract class BaseGenPrize {
 
         TCFFCPRIZE conPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
         return conPrize;
-    }
-
-    public void updateCurNO(Date date) {
-        CurNoModel curNOModel = new CurNoModel();
-        curNOModel.setLotteryCode("TCFFC");
-        String nextNO = TcffcPrizeConverter.genNofromTime(date);
-        curNOModel.setNextNo(nextNO);
-        CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
-        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
-        int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
-        if (cnt > 0) {
-            curNOModelDAO.updateByConditionSelective(curNOModel, curNOModelCondition);
-        } else {
-            curNOModelDAO.insert(curNOModel);
-        }
-    }
-
-    public synchronized void updateGenPrizeResult(TCFFCPRIZE nextPrize, TCFFCPRIZE curPirze, String nextStr) {
-        GenPrizeModel genPrizeModel = new GenPrizeModel();
-        genPrizeModel.setLotteryCode(nextPrize.getLotteryCode());
-        genPrizeModel.setNo(nextPrize.getNo());
-        if(wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
-            genPrizeModel.setGenPrize(nextStr);
-
-        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
-            genPrizeModel.setGenPrize(nextStr);
-
-        } else if(wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
-            genPrizeModel.setGenPrize(nextStr);
-        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN3_HE)) {
-            genPrizeModel.setGenPrize(nextStr);
-        } else if(wfType.equals(BaseConstants.WF_TYPE_WXBDW_HZ)) {
-            genPrizeModel.setGenPrize(nextStr);
-        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DX)) {
-            genPrizeModel.setGenPrize(nextStr);
-        } else if(wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DS)) {
-            genPrizeModel.setGenPrize(nextStr);
-        } else {
-            genPrizeModel.setGenPrize(nextPrize.getPrize());
-        }
-        genPrizeModel.setType(wfType);
-        GenPrizeModelCondition condition = new GenPrizeModelCondition();
-        condition.createCriteria().andTypeEqualTo(wfType).andNoEqualTo(nextPrize.getNo());
-        int count = genPrizeModelDAO.countByCondition(condition);
-        if (count <= 0) {
-            genPrizeModelDAO.insert(genPrizeModel);
-        }
-
-        GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
-        genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(curPirze.getLotteryCode()).andNoEqualTo(curPirze.getNo()).andTypeEqualTo(wfType);
-
-        List<GenPrizeModel> list = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
-        if (list != null && list.size() > 0) {
-
-            GenPrizeModel lastPrizeModel = new GenPrizeModel();
-            lastPrizeModel.setRealPrize(curPirze.getPrize());
-            if (wfType.equals(BaseConstants.WF_TYPE_DWD_GE_JC)) {
-                GenPrizeModel genPrize = list.get(0);
-                boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getGe() + "") >= 0;
-                lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-
-            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_QIAN_JC)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getQian() + "") >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-            } else if (wfType.equals(BaseConstants.WF_TYPE_HOU3_BD)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getPrize().substring(2)) >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN3_HE)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-            } else if (wfType.equals(BaseConstants.WF_TYPE_WXBDW_HZ)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = curPirze.getPrize().indexOf(genPrize.getGenPrize()) >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DX)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-                    log.info(curPirze.getNo() + wfType+"将被更新为:" + isPrize);
-            } else if (wfType.equals(BaseConstants.WF_TYPE_DWD_WAN4_DS)) {
-                    GenPrizeModel genPrize = list.get(0);
-                    boolean isPrize = genPrize.getGenPrize().indexOf(curPirze.getWan() + "") >= 0;
-                    lastPrizeModel.setIsPrized(isPrize ? "已中奖" : "未中奖");
-                log.info(curPirze.getNo() + wfType+"将被更新为:" + isPrize);
-            }
-            genPrizeModelDAO.updateByConditionSelective(lastPrizeModel, genPrizeModelCondition);
-
-        }
     }
 
     //去除一个最大偏移值后的平均值

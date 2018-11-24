@@ -1,7 +1,7 @@
 package com.ssc.strategy;
 
 import com.ssc.model.TCFFCPRIZE;
-import com.ssc.prize.HousanBdGenPrize;
+import com.ssc.prizeschedule.HousanBdGenPrize;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,9 +39,8 @@ public class HouSanBdStrategy extends BaseStrategy{
     public Object calBetNum(Date time) {
         TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
         tcffcprize.setTime(time);
-        housanbdGenPrize.getGenPrizeNumsStr(tcffcprize, tcffcprize);
+        housanbdGenPrize.getGenPrizeNumsStr( tcffcprize);
         List<TCFFCPRIZE> result = new ArrayList<>();
-        BeanUtils.copyProperties(housanbdGenPrize.genPrizeList, result);
         return result;
     }
 }

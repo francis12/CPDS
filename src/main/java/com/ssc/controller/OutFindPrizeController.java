@@ -5,7 +5,7 @@ import com.ssc.model.CurNoModel;
 import com.ssc.model.GenPrizeModel;
 import com.ssc.model.GenPrizeModelCondition;
 import com.ssc.service.LotteryGenService;
-import com.ssc.service.LotteryPrizeScheduleService;
+import com.ssc.prize.service.LotteryPrizeScheduleService;
 import com.ssc.util.LotteryUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

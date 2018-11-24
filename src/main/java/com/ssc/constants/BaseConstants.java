@@ -23,6 +23,10 @@ public interface BaseConstants {
     String WF_TYPE_HOU3_BD = "0101";
     String WF_TYPE_WXBDW_HZ = "0201";
 
+
+    String WF_TYPE_DWD_GE_DS = "0021";
+    String WF_TYPE_DWD_GE_DX = "0022";
+
     String OUTPUT_PATH = "output";
 
 }

@@ -6,10 +6,9 @@ import com.ssc.mapper.GenPrizeModelDAO;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.mapper.TecentTimeDAO;
 import com.ssc.model.*;
-import com.ssc.prize.BaseGenPrize;
+import com.ssc.prizeschedule.BaseGenPrize;
 import com.ssc.util.DateUtils;
 import com.ssc.util.LotteryUtil;
-import com.ssc.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -39,42 +38,13 @@ public class TcffcGenNumsService {
     private BaseGenPrize qianDwdGenPrize;
     @Resource(name="wuxingGenPrize")
     private BaseGenPrize wuxingGenPrize;
-    @Resource(name="zhongsanGenPrize")
-    private BaseGenPrize zhongsanGenPrize;
-    @Resource(name="qianSiGenPrize")
-    private BaseGenPrize qianSiGenPrize;
-    @Resource(name="houSiGenPrize")
-    private BaseGenPrize houSiGenPrize;
-    @Resource(name="zongheGenPrize")
-    private BaseGenPrize zongheGenPrize;
-    @Resource(name="housanGenPrize")
-    private BaseGenPrize housanGenPrize;
-    @Resource(name="qh4GenPrize")
-    private BaseGenPrize qh4GenPrize;
-    @Resource(name="qh4GenwuPrize")
-    private BaseGenPrize qh4GenwuPrize;
-    @Resource(name="geDwdGenPrize")
-    private BaseGenPrize geDwdGenPrize;
-    @Resource(name="geFiveDwdGenPrize")
-    private BaseGenPrize geFiveDwdGenPrize;
     @Resource(name="geBdDwdGenPrize")
     private BaseGenPrize geBdDwdGenPrize;
-    @Resource(name="geBdjcDwdGenPrize")
-    private BaseGenPrize geBdjcDwdGenPrize;
-    @Resource(name="qianBdDxDwdGenPrize")
-    private BaseGenPrize qianBdDxDwdGenPrize;
+
     @Resource(name="geBdDxDwdGenPrize")
     private BaseGenPrize geBdDxDwdGenPrize;
-    @Resource(name="baiBdDwdGenPrize")
-    private BaseGenPrize baiBdDwdGenPrize;
-    @Resource(name="houSiBdwBodongGenPrize")
-    private BaseGenPrize houSiBdwBodongGenPrize;
-    @Resource(name="housanBdGenPrize")
-    private BaseGenPrize housanBdGenPrize;
-    @Resource(name="wanDwdGenPrize")
-    private BaseGenPrize wanDwdGenPrize;
-    @Resource(name="wuxingBdwGenPrize")
-    private BaseGenPrize wuxingBdwGenPrize;
+
+
     @Resource(name = "wanDwdGenPrize3")
     protected BaseGenPrize wanDwdGenPrize3;
     @Resource(name="wanDwdGenPrize2")
@@ -92,15 +62,19 @@ public class TcffcGenNumsService {
     public void checkStrategy(List<BaseGenPrize> list) {
 
     }
+
     public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         this.updateCurPrize(curPrize);
+        Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
+        updateCurNO(nextMin);
+
         Map<String, Boolean> result = new HashMap<>();
-        result.putAll(wuxingGenPrize.run(curPrize));
+        //result.putAll(wuxingGenPrize.run(curPrize));
         result.putAll(wanDwdGenPrize2.run(curPrize));
         result.putAll(wanDwdGenPrize3.run(curPrize));
         //result.putAll(qianDwdGenPrize.run(curPrize));
-        //result.putAll(geBdDwdGenPrize.run(curPrize));
-        //result.putAll(geBdDxDwdGenPrize.run(curPrize));
+        result.putAll(geBdDwdGenPrize.run(curPrize));
+        result.putAll(geBdDxDwdGenPrize.run(curPrize));
         //result.putAll(geBdjcDwdGenPrize.run(curPrize));
         //result.putAll(qianBdDxDwdGenPrize.run(curPrize));
 //        result.putAll(housanBdGenPrize.run(curPrize));

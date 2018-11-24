@@ -15,7 +15,7 @@ public class GeQianStrategy extends BaseStrategy{
 
 
     @Autowired
-    private com.ssc.prize.GeBdjcDwdGenPrize GeBdjcDwdGenPrize;
+    private com.ssc.prizeschedule.GeBdjcDwdGenPrize GeBdjcDwdGenPrize;
     @Override
     public synchronized boolean isWin(Object calNo, TCFFCPRIZE realNo) {
         String genStr = (String) calNo;
@@ -38,7 +38,7 @@ public class GeQianStrategy extends BaseStrategy{
             List<TCFFCPRIZE> prizeList = tcffcprizedao.selectByCondition(condition);
             if (null != prizeList && prizeList.size() > 0) {
                 TCFFCPRIZE cur = prizeList.get(0);
-                result = GeBdjcDwdGenPrize.getGenPrizeNumsStr(null, cur);
+                result = GeBdjcDwdGenPrize.getGenPrizeNumsStr( cur);
             }
             log.info(no+"tou:"+result.toString());
         } catch (Exception e) {

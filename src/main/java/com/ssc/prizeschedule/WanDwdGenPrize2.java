@@ -1,9 +1,11 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
+import com.ssc.Application;
 import com.ssc.constants.BaseConstants;
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
 import com.ssc.util.DateUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,20 +14,19 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class WanDwdGenPrize3 extends BaseGenPrize {
+public class WanDwdGenPrize2 extends BaseGenPrize {
     //万位定位胆
     @Override
     void init() {
-        file = new File("wanFile.txt");
-        allFile = new File("wanAllFile.txt");
-        this.wfType = BaseConstants.WF_TYPE_DWD_WAN4_DS;
+        this.wfType = BaseConstants.WF_TYPE_DWD_WAN4_DX;
         this.isWrite2File = false;
         isSyncGenData = true;
     }
 
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize) {
+    String getGenPrizeNumsStr(TCFFCPRIZE curPrize) {
 
+        String genPrizeStr = null;
         StringBuffer sb = new StringBuffer();
         //取最近10期开奖数据
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
@@ -36,9 +37,9 @@ public class WanDwdGenPrize3 extends BaseGenPrize {
 
         //转波动的大小
         List<String> bdDsList = new ArrayList<>();
-        for(TCFFCPRIZE item: tcffcprizeList) {
+        for (TCFFCPRIZE item : tcffcprizeList) {
             int adjust = item.getWan();
-            if(adjust % 2 ==  1) {
+            if ((0 <= adjust && adjust <= 4) || (-9 <= adjust && adjust <= -6)) {
                 bdDsList.add("0");
             } else {
                 bdDsList.add("1");
@@ -48,54 +49,54 @@ public class WanDwdGenPrize3 extends BaseGenPrize {
         String nextBdDs = this.judgeNextBdDs(bdDsList);
         Integer curDx = curPrize.getGe();
 
-        genStr = "";
-        if("0".equals(nextBdDs)) {
-            genStr = "1,3,5,7,9";
-        } else if("1".equals(nextBdDs)) {
-            genStr = "0,2,4,6,8";
+        if ("0".equals(nextBdDs)) {
+            genPrizeStr = "0,1,2,3,4";
+        } else if ("1".equals(nextBdDs)) {
+            genPrizeStr = "5,6,7,8,9";
         } else {
-            genStr = nextBdDs;
+            genPrizeStr = nextBdDs;
         }
-        log.info("万位当前单双为：" + bdDsList.toString() + ",预测下期" + conPrize.getNo() +  "万位:" + genStr);
+        Application.cache.put(cacheKey, genPrizeStr);
 
-        return genStr;
+        return genPrizeStr;
     }
 
     /**
      * 策略
+     *
      * @param bdList
      * @return
      */
-    private String judgeNextBdDs(List<String> bdList){
-        if(bdList == null || bdList.size() == 0) {
+    private String judgeNextBdDs(List<String> bdList) {
+        if (bdList == null || bdList.size() == 0) {
             return "";
         }
         String bdListStr = "";
-        for(String item: bdList) {
+        for (String item : bdList) {
             bdListStr = bdListStr + item;
         }
 
         //大小跳方案
         if (bdListStr.endsWith("1010")) {
             return "1";
-        }else if (bdListStr.endsWith("0101")) {
+        } else if (bdListStr.endsWith("0101")) {
             return "0";
-        }  else {
+        } else {
             //开啥跟啥
-            if(bdListStr.endsWith("0")) {
+            if (bdListStr.endsWith("0")) {
                 return "0";
             } else {
                 return "1";
             }
         }
     }
+
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized(TCFFCPRIZE curPrize) {
         boolean result = false;
-        if (null != genPrize) {
-            if(genStr.indexOf("" + curPrize.getWan()) >= 0) {
-                result = true;
-            }
+        String prize = (String) Application.cache.get(cacheKey);
+        if (StringUtils.isNotEmpty(prize) && prize.indexOf("" + curPrize.getWan()) >= 0) {
+            result = true;
         }
         return result;
     }

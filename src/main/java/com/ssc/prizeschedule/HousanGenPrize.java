@@ -1,4 +1,4 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
@@ -19,8 +19,6 @@ public class HousanGenPrize extends BaseGenPrize {
     //后3
     @Override
     void init() {
-        file = new File("hou3File.txt");
-        allFile = new File("hou3AllFile.txt");
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -32,13 +30,10 @@ public class HousanGenPrize extends BaseGenPrize {
     }
 
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrizes) {
-        if (null == conPrize) {
-            return "";
-        }
+    public String getGenPrizeNumsStr( TCFFCPRIZE curPrizes) {
         //统计最近15000期的遗漏
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
-        Date endTime = DateUtils.addMinutes(-6, conPrize.getTime());
+        Date endTime = DateUtils.addMinutes(-6, curPrizes.getTime());
         Date startTime = DateUtils.addMinutes(-16800, endTime);
         tcffcprizeCondition.createCriteria().andTimeBetween(startTime, endTime);
         List<TCFFCPRIZE> tcffcprizeList = tcffcprizedao.selectByCondition(tcffcprizeCondition);
@@ -73,7 +68,7 @@ public class HousanGenPrize extends BaseGenPrize {
                     prePrize = prizeList.get(i);
                 } else {
                     TCFFCPRIZE curPrize = prizeList.get(i);
-                    Integer missDistance = LotteryUtil.calTcffcNoDistance(prePrize, conPrize);
+                    Integer missDistance = LotteryUtil.calTcffcNoDistance(prePrize, curPrize);
                     if (numMissCntMap.get(num) != null) {
                         numMissCntMap.get(num).add(missDistance);
                     } else {
@@ -84,7 +79,7 @@ public class HousanGenPrize extends BaseGenPrize {
 
                     //加上最新一期遗漏
                     if (i == prizeList.size() - 1) {
-                        Integer latestDistance = LotteryUtil.calTcffcNoDistance(curPrize, conPrize);
+                        Integer latestDistance = LotteryUtil.calTcffcNoDistance(curPrize, curPrize);
                         if (numMissCntMap.get(num) != null) {
                             numMissCntMap.get(num).add(latestDistance);
                         } else {
@@ -128,7 +123,7 @@ public class HousanGenPrize extends BaseGenPrize {
     }
 
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized(TCFFCPRIZE curPrize) {
         boolean result = false;
         String hou3Prize = curPrize.getPrize().substring(2, 5);
         if (null != genPrizeList && genPrizeList.size() > 0) {

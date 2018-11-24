@@ -1,4 +1,4 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.constants.BaseConstants;
 import com.ssc.model.TCFFCPRIZE;
@@ -11,13 +11,11 @@ public class WuxingBdwGenPrize extends BaseGenPrize {
     //万位定位胆
     @Override
     void init() {
-        file = new File("wuXinBdwFile.txt");
-        allFile = new File("wuXinBdwAllFile.txt");
         this.wfType = BaseConstants.WF_TYPE_WXBDW_HZ;
     }
 
     @Override
-    String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize) {
+    String getGenPrizeNumsStr(TCFFCPRIZE curPrize) {
         Integer wan = curPrize.getWan();
         Integer qian = curPrize.getQian();
         Integer bai = curPrize.getBai();
@@ -36,12 +34,10 @@ public class WuxingBdwGenPrize extends BaseGenPrize {
     }
 
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized( TCFFCPRIZE curPrize) {
         boolean result = false;
-        if (null != genPrize) {
-            if(curPrize.getPrize().indexOf(this.genStr) >= 0) {
-                result = true;
-            }
+        if(curPrize.getPrize().indexOf(this.genStr) >= 0) {
+            result = true;
         }
         return result;
     }

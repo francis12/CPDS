@@ -1,4 +1,4 @@
-package com.ssc.prize;
+package com.ssc.prizeschedule;
 
 import com.ssc.constants.BaseConstants;
 import com.ssc.model.TCFFCPRIZE;
@@ -18,17 +18,15 @@ public class GeBdjcDwdGenPrize extends BaseGenPrize {
     private GeBdDwdGenPrize geBdDwdGenPrize;
     @Override
     void init() {
-        file = new File("geBdJCFile.txt");
-        allFile = new File("geBdJCAllFile.txt");
         wfType= BaseConstants.WF_TYPE_DWD_GE_JC;
     }
 
     //大小和单双交叉
     @Override
-    public String getGenPrizeNumsStr(TCFFCPRIZE conPrize, TCFFCPRIZE curPrize) {
+    public String getGenPrizeNumsStr(TCFFCPRIZE curPrize) {
 
-        String dxStr = geBdDxDwdGenPrize.getGenPrizeNumsStr(conPrize, curPrize);
-        String dsStr = geBdDwdGenPrize.getGenPrizeNumsStr(conPrize, curPrize);
+        String dxStr = geBdDxDwdGenPrize.getGenPrizeNumsStr( curPrize);
+        String dsStr = geBdDwdGenPrize.getGenPrizeNumsStr(curPrize);
 
         //取交集
         String[] dxArr = dxStr.split(",");
@@ -60,12 +58,10 @@ public class GeBdjcDwdGenPrize extends BaseGenPrize {
         return genStr;
     }
     @Override
-    boolean isPrized(TCFFCPRIZE genPrize, TCFFCPRIZE curPrize) {
+    boolean isPrized( TCFFCPRIZE curPrize) {
         boolean result = false;
-        if (null != genPrize) {
-            if(genStr.indexOf("" + curPrize.getGe()) >= 0) {
-                result = true;
-            }
+        if(genStr.indexOf("" + curPrize.getGe()) >= 0) {
+            result = true;
         }
         return result;
     }

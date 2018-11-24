@@ -6,7 +6,6 @@ import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
 import com.ssc.model.TcffcPrizeConverter;
 import com.ssc.strategy.BaseStrategy;
-import com.ssc.strategy.QianSiStrategy;
 import com.ssc.strategy.SanXinHotStrategy;
 import com.ssc.util.DateUtils;
 import com.ssc.util.LotteryUtil;
@@ -248,20 +247,6 @@ public class LotteryStrategyService {
                         Set<String> lastHotResult = (Set<String>) calResult;
                         baseAmt = BigDecimal.valueOf(lastHotResult.size()).divide(new BigDecimal("1000"), 8 ,BigDecimal.ROUND_FLOOR);
                         baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
-                    }
-                    if(baseStrategy instanceof QianSiStrategy) {
-                        if(prizeList.get(0).getAdjustNum() < 50000 && prizeList.get(0).getAdjustNum() > -50000) {
-                            String[] numArr  = (String[]) calResult;
-                            baseAmt = BigDecimal.valueOf(numArr.length).divide(new BigDecimal("10000"), 8 ,BigDecimal.ROUND_FLOOR);
-                            baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
-                            FileUtils.writeStringToFile(new File(BaseConstants.OUTPUT_PATH + File.separator + "回测结果.txt"), "第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂") + "\r\n", true);
-
-                            log.info("第"  + prizeList.get(0).getNo() + "投注" + numArr.length + "注:" + (isMatch?"中":"挂"));
-                        } else {
-                            startTime = DateUtils.addMinutes(1, startTime);
-                            totalCheckCnt--;
-                            continue;
-                        }
                     }
 
                     curAmt = baseAmt.multiply(BigDecimal.valueOf(curSchedule.getMultiple()));

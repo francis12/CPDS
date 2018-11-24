@@ -1,7 +1,7 @@
 package com.ssc;
 
 import com.ssc.service.LotteryGenService;
-import com.ssc.service.LotteryPrizeScheduleService;
+import com.ssc.prize.service.LotteryPrizeScheduleService;
 import com.ssc.service.TjSSCScanService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
@@ -23,6 +23,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 @MapperScan("com.ssc.mapper")
 public class Application implements EmbeddedServletContainerCustomizer {
     private static Logger logger = Logger.getLogger(Application.class);
+    public static Map<String, Object> cache = new HashMap<>();
 
     @Bean
     @ConfigurationProperties(prefix="spring.datasource")
@@ -78,7 +81,6 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 lotteryPrizeScheduleService.startFetchQQprize();
             }
         };
-
         Date curTime = new Date();
         Runnable orgPrizeSchedule = new Runnable() {
             public void run() {
