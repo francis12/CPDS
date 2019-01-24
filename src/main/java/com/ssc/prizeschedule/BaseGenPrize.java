@@ -47,8 +47,18 @@ public abstract class BaseGenPrize {
     protected boolean isWrite2File = true;
     //是否同步预测结果到数据库
     protected boolean isSyncGenData = false;
-    //千位定位胆
+    //是否回测数据模式
+    protected boolean isTestDataMode = false;
     File file = null;
+
+    public boolean isTestDataMode() {
+        return isTestDataMode;
+    }
+
+    public void setTestDataMode(boolean testDataMode) {
+        isTestDataMode = testDataMode;
+    }
+
     File allFile = null;
     String genStr = "";
     int curCount = 0;
@@ -57,19 +67,19 @@ public abstract class BaseGenPrize {
     protected String cacheKey = null;
 
 
-    public Map<String, Boolean> run(TCFFCPRIZE curPrize) {
+    public Map<String, Object> run(TCFFCPRIZE curPrize) {
         this.init();
         cacheKey = "gen" + this.wfType;
         file = new File(this.wfType+".txt");
         allFile = new File(this.wfType+"-all.txt");
 
-        Map<String, Boolean> genResult = this.generateNextNums(curPrize);
+        Map<String, Object> genResult = this.generateNextNums(curPrize);
         return genResult;
     }
 
 
-    public Map<String, Boolean> generateNextNums(TCFFCPRIZE curPrize) {
-        Map<String, Boolean> winResult = new HashMap<>();
+    public Map<String, Object> generateNextNums(TCFFCPRIZE curPrize) {
+        Map<String, Object> winResult = new HashMap<>();
         try {
             //当前期开奖号码和预测号码
             isPrized = this.isPrized(curPrize);
@@ -78,9 +88,10 @@ public abstract class BaseGenPrize {
             String nextStr =this.getGenPrizeNumsStr(curPrize);
             String strResult = curPrize.getNo() + "实际：" + curPrize.getPrize() + " " + (isPrized ? "中" : "挂") + "\r\n预测" + TcffcPrizeConverter.genNofromTime(nextMin) + ":" + nextStr;
             writeResult2File(strResult);
-            if(isSyncGenData) {
+            if(isSyncGenData && !isTestDataMode) {
                 updateGenPrizeResult(curPrize, nextStr);
             }
+            winResult.put("nextStr", nextStr);
         } catch (Exception e) {
             log.error("generateNextNums error", e);
         }

@@ -63,18 +63,18 @@ public class TcffcGenNumsService {
 
     }
 
-    public Map<String, Boolean> noticeGenNumsService(TCFFCPRIZE  curPrize) {
+    public Map<String, Object> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         this.updateCurPrize(curPrize);
         Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
         updateCurNO(nextMin);
 
-        Map<String, Boolean> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         //result.putAll(wuxingGenPrize.run(curPrize));
-        result.putAll(wanDwdGenPrize2.run(curPrize));
-        result.putAll(wanDwdGenPrize3.run(curPrize));
+        //result.putAll(wanDwdGenPrize2.run(curPrize));
+       // result.putAll(wanDwdGenPrize3.run(curPrize));
         //result.putAll(qianDwdGenPrize.run(curPrize));
-        result.putAll(geBdDwdGenPrize.run(curPrize));
-        result.putAll(geBdDxDwdGenPrize.run(curPrize));
+       // result.putAll(geBdDwdGenPrize.run(curPrize));
+       // result.putAll(geBdDxDwdGenPrize.run(curPrize));
         //result.putAll(geBdjcDwdGenPrize.run(curPrize));
         //result.putAll(qianBdDxDwdGenPrize.run(curPrize));
 //        result.putAll(housanBdGenPrize.run(curPrize));

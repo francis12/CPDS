@@ -2,6 +2,8 @@ package com.ssc.controller;
 
 import com.ssc.service.LotteryGenService;
 import com.ssc.service.LotteryStrategyService;
+import com.ssc.service.PrizeStrategyService;
+import com.ssc.vo.BetingDetail;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ public class LotteryCheckController {
 	private LotteryStrategyService lotteryStrategyService;
 	@Autowired
 	private LotteryGenService lotteryGenService;
+	@Autowired
+	private com.ssc.service.PrizeStrategyService prizeStrategyService;
 
 	@ResponseBody
 	@RequestMapping(value = "/checkStrategy", method = {RequestMethod.GET})
@@ -34,5 +38,18 @@ public class LotteryCheckController {
 			log.error("getLatestGenPrize error",e );
 		}
 		return loseCnt;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/checkS", method = {RequestMethod.GET})
+	public BetingDetail getLatestGenPrize(@RequestParam(required = true, value = "start") String start
+			, @RequestParam(required = true, value = "end") String end) {
+		BetingDetail betingDetail = null;
+		try {
+			betingDetail = prizeStrategyService.check(start, end);
+		} catch (Exception e) {
+			log.error("getLatestGenPrize error",e );
+		}
+		return betingDetail;
 	}
 }

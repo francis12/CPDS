@@ -9,8 +9,8 @@
 <body style="padding:0" onload="init()">
 <div id="condition" style="display:inline;width:30%;float:left;">
     <select onchange="wfOnchange()" id="wfselectionId">
-        <option value="hou4p">
-            后4同加
+        <option value="xin4tou2">
+            任4投2
         </option>
         <option value="wuxin">
             5星不定位
@@ -124,8 +124,8 @@
             var wfType;
 			var toastNum=20;
             function init() {
-                wfType = "hou3";
-                $("#wfselectionId").val("hou3");
+                wfType = "xin4tou2";
+                $("#wfselectionId").val("xin4tou2");
 				$('#soundSwitch').attr('checked',false) 
 				//移除 checked 状态 
 				isSoundSwitchOn = false;
@@ -281,7 +281,7 @@
                 })
             }
             var creatediv2 = function(_this) {
-                var parentlrTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 32px;"></table>');
+                var parentlrTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 12px;"></table>');
                 parentlrTable.appendTo($('#lrtable'));
                 var thlrTr = $('<tr></tr>');
                 $('<th>期数</th>').appendTo(thlrTr);
@@ -347,20 +347,20 @@
 					
                 $.each(_this.list,
                 function() {
-                    var parentTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 32px;"></table>');
-                    var captionStr = '<caption style="font-size:50px;color:#FF0000">' + this.num + '(' + this.curMissedCnt + ')' + '</caption>';
+                    var parentTable = $('<table  border:solid 1px #add9c0; style="display:inline;margin:1px 8px;"></table>');
+                    var captionStr = '<caption style="font-size:26px;color:#FF0000">' + this.num + '(' + this.curMissedCnt + ')' + '</caption>';
                     $(captionStr).appendTo(parentTable);
                     parentTable.appendTo($('#table'));
                     var thTr = $('<tr></tr>');
                     $('<th>期号</th>').appendTo(thTr);
                     $('<th>开奖</th>').appendTo(thTr);
-                    $('<th>几飞</th>').appendTo(thTr);
+                    //$('<th>几飞</th>').appendTo(thTr);
                     $('<th>遗漏</th>').appendTo(thTr);
                     thTr.appendTo(parentTable);
                     var _detail = this;
                     genDataTable(_detail.list, parentTable);
 					if(toastNum == this.curMissedCnt) {
-						playToastSound();
+						//playToastSound();
 					}
 
                 });
@@ -377,7 +377,7 @@
                     dataTr.appendTo(parentTable);
                     $('<td>' + this.no.substring(9) + '</td>').appendTo(dataTr);
                     $('<td>' + this.prize + '</td>').appendTo(dataTr);
-                    $('<td>' + this.prizeCnt + '</td>').appendTo(dataTr);
+                   // $('<td>' + this.prizeCnt + '</td>').appendTo(dataTr);
                     $('<td>' + this.missCnt + '</td>').appendTo(dataTr);
                 });
             }

@@ -46,7 +46,7 @@ public class LotteryUtil {
 			}
 			System.out.println();
 		}
-		
+
 		List<LotteryDetail> result = new ArrayList<LotteryDetail>();
 		if (srcArray.length == 2) {
 			//二星
@@ -67,79 +67,79 @@ public class LotteryUtil {
 		}
 		return result;
 	}*/
-	/** 
-     * 递归实现dimValue中的笛卡尔积，结果放在result中 
-     * @param dimValue 原始数据 
-     * @param result 结果数据 
-     * @param layer dimValue的层数 
-     * @param curList 每次笛卡尔积的结果 
-     */  
-    private static void recursive (List<List<String>> dimValue, List<Set<String>> result, int layer, Set<String> curList) {
-        if (layer < dimValue.size() - 1) {  
-            if (dimValue.get(layer).size() == 0) {  
-                recursive(dimValue, result, layer + 1, curList);  
-            } else {  
-                for (int i = 0; i < dimValue.get(layer).size(); i++) {  
-                    Set<String> list = new HashSet<String>(curList);
-                    list.add(dimValue.get(layer).get(i));  
-                    recursive(dimValue, result, layer + 1, list);  
-                }  
-            }  
-        } else if (layer == dimValue.size() - 1) {  
-            if (dimValue.get(layer).size() == 0) {  
-                result.add(curList);  
-            } else {  
-                for (int i = 0; i < dimValue.get(layer).size(); i++) {  
-                    Set<String> list = new HashSet<>(curList);
-                    list.add(dimValue.get(layer).get(i));  
-                    result.add(list);  
-                }  
-            }  
-        }  
-    } 
+	/**
+	 * 递归实现dimValue中的笛卡尔积，结果放在result中
+	 * @param dimValue 原始数据
+	 * @param result 结果数据
+	 * @param layer dimValue的层数
+	 * @param curList 每次笛卡尔积的结果
+	 */
+	private static void recursive (List<List<String>> dimValue, List<Set<String>> result, int layer, Set<String> curList) {
+		if (layer < dimValue.size() - 1) {
+			if (dimValue.get(layer).size() == 0) {
+				recursive(dimValue, result, layer + 1, curList);
+			} else {
+				for (int i = 0; i < dimValue.get(layer).size(); i++) {
+					Set<String> list = new HashSet<String>(curList);
+					list.add(dimValue.get(layer).get(i));
+					recursive(dimValue, result, layer + 1, list);
+				}
+			}
+		} else if (layer == dimValue.size() - 1) {
+			if (dimValue.get(layer).size() == 0) {
+				result.add(curList);
+			} else {
+				for (int i = 0; i < dimValue.get(layer).size(); i++) {
+					Set<String> list = new HashSet<>(curList);
+					list.add(dimValue.get(layer).get(i));
+					result.add(list);
+				}
+			}
+		}
+	}
 	//排列-定位
-	public static void permutation(char[]ss,int i){  
-        if(ss==null||i<0 ||i>ss.length){  
-            return;  
-        }  
-        if(i==ss.length){  
-            System.out.println(new String(ss));  
-        }else{  
-            for(int j=i;j<ss.length;j++){  
-                char temp=ss[j];//交换前缀,使之产生下一个前缀  
-                ss[j]=ss[i];  
-                ss[i]=temp;  
-                permutation(ss,i+1);  
-                temp=ss[j]; //将前缀换回来,继续做上一个的前缀排列.  
-                ss[j]=ss[i];  
-                ss[i]=temp;  
-            }  
-        }  
-    }  
+	public static void permutation(char[]ss,int i){
+		if(ss==null||i<0 ||i>ss.length){
+			return;
+		}
+		if(i==ss.length){
+			System.out.println(new String(ss));
+		}else{
+			for(int j=i;j<ss.length;j++){
+				char temp=ss[j];//交换前缀,使之产生下一个前缀
+				ss[j]=ss[i];
+				ss[i]=temp;
+				permutation(ss,i+1);
+				temp=ss[j]; //将前缀换回来,继续做上一个的前缀排列.
+				ss[j]=ss[i];
+				ss[i]=temp;
+			}
+		}
+	}
 	//组合-- 任选
-	 public static void combiantion(char chs[]){  
-	        if(chs==null||chs.length==0){  
-	            return ;  
-	        }  
-	        List<Character> list=new ArrayList();  
-	        for(int i=1;i<=chs.length;i++){  
-	            combine(chs,0,i,list);  
-	        }  
-	    }  
-	    //从字符数组中第begin个字符开始挑选number个字符加入list中  
-	    public static void combine(char []cs,int begin,int number,List<Character> list){  
-	        if(number==0){  
-	            System.out.println(list.toString());  
-	            return ;  
-	        }  
-	        if(begin==cs.length){  
-	            return;  
-	        }  
-	        list.add(cs[begin]);  
-	        combine(cs,begin+1,number-1,list);  
-	        list.remove((Character)cs[begin]);  
-	        combine(cs,begin+1,number,list);  
-	    }
+	public static void combiantion(char chs[]){
+		if(chs==null||chs.length==0){
+			return ;
+		}
+		List<Character> list=new ArrayList();
+		for(int i=1;i<=chs.length;i++){
+			combine(chs,0,i,list);
+		}
+	}
+	//从字符数组中第begin个字符开始挑选number个字符加入list中
+	public static void combine(char []cs,int begin,int number,List<Character> list){
+		if(number==0){
+			System.out.println(list.toString());
+			return ;
+		}
+		if(begin==cs.length){
+			return;
+		}
+		list.add(cs[begin]);
+		combine(cs,begin+1,number-1,list);
+		list.remove((Character)cs[begin]);
+		combine(cs,begin+1,number,list);
+	}
 	//cqssc
 	public static String getNextAwardNo(String no, String caipiao) throws ParseException {
 		String nextNo = "";
@@ -749,7 +749,7 @@ public class LotteryUtil {
 					&& calCntInStrList(siXinItem, "7") <= 1
 					&& calCntInStrList(siXinItem, "8") <= 1
 					&& calCntInStrList(siXinItem, "9") <= 1
-					) {
+			) {
 				is0SameMatch = true;
 			}
 			//4同
@@ -764,7 +764,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 4
 					|| calCntInStrList(siXinItem, "8") == 4
 					|| calCntInStrList(siXinItem, "9") == 4
-					) {
+			) {
 				is4SameMatch = true;
 			}
 
@@ -780,7 +780,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 3
 					|| calCntInStrList(siXinItem, "8") == 3
 					|| calCntInStrList(siXinItem, "9") == 3
-					) {
+			) {
 				is3SameMatch = true;
 			}
 
@@ -796,7 +796,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 2
 					|| calCntInStrList(siXinItem, "8") == 2
 					|| calCntInStrList(siXinItem, "9") == 2
-					) {
+			) {
 				is2SameMatch = true;
 			}
 
@@ -856,7 +856,7 @@ public class LotteryUtil {
 					&& calCntInStrList(siXinItem, "7") <= 1
 					&& calCntInStrList(siXinItem, "8") <= 1
 					&& calCntInStrList(siXinItem, "9") <= 1
-					) {
+			) {
 				is0SameMatch = true;
 			}
 			//4同
@@ -871,7 +871,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 4
 					|| calCntInStrList(siXinItem, "8") == 4
 					|| calCntInStrList(siXinItem, "9") == 4
-					) {
+			) {
 				is4SameMatch = true;
 			}
 
@@ -887,7 +887,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 3
 					|| calCntInStrList(siXinItem, "8") == 3
 					|| calCntInStrList(siXinItem, "9") == 3
-					) {
+			) {
 				is3SameMatch = true;
 			}
 
@@ -903,7 +903,7 @@ public class LotteryUtil {
 					|| calCntInStrList(siXinItem, "7") == 2
 					|| calCntInStrList(siXinItem, "8") == 2
 					|| calCntInStrList(siXinItem, "9") == 2
-					) {
+			) {
 				is2SameMatch = true;
 			}
 
@@ -923,9 +923,9 @@ public class LotteryUtil {
 		char[] strArr = list.toCharArray();
 		for (char charItem : strArr) {
 			String item = "" + charItem;
-				if (src.equals(item)) {
-					matchCnt++;
-				}
+			if (src.equals(item)) {
+				matchCnt++;
+			}
 		}
 		return matchCnt;
 	}

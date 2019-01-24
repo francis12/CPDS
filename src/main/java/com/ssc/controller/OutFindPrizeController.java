@@ -43,9 +43,7 @@ public class OutFindPrizeController {
 			return result;
 		}
 		try {
-			GenPrizeModelCondition condition = new GenPrizeModelCondition();
-			condition.createCriteria().andLotteryCodeEqualTo(lotteryCode).andNoEqualTo(no).andTypeEqualTo(type);
-			GenPrizeModel genPrizeModel = lotteryGenService.getLatestGenPrize(lotteryCode);
+			GenPrizeModel genPrizeModel = lotteryGenService.getLatestGenPrize(lotteryCode, type, no);
 			if (null != genPrizeModel) {
 				result.put("no", genPrizeModel.getNo());
 				result.put("genPrize", genPrizeModel.getGenPrize());

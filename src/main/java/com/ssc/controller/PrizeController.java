@@ -5,6 +5,8 @@ import com.ssc.service.LotteryGenService;
 import com.ssc.service.PrizeService;
 import com.ssc.model.MissedPrizeResult;
 import com.ssc.model.TCFFCPRIZE;
+import com.ssc.service.PrizeStrategyService;
+import com.ssc.vo.BetingDetail;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/prize")
@@ -25,6 +28,8 @@ public class PrizeController {
 	private PrizeService prizeService;
 	@Autowired
 	private LotteryGenService lotteryGenService;
+	@Autowired
+	private PrizeStrategyService prizeStrategyService;
 
 	@ResponseBody
 	@RequestMapping(value = "/getLatestPrize", method = {RequestMethod.GET})
@@ -47,12 +52,41 @@ public class PrizeController {
 		MissedPrizeResult  result = null;
 		try {
 			//result = prizeService.getLatestPrizeMissCnt(limit,type);
+			//特殊处理type ： -1  代表个位下一期号码大小单双
 			result = prizeService.getLatestPrizeMissCntByorder(limit,type,latest1, latest2,coldLimit);
 
 		} catch (Exception e) {
 			log.error("getLatestGenPrize error",e );
 		}
 		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getLatestGeNextPrize", method = {RequestMethod.GET})
+	public Map<String, List<TCFFCPRIZE>> getLatestGeNextPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "limit") Integer limit,
+															  @RequestParam(required = true, value = "type") String type) {
+		Map<String, List<TCFFCPRIZE>>   result = null;
+		try {
+			//result = prizeService.getLatestPrizeMissCnt(limit,type);
+			//特殊处理type ： -1  代表个位下一期号码大小单双
+			result = prizeService.getLatestGeNextPrize(limit,type);
+		} catch (Exception e) {
+			log.error("getLatestGeNextPrize error",e );
+		}
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/checkS", method = {RequestMethod.GET})
+	public BetingDetail getLatestGenPrize(@RequestParam(required = true, value = "start") String start
+			, @RequestParam(required = true, value = "end") String end) {
+		BetingDetail betingDetail = null;
+		try {
+			betingDetail = prizeStrategyService.check(start, end);
+		} catch (Exception e) {
+			log.error("getLatestGenPrize error",e );
+		}
+		return betingDetail;
 	}
 
 	public  static void main(String[] args) {

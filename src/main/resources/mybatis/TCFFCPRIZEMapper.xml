@@ -76,8 +76,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, lottery_code, no, prize, wan, qian, bai, shi, ge, online_num, adjust_num, alias_no, 
-    lottery_date, time
+     *
   </sql>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.TCFFCPRIZECondition" >
     select

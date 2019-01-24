@@ -43,7 +43,7 @@ public class LotteryGenService {
         }
     }
 
-    public GenPrizeModel getLatestGenPrize(String lotteryCode) {
+    public GenPrizeModel getLatestGenPrize(String lotteryCode, String type, String requestNo) {
         GenPrizeModel result = null;
         CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
         curNOModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode);
@@ -52,7 +52,7 @@ public class LotteryGenService {
         if (null != curNOModelList && curNOModelList.size() != 0) {
             String no = curNOModelList.get(0).getNextNo();
             GenPrizeModelCondition genPrizeModelCondition = new GenPrizeModelCondition();
-            genPrizeModelCondition.createCriteria().andNoEqualTo(no);
+            genPrizeModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode).andTypeEqualTo(type).andNoEqualTo(requestNo);
 
             List<GenPrizeModel> genPrizeModelList = genPrizeModelDAO.selectByCondition(genPrizeModelCondition);
             if (null != genPrizeModelList && genPrizeModelList.size() > 0) {

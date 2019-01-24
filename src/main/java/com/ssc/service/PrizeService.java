@@ -5,6 +5,8 @@ import com.ssc.model.*;
 import com.ssc.util.DateUtils;
 import com.ssc.util.LotteryUtil;
 import com.ssc.model.*;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,33 @@ public class PrizeService {
         criteria.andTimeGreaterThanOrEqualTo(minTime);
         tcffcprizeCondition.setOrderByClause("time desc");
         List<TCFFCPRIZE> list = tcffcprizedao.selectByCondition(tcffcprizeCondition);
+        if(null !=list && list.size() > 1) {
+            TCFFCPRIZE base1 = list.get(0);
+            TCFFCPRIZE base2 = list.get(1);
+            base1.setIsMatch("Y");
+            base2.setIsMatch("Y");
+            boolean isPreMatch = false;
+            for(int i=2;i<list.size();i++) {
+                TCFFCPRIZE cur = list.get(i);
+                if(isPreMatch) {
+                    if(cur.getGe() == base2.getGe()) {
+                        list.get(i-1).setIsMatch("Y");
+                        cur.setIsMatch("Y");
+                        isPreMatch = false;
+                    }else {
+                        if(cur.getGe() == base1.getGe()) {
+                            isPreMatch = true;
+                        }else {
+                            isPreMatch = false;
+                        }
+                    }
+                } else {
+                    if(cur.getGe() == base1.getGe()) {
+                        isPreMatch = true;
+                    }
+                }
+            }
+        }
         return list;
     }
 
@@ -45,9 +74,60 @@ public class PrizeService {
     //后4连续二星
 
     static int[][] lxErXin = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {0, 9}};
+    static int[] lxXin = {0,1,2,3,4,5,6,7,8,9};
+
+    static int[][] ErXinAll = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9},
+            {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {1, 8}, {1, 9},
+             {2, 3}, {2, 4}, {2, 5}, {2, 6}, {2, 7}, {2, 8}, {2, 9},
+             {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {3, 9},
+             {4, 5}, {4, 6}, {4, 7}, {4, 8}, {4, 9},
+            {5, 6}, {5, 7}, {5, 8}, {5, 9},
+            {6, 7}, {6, 8}, {6, 9}, {7, 8}, {7, 9},  {8, 9}
+
+    };
 
     int zhuLimit = 1000;
 
+    public Map<String, List<TCFFCPRIZE>>  getLatestGeNextPrize(Integer limit, String type) throws ParseException {
+        List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
+
+        Map<String, List<TCFFCPRIZE>> result = new HashMap<>();
+        String preGeNum = null;
+        for(TCFFCPRIZE item : list) {
+            String curGeNum = null;
+            if("ge".equals(type)) {
+                curGeNum = item.getGe() + "";
+            } else if("shi".equals(type)) {
+                curGeNum = item.getShi() + "";
+            } else if("bai".equals(type)) {
+                curGeNum = item.getBai() + "";
+            } else if("qian".equals(type)) {
+                curGeNum = item.getQian() + "";
+            } else if("wan".equals(type)) {
+                curGeNum = item.getWan() + "";
+            }
+            if(StringUtils.isNotEmpty(preGeNum)) {
+                List<TCFFCPRIZE> existList = result.get(preGeNum);
+                if(existList == null || existList.size() == 0) {
+                    existList = new ArrayList<>();
+                }
+                existList.add(item);
+                result.put(preGeNum, existList);
+            }
+            preGeNum = curGeNum;
+        }
+        result.entrySet().stream().forEach( itemEntry -> {
+                    List<TCFFCPRIZE> itemList = itemEntry.getValue();
+                    Collections.sort(itemList, new Comparator<TCFFCPRIZE>() {
+                        @Override
+                        public int compare(TCFFCPRIZE o1, TCFFCPRIZE o2) {
+                            return  o2.getNo().compareTo(o1.getNo());
+                        }
+                    });
+                }
+        );
+        return result;
+    }
     //codeLimit:计算遗漏排行
     public MissedPrizeResult getLatestPrizeMissCntByorder(Integer limit, String type, Integer latest1, Integer latest2, Integer coldLimit) throws ParseException {
         MissedPrizeResult missedPrizeResult = new MissedPrizeResult();
@@ -151,13 +231,17 @@ public class PrizeService {
     }
 
     private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit) {
+        return this.queryLatestPrizeList(limit, "time asc");
+    }
+
+    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit, String orderBy) {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         TCFFCPRIZECondition.Criteria criteria = tcffcprizeCondition.createCriteria();
 
         Date date = DateUtils.getBaiduCurTime();
         Date minTime = DateUtils.addMinutes(-limit, date);
         criteria.andTimeGreaterThanOrEqualTo(minTime);
-        tcffcprizeCondition.setOrderByClause("time asc");
+        tcffcprizeCondition.setOrderByClause(orderBy);
         return tcffcprizedao.selectByCondition(tcffcprizeCondition);
     }
 
@@ -176,16 +260,24 @@ public class PrizeService {
 
         String[] zhuArr = {"qian3", "zhong3", "hou3"};
         if ("bdw".equals(tjLx)) {
+            TCFFCPRIZE pre = null;
             for (TCFFCPRIZE item : list) {
                 if ("hou4tou2".equals(type)) {
                     for (int[] arrItem : lxErXin) {
-                        genCurNoMissedModel(missedMap, item, arrItem, type);
+                        genCurNoMissedModel(pre,missedMap, item, arrItem, type);
                     }
-                } else {
-                    for (int i = 0; i < 10; i++) {
-                        genCurNoMissedModel(missedMap, item, new int[]{i}, type);
+                }else if  ("xin4tou2".equals(type)) {
+                    for (int[] arrItem : ErXinAll) {
+                        genCurNoMissedModel(pre,missedMap, item, arrItem, type);
                     }
                 }
+                else {
+                    for (int i = 0; i < 10; i++) {
+                        genCurNoMissedModel(pre,missedMap, item, new int[]{i}, type);
+                    }
+                }
+
+                pre = item;
             }
         } else if ("zhu6".equals(tjLx) || "zhu3".equals(tjLx)) {
             for (TCFFCPRIZE item : list) {
@@ -244,7 +336,7 @@ public class PrizeService {
 
     }
 
-    private void genCurNoMissedModel(Map<String, List<MissedPrizeModel>> result, TCFFCPRIZE item, int[] nums, String type) {
+    private void genCurNoMissedModel(TCFFCPRIZE pre,Map<String, List<MissedPrizeModel>> result, TCFFCPRIZE item, int[] nums, String type) {
         List<MissedPrizeModel> missedList = null;
         int wan = item.getWan();
         int qian = item.getQian();
@@ -254,6 +346,7 @@ public class PrizeService {
 
         boolean isPrized = false;
         int prizeCnt = 0;
+        boolean preIsPrized = false;
         for (int num : nums) {
             if ("wuxin".equals(type)) {
                 if (wan == num || qian == num || bai == num
@@ -276,7 +369,20 @@ public class PrizeService {
                     }
                 }
 
-            } else if ("hou4".equals(type)) {
+            }
+            else if ("hou4p".equals(type) && pre != null) {
+                int preWan = pre.getWan();
+                int preQian = pre.getQian();
+                int preBai = pre.getBai();
+                int preShi = pre.getShi();
+                int preGe = pre.getGe();
+                if ((wan - preWan != num) && (qian - preQian != num) && (bai - preBai != num) && (shi - preShi != num) && (ge - preGe != num)
+                    && (wan - preWan != -(10-num)) && (qian - preQian != -(10-num)) && (bai - preBai != -(10-num)) && (shi - preShi != -(10-num)) && (ge - preGe != -(10-num))
+                ) {
+                    isPrized = true;
+                }
+
+            }else if ("hou4".equals(type)) {
                 if (qian == num || bai == num
                         || shi == num || ge == num) {
                     isPrized = true;
@@ -370,6 +476,13 @@ public class PrizeService {
                     if (ge == num) {
                         prizeCnt++;
                     }
+                }
+            }else if ("xin4tou2".equals(type)) {
+                if (wan == num || qian == num ||bai == num ||shi == num || ge == num) {
+                    if(preIsPrized) {
+                        isPrized = true;
+                    }
+                    preIsPrized = true;
                 }
             }
         }

@@ -1,22 +1,18 @@
 package com.ssc.service;
 
-import com.ssc.constants.BaseConstants;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
 import com.ssc.model.TcffcPrizeConverter;
 import com.ssc.strategy.BaseStrategy;
-import com.ssc.strategy.SanXinHotStrategy;
 import com.ssc.util.DateUtils;
 import com.ssc.util.LotteryUtil;
 import com.ssc.vo.BetingDetail;
 import com.ssc.vo.TradeSchedule;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -30,8 +26,7 @@ public class LotteryStrategyService {
     private TCFFCPRIZEDAO tcffcprizedao;
     @Resource
     private TcffcGenNumsService tcffcGenNumsService;
-    //@Resource(name="sanXinHotStrategy")
-    @Resource(name="houSanBdStrategy")
+    //@Resource(name="houSanBdStrategy")
     private BaseStrategy baseStrategy;
     public static Executor executor = Executors.newFixedThreadPool(1);
     Logger log = Logger.getLogger(LotteryStrategyService.class);
@@ -243,11 +238,11 @@ public class LotteryStrategyService {
                         isMatch = baseStrategy.isWin(calResult, prizeList.get(0));
                     }
                     zgxt.append((isMatch?"中":"挂"));
-                    if(baseStrategy instanceof SanXinHotStrategy) {
+                   /* if(baseStrategy instanceof SanXinHotStrategy) {
                         Set<String> lastHotResult = (Set<String>) calResult;
                         baseAmt = BigDecimal.valueOf(lastHotResult.size()).divide(new BigDecimal("1000"), 8 ,BigDecimal.ROUND_FLOOR);
                         baseRate = new BigDecimal("0.94").divide(baseAmt, 8, BigDecimal.ROUND_FLOOR);
-                    }
+                    }*/
 
                     curAmt = baseAmt.multiply(BigDecimal.valueOf(curSchedule.getMultiple()));
                     betResult.setBetSum(betResult.getBetSum().add(curAmt));
@@ -318,11 +313,11 @@ public class LotteryStrategyService {
         try {
             Object calResult = baseStrategy.calBetNum(time);
 
-            if(baseStrategy instanceof SanXinHotStrategy) {
+            /*if(baseStrategy instanceof SanXinHotStrategy) {
                 Set<String> lastHotResult = (Set<String>) calResult;
                 baseAmt = (double) lastHotResult.size() / 1000;
                 baseRate = (double) (0.94/baseAmt);
-            }
+            }*/
 
             String no = TcffcPrizeConverter.genNofromTime(time);
             TCFFCPRIZECondition condition = new TCFFCPRIZECondition();

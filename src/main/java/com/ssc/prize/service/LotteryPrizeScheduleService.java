@@ -90,7 +90,7 @@ public class LotteryPrizeScheduleService {
             minute = Integer.parseInt(mm);
             int second = Integer.parseInt(ss);
 
-            URL realUrl = new URL("http://mma.qq.com/cgi-bin/im/online&callback");
+            URL realUrl = new URL("https://mma.qq.com/cgi-bin/im/online&callback");
             conn = (HttpURLConnection) realUrl.openConnection();
             conn.setRequestMethod("GET");
             conn.setUseCaches(false);
@@ -127,7 +127,7 @@ public class LotteryPrizeScheduleService {
                         log.error(warnInfo);
                     }*/
                     //test
-                    this.insertOnUnexist(tcffcprize);
+                    //this.insertOnUnexist(tcffcprize);
                     tcffcGenNumsService.noticeGenNumsService(tcffcprize);
                 } else {
                     Thread.sleep(500);

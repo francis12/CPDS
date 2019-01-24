@@ -31,6 +31,15 @@ public class TCFFCPRIZE implements Comparable{
 
     private Date time;
 
+    public String getIsMatch() {
+        return isMatch;
+    }
+
+    public void setIsMatch(String isMatch) {
+        this.isMatch = isMatch;
+    }
+
+    private String isMatch;
     public Long getId() {
         return id;
     }

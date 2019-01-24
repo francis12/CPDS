@@ -95,8 +95,14 @@ span.adjusts.full-size {
 	text-align:center;
 	width:30%
 }
+.history-codes div.history-code-item>div.code-issue.full-size.ge-active {
+	color:#FF0000
+}
 .history-codes div.history-code-item>div.code-number {
 	width:36%;
+}
+.history-codes div.history-code-item>div.code-number.full-size.ge-active {
+	color:#FF0000
 }
 .history-codes div.history-code-item>div.code-number.full-size {
 	width:33%
@@ -120,6 +126,9 @@ span.adjusts.full-size {
 }
 .history-codes div.history-code-item>div.code-adjust.full-size {
 	width:36%
+}
+.history-codes div.history-code-item>div.code-adjust.full-size.ge-active {
+	color:#FF0000;
 }
 .history-codes div.history-code-item>div.code-adjust span {
 	padding:0 2px;
