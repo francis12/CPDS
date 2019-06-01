@@ -38,7 +38,9 @@
         <option value="100">
             100
         </option>
-
+	<option value="200">
+	   200
+	</option>
 
         <option value="300">
             300
@@ -190,6 +192,8 @@
         var cur2Qian = prizeL2.prize.charAt(1);
         var cur2Wan = prizeL2.prize.charAt(0);
         var isGeMatch = false;
+        var isGeBdMatch = false;
+
 
         if(wfType =="ge") {
             if (isPreMatch) {
@@ -228,8 +232,12 @@
         childdiv.text(_this.no.substring(9));
         childdiv.appendTo(parentdiv);
         isGeMatch = _this.isMatch == "Y";
+        isGeBdMatch = _this.isBdMatch == "Y";
         if(isGeMatch) {
             childdiv.addClass('ge-active');
+        }
+        if(isGeBdMatch) {
+            childdiv.addClass('gebd-active');
         }
 
         var childdiv2 = $('<div></div>');
@@ -241,6 +249,9 @@
         if(isGeMatch) {
             childdiv2.addClass('ge-active');
         }
+        if(isGeBdMatch) {
+            childdiv2.addClass('gebd-active');
+        }
         spanChild.text(_this.prize);
         spanChild.appendTo(childdiv2);
 
@@ -250,6 +261,9 @@
 
         if(isGeMatch) {
             childdiv3.addClass('ge-active');
+        }
+        if(isGeBdMatch) {
+            childdiv3.addClass('gebd-active');
         }
         var spanChild3 = $('<span></span>');
         spanChild3.text(_this.adjustNum);

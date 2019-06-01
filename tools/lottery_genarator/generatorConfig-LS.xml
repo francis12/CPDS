@@ -16,9 +16,9 @@
   		<property name="suppressAllComments" value="true"/>
   	</commentGenerator>
     <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-        connectionURL="jdbc:mysql://127.0.0.1:3306/stock"
-        userId="root"
-        password="111111">
+        connectionURL="jdbc:mysql://47.104.93.191:3306/ssc"
+        userId="ssc"
+        password="230679zxm">
     </jdbcConnection>
 
     <javaTypeResolver >
@@ -52,7 +52,7 @@
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
   </table>-->
-  <table tableName="t_gen_prize" domainObjectName="GenPrizeModel"
+  <table tableName="t_tcffc_prize" domainObjectName="TCFFCPRIZE"
     enableDeleteByExample="true"
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />

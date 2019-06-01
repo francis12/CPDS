@@ -150,6 +150,7 @@ public class LotteryPrizeScheduleService {
         }
         return;
     }
+
     String formatCurTimeStr = "";
 
     public void fetchTcffcPrizeFrom77Org() {
@@ -158,7 +159,7 @@ public class LotteryPrizeScheduleService {
             formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
             //while (!StringUtils.isEmpty(formatCurTimeStr)) {
             try {
-                TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
+                TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimeqq09Prize(formatCurTimeStr);
                 //正常获取到开奖号码
                 if (null != parsedTcffcPrize) {
                     log.info("第" + parsedTcffcPrize.getNo() + "(" + formatCurTimeStr + ")开奖号为：" + parsedTcffcPrize.getPrize());
@@ -229,6 +230,62 @@ public class LotteryPrizeScheduleService {
                 }
             } catch (Exception e) {
                 log.error("fetchExactTimePrize error,", e);
+            }
+        }
+        return parsedTcffcPrize;
+    }
+
+
+    //qq09获取指定期
+    private TCFFCPRIZE fetchExactTimeqq09Prize(String formatCurTimeStr) throws Exception {
+
+        Date time = DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss");
+        Date curTime = DateUtils.String2Date(DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
+
+
+        while (curTime.compareTo(time) < 0) {
+            Thread.sleep(1 * 1000);
+            Date nowFor = DateUtils.getWebsiteDatetime("http://www.baidu.com");
+            curTime = DateUtils.String2Date(DateUtils.date2String(nowFor, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm");
+        }
+
+        TCFFCPRIZE parsedTcffcPrize = null;
+        boolean isGet = false;
+        int retryCnt = 0;
+        while (!isGet && retryCnt < 30) {
+            try {
+                log.debug("formatCurTimeStr:" + formatCurTimeStr + ",retryCnt:" + retryCnt);
+                retryCnt++;
+                Thread.sleep(2000);
+                //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
+                String result = RestClientProxyUtil.doGet("https://www.qq09.com/api/tecent-online/list-statistical-result-copy", String.class);
+
+                JSONObject qq09ResultJson = JSONObject.parseObject(result);
+
+                JSONObject qq09DataJson = qq09ResultJson.getJSONObject("data");
+                JSONArray prizeArray = qq09DataJson.getJSONArray("list");
+                JSONObject prize = prizeArray.getJSONObject(0);
+                String onlineTime = (String) prize.get("onlineTime");
+                if(formatCurTimeStr.compareTo(onlineTime) < 0){
+                    break;
+                }
+                if (formatCurTimeStr.equals(onlineTime)) {
+                    //获取到了当前期
+                    isGet = true;
+                        TCFFCPRIZE tcffcprize = new TCFFCPRIZE();
+                        try {
+                            tcffcprize.setTime(time);
+                            tcffcprize.setLotteryCode("TCFFC");
+                            tcffcprize.setOnlineNum(prize.getIntValue("onlineNum"));
+                            tcffcprize.setAdjustNum(prize.getIntValue("onlineChange"));
+                            parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                        } catch (Exception e) {
+                            log.error("fetchExactTimeqq09Prize error:" + formatCurTimeStr, e);
+                        }
+                        break;
+                    }
+            } catch (Exception e) {
+                log.error("fetchExactTimeqq09Prize error,", e);
             }
         }
         return parsedTcffcPrize;
@@ -567,4 +624,8 @@ public class LotteryPrizeScheduleService {
         }
         return cha;
     }*/
+
+    public static void main(String[] args) {
+        new LotteryPrizeScheduleService().fetchTcffcPrizeFrom77Org();
+    }
 }

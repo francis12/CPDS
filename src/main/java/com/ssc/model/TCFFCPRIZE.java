@@ -31,6 +31,16 @@ public class TCFFCPRIZE implements Comparable{
 
     private Date time;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private String type;
+
     public String getIsMatch() {
         return isMatch;
     }
@@ -40,6 +50,16 @@ public class TCFFCPRIZE implements Comparable{
     }
 
     private String isMatch;
+    private String isBdMatch;
+
+    public String getIsBdMatch() {
+        return isBdMatch;
+    }
+
+    public void setIsBdMatch(String isBdMatch) {
+        this.isBdMatch = isBdMatch;
+    }
+
     public Long getId() {
         return id;
     }

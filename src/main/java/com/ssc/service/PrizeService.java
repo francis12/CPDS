@@ -33,32 +33,101 @@ public class PrizeService {
         criteria.andTimeGreaterThanOrEqualTo(minTime);
         tcffcprizeCondition.setOrderByClause("time desc");
         List<TCFFCPRIZE> list = tcffcprizedao.selectByCondition(tcffcprizeCondition);
-        if(null !=list && list.size() > 1) {
+        if(null !=list && list.size() > 5) {
             TCFFCPRIZE base1 = list.get(0);
             TCFFCPRIZE base2 = list.get(1);
-            base1.setIsMatch("Y");
-            base2.setIsMatch("Y");
+            TCFFCPRIZE base3 = list.get(2);
+            TCFFCPRIZE base4 = list.get(3);
+            TCFFCPRIZE base5 = list.get(4);
+            TCFFCPRIZE base6 = list.get(5);
+            int baseBd1 = Math.abs(base1.getAdjustNum())%10;
+            int baseBd2 = Math.abs(base2.getAdjustNum())%10;
+            int baseBd3 = Math.abs(base3.getAdjustNum())%10;
+            int baseBd4 = Math.abs(base4.getAdjustNum())%10;
+            int baseBd5 = Math.abs(base5.getAdjustNum())%10;
+            int baseBd6 = Math.abs(base6.getAdjustNum())%10;
+            base1.setIsBdMatch("Y");
+            base2.setIsBdMatch("Y");
             boolean isPreMatch = false;
-            for(int i=2;i<list.size();i++) {
+            boolean isPreBdMatch = false;
+
+            for(int i = 5; i<list.size()-6;i++) {
+                TCFFCPRIZE cur1 = list.get(i);
+                TCFFCPRIZE cur2 = list.get(i+1);
+                TCFFCPRIZE cur3 = list.get(i+2);
+                TCFFCPRIZE cur4 = list.get(i+3);
+                TCFFCPRIZE cur5 = list.get(i+4);
+                TCFFCPRIZE cur6 = list.get(i+5);
+
+                if(Math.abs(base1.getAdjustNum())%10 == Math.abs(cur1.getAdjustNum())%10 && Math.abs(base2.getAdjustNum())%10 == Math.abs(cur2.getAdjustNum())%10
+                        && Math.abs(base3.getAdjustNum())%2 == Math.abs(cur3.getAdjustNum())%2
+                        && Math.abs(base4.getAdjustNum())%2 == Math.abs(cur4.getAdjustNum())%2
+                        && Math.abs(base5.getAdjustNum())%2 == Math.abs(cur5.getAdjustNum())%2
+                       ) {
+                    cur1.setIsBdMatch("Y");
+                    cur2.setIsBdMatch("Y");
+                    cur3.setIsBdMatch("Y");
+                    cur4.setIsBdMatch("Y");
+                    cur5.setIsBdMatch("Y");
+                }
+
+                if(base1.getGe() == cur1.getGe() && base2.getGe() == cur2.getGe()
+                        && ((base3.getGe() >=5 && cur3.getGe()>=5)||(base3.getGe() <5 && cur3.getGe()<5))
+                        && ((base4.getGe() >=5 && cur4.getGe()>=5)||(base4.getGe() <5 && cur4.getGe()<5))
+                        && ((base5.getGe() >=5 && cur5.getGe()>=5)||(base5.getGe() <5 && cur5.getGe()<5))
+                        ) {
+                    cur1.setIsMatch("Y");
+                    cur2.setIsMatch("Y");
+                    cur3.setIsMatch("Y");
+                    cur4.setIsMatch("Y");
+                    cur5.setIsMatch("Y");
+                }
+            }
+            /*for(int i=2;i<list.size()-6;i++) {
                 TCFFCPRIZE cur = list.get(i);
-                if(isPreMatch) {
-                    if(cur.getGe() == base2.getGe()) {
-                        list.get(i-1).setIsMatch("Y");
+                int curBd = Math.abs(cur.getAdjustNum()) % 10;
+                if (isPreMatch) {
+                    if (cur.getGe() == base2.getGe() &&
+                            Math.abs(list.get(i + 1).getGe() - base3.getGe()) < 5
+                            && Math.abs(list.get(i + 2).getGe() - base4.getGe()) < 5
+                            && Math.abs(list.get(i + 3).getGe() - base5.getGe()) < 5
+                            && Math.abs(list.get(i + 4).getGe() - base6.getGe()) < 5
+                    ) {
+                        list.get(i - 1).setIsMatch("Y");
                         cur.setIsMatch("Y");
                         isPreMatch = false;
-                    }else {
-                        if(cur.getGe() == base1.getGe()) {
+                    } else {
+                        if (cur.getGe() == base1.getGe()) {
                             isPreMatch = true;
-                        }else {
+                        } else {
                             isPreMatch = false;
                         }
                     }
                 } else {
-                    if(cur.getGe() == base1.getGe()) {
+                    if (cur.getGe() == base1.getGe()) {
                         isPreMatch = true;
                     }
                 }
-            }
+
+                if (isPreBdMatch) {
+                    if (curBd == baseBd2) {
+                        list.get(i - 1).setIsBdMatch("Y");
+                        cur.setIsBdMatch("Y");
+                        isPreBdMatch = false;
+                    } else {
+                        if (curBd
+                                == baseBd1) {
+                            isPreBdMatch = true;
+                        } else {
+                            isPreBdMatch = false;
+                        }
+                    }
+                } else {
+                    if (curBd == baseBd1) {
+                        isPreBdMatch = true;
+                    }
+                }
+            }*/
         }
         return list;
     }
@@ -78,9 +147,9 @@ public class PrizeService {
 
     static int[][] ErXinAll = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9},
             {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {1, 8}, {1, 9},
-             {2, 3}, {2, 4}, {2, 5}, {2, 6}, {2, 7}, {2, 8}, {2, 9},
-             {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {3, 9},
-             {4, 5}, {4, 6}, {4, 7}, {4, 8}, {4, 9},
+            {2, 3}, {2, 4}, {2, 5}, {2, 6}, {2, 7}, {2, 8}, {2, 9},
+            {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {3, 9},
+            {4, 5}, {4, 6}, {4, 7}, {4, 8}, {4, 9},
             {5, 6}, {5, 7}, {5, 8}, {5, 9},
             {6, 7}, {6, 8}, {6, 9}, {7, 8}, {7, 9},  {8, 9}
 
@@ -377,7 +446,7 @@ public class PrizeService {
                 int preShi = pre.getShi();
                 int preGe = pre.getGe();
                 if ((wan - preWan != num) && (qian - preQian != num) && (bai - preBai != num) && (shi - preShi != num) && (ge - preGe != num)
-                    && (wan - preWan != -(10-num)) && (qian - preQian != -(10-num)) && (bai - preBai != -(10-num)) && (shi - preShi != -(10-num)) && (ge - preGe != -(10-num))
+                        && (wan - preWan != -(10-num)) && (qian - preQian != -(10-num)) && (bai - preBai != -(10-num)) && (shi - preShi != -(10-num)) && (ge - preGe != -(10-num))
                 ) {
                     isPrized = true;
                 }
