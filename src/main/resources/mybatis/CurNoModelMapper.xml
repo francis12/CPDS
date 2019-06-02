@@ -3,6 +3,7 @@
 <mapper namespace="com.ssc.mapper.CurNoModelDAO" >
   <resultMap id="BaseResultMap" type="com.ssc.model.CurNoModel" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="cur_no" property="curNo" jdbcType="VARCHAR" />
     <result column="next_no" property="nextNo" jdbcType="VARCHAR" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, lottery_code, cur_no, next_no, next_sec, prize
+    id, type, lottery_code, cur_no, next_no, next_sec, prize
   </sql>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.CurNoModelCondition" >
     select
@@ -104,10 +105,12 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
     </selectKey>
-    insert into t_cur_no (lottery_code, cur_no, next_no, 
-      next_sec, prize)
-    values (#{lotteryCode,jdbcType=VARCHAR}, #{curNo,jdbcType=VARCHAR}, #{nextNo,jdbcType=VARCHAR}, 
-      #{nextSec,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR})
+    insert into t_cur_no (type, lottery_code, cur_no, 
+      next_no, next_sec, prize
+      )
+    values (#{type,jdbcType=VARCHAR}, #{lotteryCode,jdbcType=VARCHAR}, #{curNo,jdbcType=VARCHAR}, 
+      #{nextNo,jdbcType=VARCHAR}, #{nextSec,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ssc.model.CurNoModel" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -115,6 +118,9 @@
     </selectKey>
     insert into t_cur_no
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="type != null" >
+        type,
+      </if>
       <if test="lotteryCode != null" >
         lottery_code,
       </if>
@@ -132,6 +138,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
       <if test="lotteryCode != null" >
         #{lotteryCode,jdbcType=VARCHAR},
       </if>
@@ -161,6 +170,9 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
       <if test="record.lotteryCode != null" >
         lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       </if>
@@ -184,6 +196,7 @@
   <update id="updateByCondition" parameterType="map" >
     update t_cur_no
     set id = #{record.id,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=VARCHAR},
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       cur_no = #{record.curNo,jdbcType=VARCHAR},
       next_no = #{record.nextNo,jdbcType=VARCHAR},
@@ -196,6 +209,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.ssc.model.CurNoModel" >
     update t_cur_no
     <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
       <if test="lotteryCode != null" >
         lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       </if>
@@ -216,7 +232,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ssc.model.CurNoModel" >
     update t_cur_no
-    set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
+    set type = #{type,jdbcType=VARCHAR},
+      lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       cur_no = #{curNo,jdbcType=VARCHAR},
       next_no = #{nextNo,jdbcType=VARCHAR},
       next_sec = #{nextSec,jdbcType=VARCHAR},

@@ -1,0 +1,114 @@
+<body style="padding:0">
+<div id="condition">
+    <select id ="type">
+        <option value="1">按时间段</option>
+        <option value="2">按时间区间</option>
+    </select>
+
+    value:<input type="text" id="value_id" name="value" value="20171124">
+    value2:<input type="text" id="value_id2" name="value2" value="20171124">
+    <button type="button" onclick="draw()">查询</button>
+
+</div>
+<div style="padding:10px;clear: both;">  
+    <div id="psLine" style="height:1600px;"></div>  
+</div>  
+</body>  
+<script src="echarts.js"></script>  
+<script src="jquery-1.10.1.min.js"></script>  
+
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('psLine'));
+  var lineOption = {
+          title : {
+             text: '',
+             subtext: ''
+        },
+        tooltip : {
+             trigger: 'axis' //item 点在哪条线上显示哪条线上的数据，axis点在哪个坐标点上显示对于点上所有数据
+         },
+          legend: {
+              data:['在线人数']
+          },
+          toolbox: {
+              show : true,
+              orient : 'vertical',
+              x: 'right',
+              y: 'center',
+              feature : {
+                 mark : {show: true},
+                  dataView : {show: true, readOnly: false},
+                  magicType : {show: true, type: ['line', 'bar']},
+                  restore : {show: true},
+                  saveAsImage : {
+                      show: true,
+                      name:'折线图'//保存的图片名次
+                     }
+              }
+          },
+          calculable : true,
+          xAxis : [
+              {
+                  type : 'category',
+                  boundaryGap : false,
+                  data : []
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value',
+                  axisLabel : {
+                      formatter: '{value} '
+                  }
+              }
+          ],
+		  series : [  
+                    {  
+                        name:'在线人数',  
+                        type:'line',  
+                        data:[],   
+                        markLine : {  
+                            data : [  
+                                {type : 'average', name: '平均值'}  
+                            ]  
+                        }  
+                    }
+				]	,
+          grid: {
+              x:150,//设置该图形与对应div的左边距
+              y:180,//设置该图形与对应div的上边距
+          }
+      };
+  
+  myChart.setOption(lineOption);
+  var ajax = function() {
+      var queryType = $("#type").val();
+      var value = $("#value_id").val();
+      var value2 = $("#value_id2").val();
+
+      $.ajax({
+          //url :encodeURI('http://localhost:8011/ds/tecentOnlineData?type=1&value=2017%04:%:%'),
+          //          url : 'http://localhost:8011/ds/tecentOnlineData?type=' + type + "&value=" + value + 2017-11-20 04:48:00&value2=2017-11-27 08:48:00',
+          url : 'http://localhost:8011/ds/queryQQh3?type=' + queryType + "&value=" + value + "&value2=" + value2,
+          success: function(responseText) {
+             //请求成功时处理
+              //var responseText = eval('(' + responseText + ')'); 
+              lineOption.xAxis[0].data = responseText.xAxis;
+              lineOption.series[0].data = responseText.series;
+              //alert(lineOption.series);
+              myChart.setOption(lineOption,true);
+          },
+          complete: function() {
+              //请求完成的处理
+          },
+          error: function() {
+              //请求出错处理
+              alert("加载失败");
+          }
+      })
+  }
+  var draw = function () {
+      window.setTimeout(ajax,100);
+  }
+ // window.setTimeout(ajax,100);
+</script>  

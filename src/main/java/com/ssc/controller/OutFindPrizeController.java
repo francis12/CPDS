@@ -180,7 +180,8 @@ public class OutFindPrizeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getLatestPrize", method = {RequestMethod.GET})
-	public Map getLatestPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode) {
+	public Map getLatestPrize(@RequestParam(required = true, value = "lotteryCode") String lotteryCode, @RequestParam(required = true, value = "signCode") String signCode,
+									String prizeType) {
 		Map<String,Object> result = new HashMap<>();
 		if (StringUtils.isEmpty(lotteryCode)) {
 			result.put("code", 201);
@@ -191,7 +192,10 @@ public class OutFindPrizeController {
 			return result;
 		}
 		try {
-			CurNoModel prize = prizeService.queryCurNoPrize(lotteryCode);
+			if (StringUtils.isEmpty(prizeType)) {
+				prizeType = BaseConstants.PRIZE_TYPE_77TJ;
+			}
+			CurNoModel prize = prizeService.queryCurNoPrize(lotteryCode, prizeType);
 			if (null != prize) {
 				result.put("no", prize.getCurNo());
 				result.put("prize", prize.getPrize());

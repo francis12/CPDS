@@ -164,6 +164,76 @@ public class CurNoModelCondition  {
             return (Criteria) this;
         }
 
+        public Criteria andTypeIsNull() {
+            addCriterion("type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNotNull() {
+            addCriterion("type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeEqualTo(String value) {
+            addCriterion("type =", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotEqualTo(String value) {
+            addCriterion("type <>", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThan(String value) {
+            addCriterion("type >", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("type >=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThan(String value) {
+            addCriterion("type <", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThanOrEqualTo(String value) {
+            addCriterion("type <=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLike(String value) {
+            addCriterion("type like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotLike(String value) {
+            addCriterion("type not like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<String> values) {
+            addCriterion("type in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotIn(List<String> values) {
+            addCriterion("type not in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeBetween(String value1, String value2) {
+            addCriterion("type between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotBetween(String value1, String value2) {
+            addCriterion("type not between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
         public Criteria andLotteryCodeIsNull() {
             addCriterion("lottery_code is null");
             return (Criteria) this;
@@ -445,72 +515,77 @@ public class CurNoModelCondition  {
         }
 
         public Criteria andPrizeIsNull() {
-            addCriterion("prizeschedule is null");
+            addCriterion("prize is null");
             return (Criteria) this;
         }
 
         public Criteria andPrizeIsNotNull() {
-            addCriterion("prizeschedule is not null");
+            addCriterion("prize is not null");
             return (Criteria) this;
         }
 
         public Criteria andPrizeEqualTo(String value) {
-            addCriterion("prizeschedule =", value, "prizeschedule");
+            addCriterion("prize =", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotEqualTo(String value) {
-            addCriterion("prizeschedule <>", value, "prizeschedule");
+            addCriterion("prize <>", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeGreaterThan(String value) {
-            addCriterion("prizeschedule >", value, "prizeschedule");
+            addCriterion("prize >", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeGreaterThanOrEqualTo(String value) {
-            addCriterion("prizeschedule >=", value, "prizeschedule");
+            addCriterion("prize >=", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLessThan(String value) {
-            addCriterion("prizeschedule <", value, "prizeschedule");
+            addCriterion("prize <", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLessThanOrEqualTo(String value) {
-            addCriterion("prizeschedule <=", value, "prizeschedule");
+            addCriterion("prize <=", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeLike(String value) {
-            addCriterion("prizeschedule like", value, "prizeschedule");
+            addCriterion("prize like", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotLike(String value) {
-            addCriterion("prizeschedule not like", value, "prizeschedule");
+            addCriterion("prize not like", value, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeIn(List<String> values) {
-            addCriterion("prizeschedule in", values, "prizeschedule");
+            addCriterion("prize in", values, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotIn(List<String> values) {
-            addCriterion("prizeschedule not in", values, "prizeschedule");
+            addCriterion("prize not in", values, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeBetween(String value1, String value2) {
-            addCriterion("prizeschedule between", value1, value2, "prizeschedule");
+            addCriterion("prize between", value1, value2, "prize");
             return (Criteria) this;
         }
 
         public Criteria andPrizeNotBetween(String value1, String value2) {
-            addCriterion("prizeschedule not between", value1, value2, "prizeschedule");
+            addCriterion("prize not between", value1, value2, "prize");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLikeInsensitive(String value) {
+            addCriterion("upper(type) like", value.toUpperCase(), "type");
             return (Criteria) this;
         }
 
@@ -535,7 +610,7 @@ public class CurNoModelCondition  {
         }
 
         public Criteria andPrizeLikeInsensitive(String value) {
-            addCriterion("upper(prizeschedule) like", value.toUpperCase(), "prizeschedule");
+            addCriterion("upper(prize) like", value.toUpperCase(), "prize");
             return (Criteria) this;
         }
     }

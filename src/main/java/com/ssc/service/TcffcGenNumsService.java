@@ -66,7 +66,7 @@ public class TcffcGenNumsService {
     public Map<String, Object> noticeGenNumsService(TCFFCPRIZE  curPrize) {
         this.updateCurPrize(curPrize);
         Date nextMin = DateUtils.addMinutes(1, curPrize.getTime());
-        updateCurNO(nextMin);
+        updateCurNO(nextMin, curPrize);
 
         Map<String, Object> result = new HashMap<>();
         //result.putAll(wuxingGenPrize.run(curPrize));
@@ -110,10 +110,12 @@ public class TcffcGenNumsService {
         curNOModel.setNextNo(nextNO);
         curNOModel.setCurNo(curPrize.getNo());
         curNOModel.setPrize(curPrize.getPrize());
+        curNOModel.setType(curPrize.getType());
         CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
-        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
+        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC").andTypeEqualTo(curPrize.getType());
         int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
         if (cnt > 0) {
+            log.info("curno更新" + curPrize.getType() + ":" + curPrize.getPrize());
             curNOModelDAO.updateByConditionSelective(curNOModel, curNOModelCondition);
         } else {
             curNOModelDAO.insert(curNOModel);
@@ -239,7 +241,7 @@ public class TcffcGenNumsService {
             FileUtils.writeStringToFile(wuXingFile, wuXingSb.toString(), false);
             System.out.println(curPrize.getNo() + "实际：" + curPrize.getPrize() + " "+(iaWuXingTstPrized?"中":"挂"));
 
-            updateCurNO(nextMin);
+            updateCurNO(nextMin, curPrize);
             //updateGenPrizeResult(conPrize, curPrize);
 
             genPrize = conPrize;
@@ -500,13 +502,15 @@ public class TcffcGenNumsService {
         TCFFCPRIZE conPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
         return  conPrize;
     }
-    public void updateCurNO(Date date) {
+    public void updateCurNO(Date date, TCFFCPRIZE curPrize) {
         CurNoModel curNOModel = new CurNoModel();
         curNOModel.setLotteryCode("TCFFC");
         String nextNO = TcffcPrizeConverter.genNofromTime(date);
         curNOModel.setNextNo(nextNO);
+        curNOModel.setType(curPrize.getType());
+        curNOModel.setPrize(curPrize.getPrize());
         CurNoModelCondition curNOModelCondition = new CurNoModelCondition();
-        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC");
+        curNOModelCondition.createCriteria().andLotteryCodeEqualTo("TCFFC").andTypeEqualTo(curPrize.getType());
         int cnt = curNOModelDAO.countByCondition(curNOModelCondition);
         if (cnt > 0) {
             curNOModelDAO.updateByConditionSelective(curNOModel, curNOModelCondition);

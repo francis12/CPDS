@@ -46,10 +46,11 @@ public class ChartService {
      * @return
      * @throws ParseException
      */
-    public Map<String, Object> queryTecentOnlineData2Option(Integer limit, String queryDateStr, int type) throws ParseException {
+    public Map<String, Object> queryTecentOnlineData2Option(String prizeType,Integer limit, String queryDateStr, int type) throws ParseException {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         TCFFCPRIZECondition.Criteria criteria = tcffcprizeCondition.createCriteria();
 
+        criteria.andTypeEqualTo(prizeType);
         if (limit != 0 && limit != null) {
             Date date = DateUtils.getBaiduCurTime();
             Date minTime = DateUtils.addMinutes(-limit, date);
@@ -131,7 +132,7 @@ public class ChartService {
 
         return null;
     }
-    public Map<String, Object> queryBdDxData(Integer limit, String queryDateStr) throws ParseException {
+    public Map<String, Object> queryBdDxData(Integer limit, String queryDateStr,String prizeType) throws ParseException {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         Map<String, Object> map = null;
         List<String> noList = new ArrayList<>();
@@ -150,6 +151,7 @@ public class ChartService {
                 criteria.andLotteryDateEqualTo(queryDate);
             }
 
+            criteria.andTypeEqualTo(prizeType);
             tcffcprizeCondition.setOrderByClause("time asc");
 
             List<TCFFCPRIZE> list = tcffcprizedao.selectByCondition(tcffcprizeCondition);
@@ -186,9 +188,9 @@ public class ChartService {
     }
         //type:0 - 波动个位双， 1 - 开奖个位双 ， 2 - 波动十位双， 3 - 开奖百位双 ， 4 - 波动千位双， 5 - 波动千位双 -6 波动个位小(0,1,2,3,4,-6,-7,-8,-9,-0)
         // -7 波动大小-正负分开-8wan  -9  qian  bd dx   -11波动的波动单双  - 12 开奖个位大小 -13 万位单双  14 万位大小
-    public Map<String, Object> queryTecentOnlineDanData2Option(Integer limit, String queryDateStr, int type) throws ParseException {
+    public Map<String, Object> queryTecentOnlineDanData2Option(Integer limit, String queryDateStr, int type,String prizeType) throws ParseException {
         if(7==type) {
-            return this.queryBdDxData(limit, queryDateStr);
+            return this.queryBdDxData(limit, queryDateStr, prizeType);
         }
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         Map<String, Object> map = null;
@@ -203,11 +205,11 @@ public class ChartService {
                 Date minTime = DateUtils.addMinutes(-limit, date);
                 criteria.andTimeGreaterThanOrEqualTo(minTime);
             }
-            if(StringUtils.isNotEmpty(queryDateStr)) {
-                Date queryDate = DateUtils.String2Date(queryDateStr, "yyyyMMdd");
-                criteria.andLotteryDateEqualTo(queryDate);
-            }
-
+//            if(StringUtils.isNotEmpty(queryDateStr)) {
+//                Date queryDate = DateUtils.String2Date(queryDateStr, "yyyyMMdd");
+//                criteria.andLotteryDateEqualTo(queryDate);
+//            }
+            criteria.andTypeEqualTo(prizeType);
             tcffcprizeCondition.setOrderByClause("time asc");
 
             List<TCFFCPRIZE> list = tcffcprizedao.selectByCondition(tcffcprizeCondition);
@@ -275,7 +277,7 @@ public class ChartService {
                 adjustDsList = this.convert2KArray(adjustList);
             }
 
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         map = new HashMap<>();

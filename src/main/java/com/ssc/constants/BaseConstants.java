@@ -29,4 +29,7 @@ public interface BaseConstants {
 
     String OUTPUT_PATH = "output";
 
+    String PRIZE_TYPE_77TJ = "77TJ";
+    String PRIZE_TYPE_QQ09 = "QQ09";
+
 }

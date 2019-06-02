@@ -26,7 +26,7 @@
     </javaTypeResolver>
 
 	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
-    <javaModelGenerator targetPackage="com.ds.zxm.model"
+    <javaModelGenerator targetPackage="com.ssc.model"
 	targetProject=".\Output\src\main\java\">
       <property name="enableSubPackages" value="true" />
       <property name="trimStrings" value="true" />
@@ -40,7 +40,7 @@
 	
 	<!-- 更改 targetPackage 为 "ps", "ls" 等 -->
 	<javaClientGenerator type="XMLMAPPER" 
-	targetPackage="com.ds.zxm.mapper"
+	targetPackage="com.ssc.mapper"
 	 targetProject=".\Output\src\main\java\">
       <property name="enableSubPackages" value="true" />
     </javaClientGenerator>
@@ -52,7 +52,7 @@
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />
   </table>-->
-  <table tableName="t_tcffc_prize" domainObjectName="TCFFCPRIZE"
+  <table tableName="t_cur_no" domainObjectName="CurNoModel"
     enableDeleteByExample="true"
     enableUpdateByExample="true">
     <generatedKey column="ID" identity="true" sqlStatement="SELECT @@IDENTITY" />

@@ -74,7 +74,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
         TjSSCScanService tjSSCScanService = (TjSSCScanService)context.getBean("tjSSCScanService");
 
         //启动过程中初始化最近一个半小时数据
-        lotteryPrizeScheduleService.batchFetchTCFFCData(1,2);
+        // lotteryPrizeScheduleService.batchFetchTCFFCData(1,2);
         //qq官网采集
         Runnable tcPrizeSchedule = new Runnable() {
             public void run() {
@@ -84,7 +84,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
         Date curTime = new Date();
         Runnable orgPrizeSchedule = new Runnable() {
             public void run() {
-                lotteryPrizeScheduleService.fetchTcffcPrizeFrom77Org();
+                lotteryPrizeScheduleService.startFetchPrizeDataFromQQ();
             }
         };
 
@@ -103,10 +103,10 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 .newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
         service.scheduleAtFixedRate(tcPrizeSchedule, 1, 10, TimeUnit.MILLISECONDS);
-       // service.scheduleAtFixedRate(tjsscScan,1,5,TimeUnit.SECONDS);
+        // service.scheduleAtFixedRate(tjsscScan,1,5,TimeUnit.SECONDS);
         //service.execute(tjsscScan);
 
-       //service.execute(orgPrizeSchedule);
+        //service.execute(orgPrizeSchedule);
         logger.info("SpringBoot Start Success");
     }
 

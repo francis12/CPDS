@@ -3,7 +3,6 @@ package com.ssc.mapper;
 import com.ssc.model.CurNoModel;
 import com.ssc.model.CurNoModelCondition;
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 public interface CurNoModelDAO {

@@ -6,15 +6,16 @@
     <result column="lottery_code" property="lotteryCode" jdbcType="VARCHAR" />
     <result column="no" property="no" jdbcType="VARCHAR" />
     <result column="prize" property="prize" jdbcType="VARCHAR" />
-    <result column="wan" property="wan" jdbcType="INTEGER" />
-    <result column="qian" property="qian" jdbcType="INTEGER" />
-    <result column="bai" property="bai" jdbcType="INTEGER" />
-    <result column="shi" property="shi" jdbcType="INTEGER" />
-    <result column="ge" property="ge" jdbcType="INTEGER" />
+    <result column="wan" property="wan" jdbcType="VARCHAR" />
+    <result column="qian" property="qian" jdbcType="VARCHAR" />
+    <result column="bai" property="bai" jdbcType="VARCHAR" />
+    <result column="shi" property="shi" jdbcType="VARCHAR" />
+    <result column="ge" property="ge" jdbcType="VARCHAR" />
     <result column="online_num" property="onlineNum" jdbcType="INTEGER" />
     <result column="adjust_num" property="adjustNum" jdbcType="INTEGER" />
     <result column="alias_no" property="aliasNo" jdbcType="VARCHAR" />
-    <result column="lottery_date" property="lotteryDate" jdbcType="DATE" />
+    <result column="lottery_date" property="lotteryDate" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="time" property="time" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -76,7 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-     *
+    id, lottery_code, no, prize, wan, qian, bai, shi, ge, online_num, adjust_num, alias_no, 
+    lottery_date, type, time
   </sql>
   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ssc.model.TCFFCPRIZECondition" >
     select
@@ -108,21 +110,6 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ssc.model.TCFFCPRIZE" >
-    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT @@IDENTITY
-    </selectKey>
-    insert into t_tcffc_prize (lottery_code, no, prize,
-      wan, qian, bai, shi,
-      ge, online_num, adjust_num,
-      alias_no, lottery_date, time
-      )
-    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR},
-      #{wan,jdbcType=INTEGER}, #{qian,jdbcType=INTEGER}, #{bai,jdbcType=INTEGER}, #{shi,jdbcType=INTEGER},
-      #{ge,jdbcType=INTEGER}, #{onlineNum,jdbcType=INTEGER}, #{adjustNum,jdbcType=INTEGER},
-      #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=DATE}, #{time,jdbcType=TIMESTAMP}
-      )
-  </insert>
   <insert id="insertBatch" parameterType="java.util.List" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT @@IDENTITY
@@ -130,17 +117,32 @@
     insert into t_tcffc_prize (lottery_code, no, prize,
     wan, qian, bai, shi,
     ge, online_num, adjust_num,
-    alias_no, lottery_date, time
+    alias_no, lottery_date, time,type
     )
     values
-     <foreach collection ="list" item="item" index= "index" separator =",">
+    <foreach collection ="list" item="item" index= "index" separator =",">
 
-     (#{item.lotteryCode,jdbcType=VARCHAR}, #{item.no,jdbcType=VARCHAR}, #{item.prize,jdbcType=VARCHAR},
-    #{item.wan,jdbcType=INTEGER}, #{item.qian,jdbcType=INTEGER}, #{item.bai,jdbcType=INTEGER}, #{item.shi,jdbcType=INTEGER},
-    #{item.ge,jdbcType=INTEGER}, #{item.onlineNum,jdbcType=INTEGER}, #{item.adjustNum,jdbcType=INTEGER},
-    #{item.aliasNo,jdbcType=VARCHAR}, #{item.lotteryDate,jdbcType=DATE}, #{item.time,jdbcType=TIMESTAMP}
-    )
-     </foreach >
+      (#{item.lotteryCode,jdbcType=VARCHAR}, #{item.no,jdbcType=VARCHAR}, #{item.prize,jdbcType=VARCHAR},
+      #{item.wan,jdbcType=INTEGER}, #{item.qian,jdbcType=INTEGER}, #{item.bai,jdbcType=INTEGER}, #{item.shi,jdbcType=INTEGER},
+      #{item.ge,jdbcType=INTEGER}, #{item.onlineNum,jdbcType=INTEGER}, #{item.adjustNum,jdbcType=INTEGER},
+      #{item.aliasNo,jdbcType=VARCHAR}, #{item.lotteryDate,jdbcType=DATE}, #{item.time,jdbcType=TIMESTAMP}, #{item.type,jdbcType=VARCHAR}
+      )
+    </foreach >
+  </insert>
+  <insert id="insert" parameterType="com.ssc.model.TCFFCPRIZE" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT @@IDENTITY
+    </selectKey>
+    insert into t_tcffc_prize (lottery_code, no, prize, 
+      wan, qian, bai, shi, 
+      ge, online_num, adjust_num, 
+      alias_no, lottery_date, type, 
+      time)
+    values (#{lotteryCode,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{prize,jdbcType=VARCHAR}, 
+      #{wan,jdbcType=VARCHAR}, #{qian,jdbcType=VARCHAR}, #{bai,jdbcType=VARCHAR}, #{shi,jdbcType=VARCHAR}, 
+      #{ge,jdbcType=VARCHAR}, #{onlineNum,jdbcType=INTEGER}, #{adjustNum,jdbcType=INTEGER}, 
+      #{aliasNo,jdbcType=VARCHAR}, #{lotteryDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{time,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ssc.model.TCFFCPRIZE" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -184,6 +186,9 @@
       <if test="lotteryDate != null" >
         lottery_date,
       </if>
+      <if test="type != null" >
+        type,
+      </if>
       <if test="time != null" >
         time,
       </if>
@@ -199,19 +204,19 @@
         #{prize,jdbcType=VARCHAR},
       </if>
       <if test="wan != null" >
-        #{wan,jdbcType=INTEGER},
+        #{wan,jdbcType=VARCHAR},
       </if>
       <if test="qian != null" >
-        #{qian,jdbcType=INTEGER},
+        #{qian,jdbcType=VARCHAR},
       </if>
       <if test="bai != null" >
-        #{bai,jdbcType=INTEGER},
+        #{bai,jdbcType=VARCHAR},
       </if>
       <if test="shi != null" >
-        #{shi,jdbcType=INTEGER},
+        #{shi,jdbcType=VARCHAR},
       </if>
       <if test="ge != null" >
-        #{ge,jdbcType=INTEGER},
+        #{ge,jdbcType=VARCHAR},
       </if>
       <if test="onlineNum != null" >
         #{onlineNum,jdbcType=INTEGER},
@@ -223,7 +228,10 @@
         #{aliasNo,jdbcType=VARCHAR},
       </if>
       <if test="lotteryDate != null" >
-        #{lotteryDate,jdbcType=DATE},
+        #{lotteryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
       </if>
       <if test="time != null" >
         #{time,jdbcType=TIMESTAMP},
@@ -252,19 +260,19 @@
         prize = #{record.prize,jdbcType=VARCHAR},
       </if>
       <if test="record.wan != null" >
-        wan = #{record.wan,jdbcType=INTEGER},
+        wan = #{record.wan,jdbcType=VARCHAR},
       </if>
       <if test="record.qian != null" >
-        qian = #{record.qian,jdbcType=INTEGER},
+        qian = #{record.qian,jdbcType=VARCHAR},
       </if>
       <if test="record.bai != null" >
-        bai = #{record.bai,jdbcType=INTEGER},
+        bai = #{record.bai,jdbcType=VARCHAR},
       </if>
       <if test="record.shi != null" >
-        shi = #{record.shi,jdbcType=INTEGER},
+        shi = #{record.shi,jdbcType=VARCHAR},
       </if>
       <if test="record.ge != null" >
-        ge = #{record.ge,jdbcType=INTEGER},
+        ge = #{record.ge,jdbcType=VARCHAR},
       </if>
       <if test="record.onlineNum != null" >
         online_num = #{record.onlineNum,jdbcType=INTEGER},
@@ -276,7 +284,10 @@
         alias_no = #{record.aliasNo,jdbcType=VARCHAR},
       </if>
       <if test="record.lotteryDate != null" >
-        lottery_date = #{record.lotteryDate,jdbcType=DATE},
+        lottery_date = #{record.lotteryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.time != null" >
         time = #{record.time,jdbcType=TIMESTAMP},
@@ -292,15 +303,16 @@
       lottery_code = #{record.lotteryCode,jdbcType=VARCHAR},
       no = #{record.no,jdbcType=VARCHAR},
       prize = #{record.prize,jdbcType=VARCHAR},
-      wan = #{record.wan,jdbcType=INTEGER},
-      qian = #{record.qian,jdbcType=INTEGER},
-      bai = #{record.bai,jdbcType=INTEGER},
-      shi = #{record.shi,jdbcType=INTEGER},
-      ge = #{record.ge,jdbcType=INTEGER},
+      wan = #{record.wan,jdbcType=VARCHAR},
+      qian = #{record.qian,jdbcType=VARCHAR},
+      bai = #{record.bai,jdbcType=VARCHAR},
+      shi = #{record.shi,jdbcType=VARCHAR},
+      ge = #{record.ge,jdbcType=VARCHAR},
       online_num = #{record.onlineNum,jdbcType=INTEGER},
       adjust_num = #{record.adjustNum,jdbcType=INTEGER},
       alias_no = #{record.aliasNo,jdbcType=VARCHAR},
-      lottery_date = #{record.lotteryDate,jdbcType=DATE},
+      lottery_date = #{record.lotteryDate,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=VARCHAR},
       time = #{record.time,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -319,19 +331,19 @@
         prize = #{prize,jdbcType=VARCHAR},
       </if>
       <if test="wan != null" >
-        wan = #{wan,jdbcType=INTEGER},
+        wan = #{wan,jdbcType=VARCHAR},
       </if>
       <if test="qian != null" >
-        qian = #{qian,jdbcType=INTEGER},
+        qian = #{qian,jdbcType=VARCHAR},
       </if>
       <if test="bai != null" >
-        bai = #{bai,jdbcType=INTEGER},
+        bai = #{bai,jdbcType=VARCHAR},
       </if>
       <if test="shi != null" >
-        shi = #{shi,jdbcType=INTEGER},
+        shi = #{shi,jdbcType=VARCHAR},
       </if>
       <if test="ge != null" >
-        ge = #{ge,jdbcType=INTEGER},
+        ge = #{ge,jdbcType=VARCHAR},
       </if>
       <if test="onlineNum != null" >
         online_num = #{onlineNum,jdbcType=INTEGER},
@@ -343,7 +355,10 @@
         alias_no = #{aliasNo,jdbcType=VARCHAR},
       </if>
       <if test="lotteryDate != null" >
-        lottery_date = #{lotteryDate,jdbcType=DATE},
+        lottery_date = #{lotteryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
       </if>
       <if test="time != null" >
         time = #{time,jdbcType=TIMESTAMP},
@@ -356,15 +371,16 @@
     set lottery_code = #{lotteryCode,jdbcType=VARCHAR},
       no = #{no,jdbcType=VARCHAR},
       prize = #{prize,jdbcType=VARCHAR},
-      wan = #{wan,jdbcType=INTEGER},
-      qian = #{qian,jdbcType=INTEGER},
-      bai = #{bai,jdbcType=INTEGER},
-      shi = #{shi,jdbcType=INTEGER},
-      ge = #{ge,jdbcType=INTEGER},
+      wan = #{wan,jdbcType=VARCHAR},
+      qian = #{qian,jdbcType=VARCHAR},
+      bai = #{bai,jdbcType=VARCHAR},
+      shi = #{shi,jdbcType=VARCHAR},
+      ge = #{ge,jdbcType=VARCHAR},
       online_num = #{onlineNum,jdbcType=INTEGER},
       adjust_num = #{adjustNum,jdbcType=INTEGER},
       alias_no = #{aliasNo,jdbcType=VARCHAR},
-      lottery_date = #{lotteryDate,jdbcType=DATE},
+      lottery_date = #{lotteryDate,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
       time = #{time,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

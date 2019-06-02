@@ -1,6 +1,8 @@
 package com.ssc.controller;
 
+import com.ssc.constants.BaseConstants;
 import com.ssc.service.ChartService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +25,13 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/tecentOnlineData", method = {RequestMethod.GET})
 	public Map<String, Object> tecentOnlineData( @RequestParam(value = "limit") Integer limit,
-												 @RequestParam(value = "date") String date) {
+												 @RequestParam(value = "date") String date, String prizeType) {
 		Map<String, Object> option = null;
 		try {
-			option = chartService.queryTecentOnlineData2Option(limit, date,0);
+			if (StringUtils.isEmpty(prizeType)) {
+				prizeType = BaseConstants.PRIZE_TYPE_77TJ;
+			}
+			option = chartService.queryTecentOnlineData2Option(prizeType, limit, date,0);
 		} catch (Exception e) {
 			log.error("tecentOnlineData error");
 		}
@@ -36,7 +41,7 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/tecentOnlineDataByInterval", method = {RequestMethod.GET})
 	public Map<String, Object> tecentOnlineDataByInterval( @RequestParam(value = "startNo") String startNo,
-												 @RequestParam(value = "endNo") String endNo) {
+														   @RequestParam(value = "endNo") String endNo) {
 		Map<String, Object> option = null;
 		try {
 			option = chartService.queryTecentOnlineDataByInterval2Option(startNo, endNo);
@@ -49,10 +54,13 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/tecentOnlineDanData", method = {RequestMethod.GET})
 	public Map<String, Object> tecentOnlineDanData( @RequestParam(value = "limit") Integer limit,
-												 @RequestParam(value = "date") String date) {
+													@RequestParam(value = "date") String date, String prizeType) {
 		Map<String, Object> option = null;
 		try {
-			option = chartService.queryTecentOnlineDanData2Option(limit, date,0);
+			if (StringUtils.isEmpty(prizeType)) {
+				prizeType = BaseConstants.PRIZE_TYPE_77TJ;
+			}
+			option = chartService.queryTecentOnlineDanData2Option(limit, date,0, prizeType);
 		} catch (Exception e) {
 			log.error("tecentOnlineData error");
 		}
@@ -63,10 +71,14 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/tecentOnlineGeDsData", method = {RequestMethod.GET})
 	public Map<String, Object> tecentOnlineGeDsData( @RequestParam(value = "limit") Integer limit,
-													 @RequestParam(value = "date") String date) {
+													 @RequestParam(value = "date") String date,
+													 String prizeType) {
 		Map<String, Object> option = null;
 		try {
-			option = chartService.queryTecentOnlineData2Option(limit, date,1);
+			if (StringUtils.isEmpty(prizeType)){
+				prizeType = BaseConstants.PRIZE_TYPE_77TJ;
+			}
+			option = chartService.queryTecentOnlineData2Option(prizeType,limit, date,1);
 		} catch (Exception e) {
 			log.error("tecentOnlineData error");
 		}
@@ -77,11 +89,14 @@ public class ChartController {
 	@ResponseBody
 	@RequestMapping(value = "/tecentOnlineDataByType", method = {RequestMethod.GET})
 	public Map<String, Object> tecentOnlineDataByType( @RequestParam(value = "limit") Integer limit,
-													 @RequestParam(value = "date") String date,
-													   @RequestParam(value = "type") Integer type) {
+													   @RequestParam(value = "date") String date,
+													   @RequestParam(value = "type") Integer type,String prizeType) {
 		Map<String, Object> option = new HashMap<>();
 		try {
-			option = chartService.queryTecentOnlineDanData2Option(limit, date,type);
+			if(StringUtils.isEmpty(prizeType)) {
+				prizeType = BaseConstants.PRIZE_TYPE_77TJ;
+			}
+			option = chartService.queryTecentOnlineDanData2Option(limit, date,type,prizeType);
 		} catch (Exception e) {
 			log.error("tecentOnlineData error",e );
 		}

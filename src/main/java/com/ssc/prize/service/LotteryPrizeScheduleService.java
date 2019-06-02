@@ -53,16 +53,19 @@ public class LotteryPrizeScheduleService {
 
 
     public void startFetchQQprize() {
-        if ("0".equals(type)) {
-            this.startFetchPrizeDataFromQQ();
-        } else if ("1".equals(type)) {
-            fetchTcffcPrizeFrom77Org();
+        String[] typeArr = type.split(",");
+        for (String item:typeArr) {
+            if ("0".equals(item)) {
+                this.startFetchPrizeDataFromQQ();
+            } else if (BaseConstants.PRIZE_TYPE_77TJ.equals(item) || BaseConstants.PRIZE_TYPE_QQ09.equals(item)) {
+                fetchTcffcPrize(item);
+            }
         }
     }
 
-    public CurNoModel queryCurNoPrize(String lotteryCode) {
+    public CurNoModel queryCurNoPrize(String lotteryCode, String prizeType) {
         CurNoModelCondition curNoModelCondition = new CurNoModelCondition();
-        curNoModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode);
+        curNoModelCondition.createCriteria().andLotteryCodeEqualTo(lotteryCode).andTypeEqualTo(prizeType);
         List<CurNoModel> curNoModelList = curNOModelDAO.selectByCondition(curNoModelCondition);
         if (null == curNoModelList || curNoModelList.size() == 0) {
             return new CurNoModel();
@@ -153,13 +156,18 @@ public class LotteryPrizeScheduleService {
 
     String formatCurTimeStr = "";
 
-    public void fetchTcffcPrizeFrom77Org() {
+    public void fetchTcffcPrize(String type) {
         try {
             String curTimeStr = DateUtils.date2String(getCurTime(), "yyyy-MM-dd HH:mm");
             formatCurTimeStr = DateUtils.date2String(DateUtils.String2Date(curTimeStr, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss");
             //while (!StringUtils.isEmpty(formatCurTimeStr)) {
             try {
-                TCFFCPRIZE parsedTcffcPrize = this.fetchExactTimeqq09Prize(formatCurTimeStr);
+                TCFFCPRIZE parsedTcffcPrize = new TCFFCPRIZE();
+                if(BaseConstants.PRIZE_TYPE_QQ09.equals(type)) {
+                    parsedTcffcPrize = this.fetchExactTimeqq09Prize(formatCurTimeStr);
+                } else if(BaseConstants.PRIZE_TYPE_77TJ.equals(type)) {
+                    parsedTcffcPrize = this.fetchExactTimePrize(formatCurTimeStr);
+                }
                 //正常获取到开奖号码
                 if (null != parsedTcffcPrize) {
                     log.info("第" + parsedTcffcPrize.getNo() + "(" + formatCurTimeStr + ")开奖号为：" + parsedTcffcPrize.getPrize());
@@ -167,11 +175,11 @@ public class LotteryPrizeScheduleService {
                     //notice出号中心
                     tcffcGenNumsService.noticeGenNumsService(parsedTcffcPrize);
                 } else {
-                    log.error("第" + formatCurTimeStr + "期开奖数据获取失败!");
+                    log.error("第" + formatCurTimeStr + "期"+ type + "开奖数据获取失败!");
                 }
             } catch (Exception e) {
                 log.error("fetchExactTimePrize error, formatCurTimeStr:" + formatCurTimeStr, e);
-                log.error("第" + formatCurTimeStr + "期开奖数据获取失败,跳过!");
+                log.error("第" + formatCurTimeStr + "期"+ type + "开奖数据获取失败,跳过!");
             }
             Date nextMin = DateUtils.addMinutes(1, DateUtils.String2Date(formatCurTimeStr, "yyyy-MM-dd HH:mm:ss"));
             formatCurTimeStr = DateUtils.date2String(nextMin, "yyyy-MM-dd HH:mm:ss");
@@ -204,7 +212,7 @@ public class LotteryPrizeScheduleService {
             try {
                 log.debug("formatCurTimeStr:" + formatCurTimeStr + ",retryCnt:" + retryCnt);
                 retryCnt++;
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
                 String result = RestClientProxyUtil.doGet("http://77tj.org/api/tencent/onlineim", String.class);
 
@@ -222,6 +230,7 @@ public class LotteryPrizeScheduleService {
                             tcffcprize.setOnlineNum(prize.getIntValue("onlinenumber"));
                             tcffcprize.setAdjustNum(prize.getIntValue("onlinechange"));
                             parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                            parsedTcffcPrize.setType("77TJ");
                         } catch (Exception e) {
                             log.error("fetchTcffcPrizeFrom77Org error:" + formatCurTimeStr, e);
                         }
@@ -252,14 +261,14 @@ public class LotteryPrizeScheduleService {
         TCFFCPRIZE parsedTcffcPrize = null;
         boolean isGet = false;
         int retryCnt = 0;
-        while (!isGet && retryCnt < 30) {
+        while (!isGet && retryCnt < 10) {
             try {
                 log.debug("formatCurTimeStr:" + formatCurTimeStr + ",retryCnt:" + retryCnt);
                 retryCnt++;
-                Thread.sleep(2000);
+                Thread.sleep(3000);
                 //String result = HttpUtil.doGet("http://77tj.org/api/tencent/onlineim", "utf-8");
                 String result = RestClientProxyUtil.doGet("https://www.qq09.com/api/tecent-online/list-statistical-result-copy", String.class);
-
+                log.info("qq09result:" + result);
                 JSONObject qq09ResultJson = JSONObject.parseObject(result);
 
                 JSONObject qq09DataJson = qq09ResultJson.getJSONObject("data");
@@ -279,6 +288,7 @@ public class LotteryPrizeScheduleService {
                             tcffcprize.setOnlineNum(prize.getIntValue("onlineNum"));
                             tcffcprize.setAdjustNum(prize.getIntValue("onlineChange"));
                             parsedTcffcPrize = TcffcPrizeConverter.convert2TCFFCPrize(tcffcprize);
+                            parsedTcffcPrize.setType("QQ09");
                         } catch (Exception e) {
                             log.error("fetchExactTimeqq09Prize error:" + formatCurTimeStr, e);
                         }
@@ -306,7 +316,7 @@ public class LotteryPrizeScheduleService {
     }
     private void insertOnUnexist(TCFFCPRIZE curPrize) {
         TCFFCPRIZECondition conditon = new TCFFCPRIZECondition();
-        conditon.createCriteria().andNoEqualTo(curPrize.getNo());
+        conditon.createCriteria().andNoEqualTo(curPrize.getNo()).andTypeEqualTo(curPrize.getType());
         int cnt = tcffcprizedao.countByCondition(conditon);
         if (cnt <= 0) {
             //log.info("数据库新增" + curPrize.getNo());
@@ -626,6 +636,5 @@ public class LotteryPrizeScheduleService {
     }*/
 
     public static void main(String[] args) {
-        new LotteryPrizeScheduleService().fetchTcffcPrizeFrom77Org();
     }
 }

@@ -1,5 +1,6 @@
 package com.ssc.service;
 
+import com.ssc.constants.BaseConstants;
 import com.ssc.mapper.TCFFCPRIZEDAO;
 import com.ssc.model.*;
 import com.ssc.util.DateUtils;
@@ -24,13 +25,14 @@ public class PrizeService {
     Logger log = Logger.getLogger(PrizeService.class);
 
 
-    public List<TCFFCPRIZE> queryLatestPrize(Integer limit) throws ParseException {
+    public List<TCFFCPRIZE> queryLatestPrize(Integer limit, String prizeType) throws ParseException {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         TCFFCPRIZECondition.Criteria criteria = tcffcprizeCondition.createCriteria();
 
         Date date = DateUtils.getBaiduCurTime();
         Date minTime = DateUtils.addMinutes(-limit, date);
         criteria.andTimeGreaterThanOrEqualTo(minTime);
+        criteria.andTypeEqualTo(prizeType);
         tcffcprizeCondition.setOrderByClause("time desc");
         List<TCFFCPRIZE> list = tcffcprizedao.selectByCondition(tcffcprizeCondition);
         if(null !=list && list.size() > 5) {
@@ -157,8 +159,8 @@ public class PrizeService {
 
     int zhuLimit = 1000;
 
-    public Map<String, List<TCFFCPRIZE>>  getLatestGeNextPrize(Integer limit, String type) throws ParseException {
-        List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
+    public Map<String, List<TCFFCPRIZE>>  getLatestGeNextPrize(Integer limit, String type,String prizeType) throws ParseException {
+        List<TCFFCPRIZE> list = queryLatestPrizeList(limit,prizeType);
 
         Map<String, List<TCFFCPRIZE>> result = new HashMap<>();
         String preGeNum = null;
@@ -299,23 +301,24 @@ public class PrizeService {
         });
     }
 
-    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit) {
-        return this.queryLatestPrizeList(limit, "time asc");
+    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit,String prizeType) {
+        return this.queryLatestPrizeList(limit, "time asc",prizeType);
     }
 
-    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit, String orderBy) {
+    private List<TCFFCPRIZE> queryLatestPrizeList(Integer limit, String orderBy, String prizeType) {
         TCFFCPRIZECondition tcffcprizeCondition = new TCFFCPRIZECondition();
         TCFFCPRIZECondition.Criteria criteria = tcffcprizeCondition.createCriteria();
 
         Date date = DateUtils.getBaiduCurTime();
         Date minTime = DateUtils.addMinutes(-limit, date);
         criteria.andTimeGreaterThanOrEqualTo(minTime);
+        criteria.andTypeEqualTo(prizeType);
         tcffcprizeCondition.setOrderByClause(orderBy);
         return tcffcprizedao.selectByCondition(tcffcprizeCondition);
     }
 
     public void getZhu3Zhu6MissData(Integer limit) {
-        List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
+       // List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
 
 
     }
@@ -324,7 +327,7 @@ public class PrizeService {
     public List<MissedPrizeList> getLatestPrizeMissCnt(Integer limit, String type, String tjLx) throws ParseException {
         Date date = DateUtils.getBaiduCurTime();
         String curNo = TcffcPrizeConverter.genNofromTime(date);
-        List<TCFFCPRIZE> list = queryLatestPrizeList(limit);
+        List<TCFFCPRIZE> list = queryLatestPrizeList(limit, BaseConstants.PRIZE_TYPE_77TJ);
         Map<String, List<MissedPrizeModel>> missedMap = new HashMap<>();
 
         String[] zhuArr = {"qian3", "zhong3", "hou3"};

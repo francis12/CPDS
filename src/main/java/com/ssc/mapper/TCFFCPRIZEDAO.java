@@ -3,7 +3,6 @@ package com.ssc.mapper;
 import com.ssc.model.TCFFCPRIZE;
 import com.ssc.model.TCFFCPRIZECondition;
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 public interface TCFFCPRIZEDAO {
